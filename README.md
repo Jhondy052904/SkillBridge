@@ -1,0 +1,3 @@
+SkillBridge is a web-based system designed to support Barangay Labangon, Cebu City in managing livelihood programs, job opportunities, and training for its residents. The platform creates digital skill profiles that highlight residents’ abilities and certifications, making it easier to connect them with suitable jobs or training sessions.
+
+For barangay officials, SkillBridge provides tools to track participation and measure the impact of community programs. By replacing traditional paper records with a centralized online system, it streamlines processes, improves access to opportunities, and strengthens connections between residents and local employers.
