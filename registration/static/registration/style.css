@@ -1,0 +1,302 @@
+/* =====================
+   General Page Styling
+===================== */
+body {
+    font-family: Arial, sans-serif;
+    background: #1B3C53;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* =====================
+   Main Container
+===================== */
+.container {
+    background: #F9F5F0;
+    padding: 60px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* =====================
+   Headings
+===================== */
+h1, h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* =====================
+   Text & Links
+===================== */
+p {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #555;
+}
+
+a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* =====================
+   Forms (general layout)
+===================== */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Apply box styling only to forms inside container */
+.container form,
+.auth-form {
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #1B3C53;
+    border-radius: 8px;
+    background: #456882;
+    margin-left: -16.2px;
+}
+
+/* =====================
+   Form Inputs & Labels
+===================== */
+form label {
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+form input,
+form select,
+form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* =====================
+   Buttons
+===================== */
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #3498db;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background: #2980b9;
+}
+
+/* Special green buttons (e.g. signup) */
+form button {
+    background-color: #4CAF50;
+}
+
+form button:hover {
+    background-color: #45a049;
+}
+
+/* =====================
+   Error Messages
+===================== */
+.error {
+    color: red;
+    font-size: 13px;
+    margin-top: -8px;
+}
+
+/* =====================
+   Navbar Styling
+===================== */
+.navbar {
+    position: fixed;
+    top: 5px;
+    left: 0;
+    width: 100%;
+    padding: 15px 40px;
+    background: #1b3c53ca;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.navbar .logo {
+    font-size: 27px;
+    font-family: sans-serif;
+    font-weight: 700;
+    color: #fff;
+}
+
+.navbar .logo1 {
+    font-size: 27px;
+    font-family: sans-serif;
+    font-weight: 100;
+    line-height: 1.4;
+    color: #fff;
+}
+.navbar .nav-right {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+    margin-right: 70px;
+}
+
+.navbar .nav-right a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-right a:hover {
+    color: #ddd;
+}
+
+/* Buttons inside navbar */
+.navbar .btn.join {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #fff;
+    background: transparent;
+    color: #fff;
+    transition: all 0.3s ease;
+    font-size: 15px;
+}
+
+.navbar .btn:hover {
+    color: #000B58;
+}
+
+.navbar .btn.join:hover {
+    background: #fff;
+    color: #4CAF50;
+}
+
+/* =====================
+   Index content
+===================== */
+
+body.index-page {
+    display: block;      
+    padding: 70px;        
+}
+
+.index-content {
+    max-width: 650px;    
+    padding: 20px;
+    border-radius: 8px;
+    /* background: white; */
+    margin-top: 90px;
+    margin-left: 20px;   
+}
+
+/* =====================
+   Div Content inside index
+===================== */
+
+#motto {
+    font-size: 25px;
+    font-weight: 200; 
+    color: #F9F5F0;
+}
+
+#headline {
+    font-size: 45px;
+    font-weight: 650;
+    color: #F9F5F0;
+    margin-top: 10px;
+    text-align: left;
+}
+
+#subheadline {
+    font-size: 16px;
+    color: #F9F5F0;
+    font-weight: 200px;
+    line-height: 1.4;
+}
+
+#divider {
+    color: #F9F5F0;
+    margin: 20px 0;
+    font-weight: 1000;
+}
+
+#cta-button {
+    display: inline-block;
+    background: #3498db;
+    color: #F9F5F0;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+
+}
+
+#cta-button:hover {
+    background: #000B58;
+}
+
+/* =====================
+   rATING SECTIONS AND USER STORIES
+===================== */
+
+.ratings {
+    margin-top: 30px;
+    margin-left: 40px; 
+    font-family: 'Poppins', sans-serif;
+    text-align: left;
+}
+
+.stars {
+    font-size: 22px;
+    color: gold;   
+    font-weight: bold;
+}
+
+.stars span {
+    color: #050f35;  
+    margin-left: 8px; 
+    font-size: 25px;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+.reviews {
+    font-size: 14px;
+    color: #FDEB9E;
+    margin-top: -5px;
+}
+
+.stories a {
+    font-size: 14px;
+    font-weight: bold;
+    color: #3498db;
+    text-decoration: none;
+}
+
+.stories a:hover {
+    text-decoration: underline;
+}

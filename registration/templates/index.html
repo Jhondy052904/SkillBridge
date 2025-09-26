@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block no_container %}
+<body class="index-page">
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="#" class="logo">~ SKILL</a>
+      <a href="#" class="logo1">BRIDGE .</a>
+    </div>
+    <div class="nav-right">
+      <a href="#">Community</a>
+      <a href="#">About Us</a>
+      <a href="#">Job Hunt</a>
+      <a>|</a>
+      <a href="{% url 'login' %}" class="btn">Sign In</a>
+      <a href="{% url 'signup' %}" class="btn join">Join Us</a>
+    </div>
+  </nav>
+
+ <div class="index-content">
+   <p id="motto">Bridging Opportunities</p>
+   <h1 id="headline">A platform that connects talent to real success.</h1>
+   <h4 id="subheadline">Where Skills create possibilities.</h4>
+   <br>
+   <p id="divider">______________________________________________________________________________</p>
+   <a href="{% url 'signup' %}" id="cta-button" class="btn main-btn">Get Started</a>
+</div>
+
+<br>
+
+<div class="ratings">
+   <p class="stars">★★★★★ <span>4.7/5</span></p>
+   <p class="reviews">from 1,561 ratings</p>
+   <p class="stories"><a href="#">Check out our customers’ stories → </a></p>
+</div>
+
+</body>
+{% endblock %}
