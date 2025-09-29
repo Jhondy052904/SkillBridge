@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h2>Login</h2>
+
+    <form method="post">
+    {% csrf_token %}
+
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required>
+
+    {% if form.non_field_errors %}
+        <div class="error">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+
+    <button type="submit">Login</button>
+    </form>
+
+    {% if form.non_field_errors %}
+        <div class="error">{{ form.non_field_errors.0 }}</div>
+    {% endif %}
+
+    <p>Don’t have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+    
+{% endblock %}

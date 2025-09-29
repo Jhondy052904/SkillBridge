@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}SkillBridge{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'registration/style.css' %}">
+</head>
+<body>
+  {% block no_container %}
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>
+  {% endblock %}
+</body>
+
+</html>
+
+
+{% load static %}
+

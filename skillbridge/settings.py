@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'account',
+    'registration',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +62,7 @@ ROOT_URLCONF = 'skillbridge.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,11 +85,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Database configuration using Supabase Session Pooler
 DATABASES = {
     "default": dj_database_url.config(
-        default="sqlite:///db.sqlite3",  # fallback if .env is missing
-        conn_max_age=600,                # persistent connections
-        ssl_require=True                 # enforce SSL
+        default="sqlite:///db.sqlite3",
+        conn_max_age=600,
+        ssl_require=False  # turn off SSL for SQLite
     )
 }
+
 
 
 # Password validation
@@ -132,3 +133,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+LOGIN_URL = 'login'                  # important so login redirects use this name
+LOGIN_REDIRECT_URL = 'index'         # where to go after successful login
+LOGOUT_REDIRECT_URL = 'index'        # where to go after logout
