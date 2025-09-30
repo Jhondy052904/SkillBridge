@@ -6,25 +6,111 @@
     <h2>Create an Account</h2>
 
     <form method="post" class="auth-form">
-    {% csrf_token %}
+        {% csrf_token %}
 
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" maxlength="20" required>
-    
-    <label for="password1">Password</label>
-    <input type="password" id="password1" name="password1" required>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" maxlength="20" required>
 
-    <label for="password2">Confirm Password</label>
-    <input type="password" id="password2" name="password2" required>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
 
-    <button type="submit">Sign Up</button>
+        <!-- Address (with barangay + sublocation + house no.) -->
+        <div class="address-row">
+            <div class="form-group">
+                <label for="barangay">Barangay</label>
+                <select id="barangay" name="barangay" required>
+                    <option value="">Choose Barangay</option>
+                    <option value="Labangon">Labangon</option>
+                    <option value="Mambaling">Mambaling</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="sublocation">Sub-location</label>
+                <select id="sublocation" name="sublocation" required>
+                    <option value="">-- Select Sub-location --</option>
+                </select>
+            </div>
+        </div>
+
+        <label for="house_number">House No. / Street</label>
+        <input type="text" id="house_number" name="house_number" placeholder="e.g. #23 Mango St." required>
+
+        <!-- Skills -->
+        <label for="skills">Skills</label>
+        <select id="skills" name="skills" required>
+            <option value="other">Other</option>
+            <option value="carpentry">Carpentry</option>
+            <option value="sewing">Sewing</option>
+            <option value="cooking">Cooking</option>
+            <option value="gardening">Gardening</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="electrical">Electrical Work</option>
+            <option value="tailoring">Tailoring</option>
+            <option value="welding">Welding</option>
+            <option value="cleaning">Housekeeping/Cleaning</option>
+            <option value="driving">Driving</option>
+            <option value="childcare">Childcare</option>
+            <option value="eldercare">Elder Care</option>
+            <option value="sales">Sales/Merchandising</option>
+            <option value="farming">Farming</option>
+            <option value="fishing">Fishing</option>
+            <option value="baking">Baking</option>
+            <option value="haircutting">Haircutting / Barber</option>
+            <option value="beauty">Beauty Care (Hair/Makeup/Nails)</option>
+        </select>
+
+        <label for="password1">Password</label>
+        <input type="password" id="password1" name="password1" required>
+
+        <label for="password2">Confirm Password</label>
+        <input type="password" id="password2" name="password2" required>
+
+        <button type="submit">Sign Up</button>
     </form>
 
-    <!-- Error message -->
     {% if form.non_field_errors %}
     <div class="error">{{ form.non_field_errors.0 }}</div>
     {% endif %}
     
     <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+
+    <!-- JS for dependent dropdown -->
+    <script>
+        const sublocations = {
+            Labangon: ["Tres de Abril", "Katipunan St.", "V. Rama Ave"],
+            Mambaling: ["Tabada", "Sitio Caimito", "Sitio Manga"],
+        };
+
+        document.getElementById("barangay").addEventListener("change", function () {
+            const barangay = this.value;
+            const sublocationSelect = document.getElementById("sublocation");
+
+            // Reset sublocation options
+            sublocationSelect.innerHTML = '<option value="">-- Select Sub-location --</option>';
+
+            if (barangay && sublocations[barangay]) {
+                sublocations[barangay].forEach(function (loc) {
+                    const option = document.createElement("option");
+                    option.value = loc.toLowerCase().replace(/\s+/g, "_");
+                    option.textContent = loc;
+                    sublocationSelect.appendChild(option);
+                });
+            }
+        });
+    </script>
+
+    <!-- Styling to align barangay & sublocation -->
+    <style>
+        .address-row {
+            display: flex;
+            gap: 20px;
+        }
+        .address-row .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
 
 {% endblock %}
