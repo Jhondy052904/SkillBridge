@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block no_container %}
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="#" class="logo">~ SKILL</a>
+      <a href="#" class="logo1">BRIDGE .</a>
+    </div>
+    <div class="nav-right">
+      <a href="#">Community</a>
+      <a href="#">About Us</a>
+      <a href="#">Job Hunt</a>
+      <a>|</a>
+      <a href="{% url 'logout' %}" class="btn">Logout</a>
+    </div>
+  </nav>
+  <body class="page-background">
+
+  <div class="index-content">
+    <p id="motto">Welcome back, {{ user.username }}!</p>
+    <h1 id="headline">This is your SkillBridge home.</h1>
+    <h4 id="subheadline">Explore opportunities, connect with others, and grow your skills.</h4>
+    <br>
+    <p id="divider">______________________________________________________________________________</p>
+    <a href="#" id="cta-button" class="btn main-btn">Explore Now</a>
+  </div>
+
+  <br>
+
+{% endblock %}

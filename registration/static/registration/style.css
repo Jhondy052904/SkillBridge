@@ -10,6 +10,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    
+}
+.page-background {
+    background: url("/static/images/html-background.png") no-repeat center center fixed;
+    background-size: cover;
 }
 
 /* =====================
@@ -212,6 +217,10 @@ body.index-page {
     /* background: white; */
     margin-top: 90px;
     margin-left: 20px;   
+}
+
+.index-content p,h1,h4{
+    opacity: 1.5;
 }
 
 /* =====================

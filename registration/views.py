@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 
@@ -20,4 +20,9 @@ def signup(request):
         form = CustomUserCreationForm()
     return render(request, 'signup.html', {'form': form})
 
+def home(request):
+    return render(request, 'home.html')
 
+def LogOut(request):
+    logout(request)
+    return redirect('/index/')
