@@ -3,28 +3,28 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-    <h2>Login</h2>
-
-    <form method="post">
+<h2 class="section-title">Welcome Back!</h2>
+<br>
+<form method="post" class="auth-form">
     {% csrf_token %}
 
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" required>
+    <div class="form-group floating-label">
+        <input type="text" id="username" name="username" placeholder=" " required>
+        <label for="username">Username</label>
+    </div>
 
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" required>
+    <div class="form-group floating-label">
+        <input type="password" id="password" name="password" placeholder=" " required>
+        <label for="password">Password</label>
+    </div>
 
     {% if form.non_field_errors %}
         <div class="error">{{ form.non_field_errors.0 }}</div>
     {% endif %}
 
     <button type="submit">Login</button>
-    </form>
-
-    {% if form.non_field_errors %}
-        <div class="error">{{ form.non_field_errors.0 }}</div>
-    {% endif %}
-
-    <p>Don’t have an account? <a href="{% url 'signup' %}">Sign up</a></p>
-    
+</form>
+<br>
+<p style="color: #ffffff; font-weight: bold; margin-top: 15px;">Don’t have an account?
+<a href="{% url 'signup' %}" style="color: #fbff03; font-weight: bold;">Sign up</a></p>
 {% endblock %}

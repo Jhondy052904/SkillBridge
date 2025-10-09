@@ -2,135 +2,267 @@
    General Page Styling
 ===================== */
 body {
-    font-family: Arial, sans-serif;
-    background: #1B3C53;
+    background: url("/static/images/html-background.png") no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Poppins', Arial, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    
-}
-.page-background {
-    background: url("/static/images/html-background.png") no-repeat center center fixed;
-    background-size: cover;
+    font-size: 0.9rem;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-/* =====================
-   Main Container
-===================== */
 .container {
-    background: #F9F5F0;
-    padding: 60px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    background: url("/static/images/BackgroundR.jpg") no-repeat;
+    background-size: cover;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    padding: 30px;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
     max-width: 400px;
+    width: 100%;
+    margin-top: 5%;
     text-align: center;
+    animation: fadeInUp 1s ease forwards;
 }
 
+
 /* =====================
-   Headings
+   Headings / Section Titles
 ===================== */
 h1, h2 {
-    color: #333;
-    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: #F9F5F0;
+    margin-bottom: 15px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    position: relative;
+}
+
+h2.section-title::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    background: #d9ff00;
+    margin: 6px auto 0;
+    border-radius: 2px;
 }
 
 /* =====================
-   Text & Links
+   Auth Form Styling
 ===================== */
-p {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #555;
-}
-
-a {
-    color: #3498db;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* =====================
-   Forms (general layout)
-===================== */
-form {
+.auth-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-}
-
-/* Apply box styling only to forms inside container */
-.container form,
-.auth-form {
-    width: 100%;
-    padding: 20px;
-    border: 1px solid #1B3C53;
-    border-radius: 8px;
-    background: #456882;
-    margin-left: -16.2px;
+    gap: 25px;
+    width: 110%;
+    max-width: 95%;
 }
 
 /* =====================
-   Form Inputs & Labels
+   Floating Labels with Animation
 ===================== */
-form label {
-    font-weight: bold;
-    margin-bottom: 4px;
-    text-align: left;
+.form-group {
+    position: relative;
 }
 
-form input,
-form select,
-form textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
+.auth-form input,
+.auth-form select,
+.auth-form input[type="file"] {
     width: 100%;
-    box-sizing: border-box;
+    padding: 14px 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.05);
+    color: #000000;
+    font-size: 0.9rem;
+    transition: all 0.4s ease;
+}
+
+.auth-form input:focus,
+.auth-form select:focus,
+.auth-form input[type="file"]:focus {
+    border-color: #d9ff00;
+    background: rgba(255,255,255,0.15);
+    box-shadow: 0 0 12px rgba(217,255,0,0.6);
+}
+
+.form-group label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    color: #fff;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background: rgba(27,60,83,0.6);
+    padding: 0 6px;
+    border-radius: 4px;
+}
+
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group select:focus + label,
+.form-group select:not([value=""]) + label {
+    top: -10px;
+    left: 12px;
+    font-size: 0.75rem;
+    color: #d9ff00;
 }
 
 /* =====================
    Buttons
 ===================== */
-button {
-    padding: 10px;
+.auth-form button {
+    padding: 12px 35px;
+    border-radius: 25px;
     border: none;
-    border-radius: 6px;
-    background: #3498db;
+    background: linear-gradient(135deg, #4CAF50, #2e7d32);
     color: #fff;
-    font-size: 15px;
+    font-size: 0.95rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.4s ease;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    align-self: center;
+    margin-left: 6%;
+    position: relative;
+    overflow: hidden;
 }
 
-button:hover {
-    background: #2980b9;
+.auth-form button::after {
+    content: '';
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: -100%;
+    left: -100%;
+    background: rgba(255,255,255,0.15);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
 }
 
-/* Special green buttons (e.g. signup) */
-form button {
-    background-color: #4CAF50;
+.auth-form button:hover::after {
+    top: -30%;
+    left: -30%;
 }
 
-form button:hover {
-    background-color: #45a049;
+.auth-form button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+
+/* =====================
+   Select arrow styling
+===================== */
+.auth-form select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 36px;
+    background: rgba(255,255,255,0.05)
+        url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'><polygon points='0,0 14,0 7,10' fill='%23ffffff'/></svg>")
+        no-repeat right 12px center;
+    background-size: 12px 8px;
+}
+
+/* =====================
+   Form Row & Group Spacing
+===================== */
+.form-row {
+    display: flex;
+    gap: 45px; /* horizontal spacing between inputs */
+    flex-wrap: wrap;
+    margin-bottom: 1px; /* vertical spacing between rows */
+}
+
+.form-row .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px; /* extra space under each input if needed */
+}
+
+/* Optional: increase spacing between sections */
+.section-title {
+    margin-top: 30px; /* space above each section */
+    margin-bottom: 15px; /* space below section title */
+    font-family: 'Poppins', sans-serif; 
+    font-size: 1.4rem;
+    color: #f9f5f0;
 }
 
 /* =====================
    Error Messages
 ===================== */
 .error {
-    color: red;
-    font-size: 13px;
-    margin-top: -8px;
+    color: #ff6666;
+    font-size: 12px;
+    text-align: left;
+    margin-top: -6px;
+}
+
+/* =====================
+   Paragraphs / Links
+===================== */
+.auth-form p, .auth-form a {
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+.auth-form p {
+    color: #fff;
+}
+
+.auth-form a {
+    color: #d9ff00;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-form a:hover {
+    text-decoration: underline;
+}
+
+/* =====================
+   Animations
+===================== */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 500px) {
+    .container {
+        padding: 20px;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* =====================
+   Responsive Adjustments
+===================== */
+@media (max-width: 1000px) {
+    .main-columns {
+        flex-direction: column;
+        gap: 15px;
+    }
 }
 
 /* =====================
@@ -214,9 +346,8 @@ body.index-page {
     max-width: 650px;    
     padding: 20px;
     border-radius: 8px;
-    /* background: white; */
-    margin-top: 90px;
-    margin-left: 20px;   
+    margin-top: -85px;
+    margin-left: -20%;   
 }
 
 .index-content p,h1,h4{
@@ -256,21 +387,48 @@ body.index-page {
 
 #cta-button {
     display: inline-block;
-    background: #3498db;
-    color: #F9F5F0;
+    background: linear-gradient(135deg, #4CAF50, #2e7d32);
+    color: #fff;
     padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
+    border-radius: 15px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}
 
+/* Diagonal shimmer effect */
+#cta-button::after {
+    content: '';
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: -100%;
+    left: -100%;
+    background: rgba(255,255,255,0.15);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+}
+
+#cta-button:hover::after {
+    top: -30%;
+    left: -30%;
 }
 
 #cta-button:hover {
-    background: #000B58;
+    background: linear-gradient(135deg, #45a049, #1b5e20); /* slightly darker gradient */
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 }
 
 /* =====================
-   rATING SECTIONS AND USER STORIES
+   RATING SECTIONS AND USER STORIES
 ===================== */
 
 .ratings {
@@ -308,18 +466,4 @@ body.index-page {
 
 .stories a:hover {
     text-decoration: underline;
-}
-
-/* =====================
-   Address Fields in Forms
-===================== */
-.address-row {
-    display: flex;
-    gap: 20px;
-}
-
-.address-row .form-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
 }
