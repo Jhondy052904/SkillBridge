@@ -5,20 +5,18 @@
 {% block content %}
     <h2>Create an Account</h2>
 
-    <form method="post" class="auth-form">
-        {% csrf_token %}
-
+    <form class="auth-form">
         <label for="username">Username</label>
-        <input type="text" id="username" name="username" maxlength="20" required>
+        <input type="text" id="username" maxlength="20" required>
 
         <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" required>
 
-        <!-- Address (with barangay + sublocation + house no.) -->
+        <!-- Address -->
         <div class="address-row">
             <div class="form-group">
                 <label for="barangay">Barangay</label>
-                <select id="barangay" name="barangay" required>
+                <select id="barangay" required>
                     <option value="">Choose Barangay</option>
                     <option value="Labangon">Labangon</option>
                     <option value="Mambaling">Mambaling</option>
@@ -27,18 +25,18 @@
 
             <div class="form-group">
                 <label for="sublocation">Sub-location</label>
-                <select id="sublocation" name="sublocation" required>
+                <select id="sublocation" required>
                     <option value="">-- Select Sub-location --</option>
                 </select>
             </div>
         </div>
 
         <label for="house_number">House No. / Street</label>
-        <input type="text" id="house_number" name="house_number" placeholder="e.g. #23 Mango St." required>
+        <input type="text" id="house_number" placeholder="e.g. #23 Mango St." required>
 
         <!-- Skills -->
         <label for="skills">Skills</label>
-        <select id="skills" name="skills" required>
+        <select id="skills" required>
             <option value="other">Other</option>
             <option value="carpentry">Carpentry</option>
             <option value="sewing">Sewing</option>
@@ -61,18 +59,14 @@
         </select>
 
         <label for="password1">Password</label>
-        <input type="password" id="password1" name="password1" required>
+        <input type="password" id="password1" minlength="6" required>
 
         <label for="password2">Confirm Password</label>
-        <input type="password" id="password2" name="password2" required>
+        <input type="password" id="password2" minlength="6" required>
 
         <button type="submit">Sign Up</button>
     </form>
 
-    {% if form.non_field_errors %}
-    <div class="error">{{ form.non_field_errors.0 }}</div>
-    {% endif %}
-    
     <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
 
     <!-- JS for dependent dropdown -->
@@ -85,14 +79,11 @@
         document.getElementById("barangay").addEventListener("change", function () {
             const barangay = this.value;
             const sublocationSelect = document.getElementById("sublocation");
-
-            // Reset sublocation options
             sublocationSelect.innerHTML = '<option value="">-- Select Sub-location --</option>';
-
             if (barangay && sublocations[barangay]) {
                 sublocations[barangay].forEach(function (loc) {
                     const option = document.createElement("option");
-                    option.value = loc.toLowerCase().replace(/\s+/g, "_");
+                    option.value = loc;
                     option.textContent = loc;
                     sublocationSelect.appendChild(option);
                 });
@@ -100,4 +91,107 @@
         });
     </script>
 
+    <!-- Supabase integration -->
+    <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+        "https://sfgnccdbgmewovbogibo.supabase.co",  
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmZ25jY2RiZ21ld292Ym9naWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NTgxMjYsImV4cCI6MjA3NDQzNDEyNn0.ZPrGL60IPIuS9DClstiv21r_Ss6RGluj18b0ulOGnLc"
+    );
+
+    document.querySelector(".auth-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const barangay = document.getElementById("barangay").value;
+        const sublocation = document.getElementById("sublocation").value;
+        const house_number = document.getElementById("house_number").value.trim();
+        const skills = document.getElementById("skills").value;
+        const password1 = document.getElementById("password1").value;
+        const password2 = document.getElementById("password2").value;
+
+        // Validate passwords match
+        if (password1 !== password2) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        // Validate password length
+        if (password1.length < 6) {
+            alert("Password must be at least 6 characters long!");
+            return;
+        }
+
+        try {
+            console.log("Step 1: Signing up with Supabase Auth...");
+            
+            // 1. Sign up with Supabase Auth (creates authenticated user with password hashing)
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: email,
+                password: password1
+            });
+
+            if (authError) {
+                alert("Error creating account: " + authError.message);
+                console.error("Auth error:", authError);
+                return;
+            }
+
+            if (!authData.user) {
+                alert("Signup failed. Please try again.");
+                return;
+            }
+
+            console.log("Step 2: Auth user created with UUID:", authData.user.id);
+
+            // 2. Insert into user_account table (let database auto-generate the bigint ID)
+            const { data: userData, error: userError } = await supabase
+                .from("user_account")
+                .insert([{ 
+                    username: username, 
+                    password_hash: authData.user.id,  // Store the Supabase Auth UUID here for reference
+                    role: "Resident" 
+                }])
+                .select("id")
+                .single();
+
+            if (userError) {
+                console.error("User account error:", userError);
+                alert("Error creating user profile: " + userError.message);
+                return;
+            }
+
+            console.log("Step 3: User account created with ID:", userData.id);
+
+            // 3. Insert into resident table
+            const { error: residentError } = await supabase
+                .from("resident")
+                .insert([{
+                    user_id: userData.id,  // Use the bigint ID from user_account
+                    first_name: username,
+                    last_name: "N/A",
+                    address: `${house_number}, ${sublocation}, ${barangay}`,
+                    email: email,
+                    employment_status: "Unemployed",
+                    skills: skills
+                }]);
+
+            if (residentError) {
+                console.error("Resident error:", residentError);
+                alert("Error creating resident profile: " + residentError.message);
+                return;
+            }
+
+            console.log("Step 4: All done!");
+            alert("Account created successfully! You can now login.");
+            window.location.href = "{% url 'login' %}";
+
+        } catch (err) {
+            console.error("Signup error:", err);
+            alert("An unexpected error occurred: " + err.message);
+        }
+    });
+    </script>
 {% endblock %}
