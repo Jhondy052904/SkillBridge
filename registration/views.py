@@ -2,64 +2,217 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
+from .models import Job, Training, Official, Event
 
+# -----------------------------
+# Public Views
+# -----------------------------
 def index(request):
     return render(request, 'index.html')
-
 
 def home(request):
     return render(request, 'home.html')
 
-
 def signup_view(request):
-    """
-    Render signup page - actual signup is handled by Supabase in the frontend
-    """
+    if request.method == 'POST':
+        messages.success(request, 'SIGN UP SUCCESSFULLY!')
+        return redirect('login')
     return render(request, 'signup.html')
-
 
 @csrf_protect
 def login_view(request):
-    """
-    Handle login with username and password via Supabase authentication
-    """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
-        # Authenticate user using custom Supabase backend
+
         user = authenticate(request, username=username, password=password)
-        
+
         if user is not None:
-            # Login successful
             login(request, user)
-            
-            # Get user role from session
-            user_role = request.session.get('user_role', 'Resident')
-            
-            # Redirect based on role
+
+            from .models import UserAccount
+            try:
+                user_account = UserAccount.objects.get(username=user.username)
+                request.session['user_role'] = user_account.role
+            except UserAccount.DoesNotExist:
+                request.session['user_role'] = 'Resident'
+
+            messages.success(request, f'WELCOME TO SKILLBRIDGE, {user.username.upper()}!!')
+
+            user_role = request.session['user_role']
             if user_role == 'Admin':
-                return redirect('home')  # Update to admin dashboard if you have one
+                return redirect('admin_dashboard')
+            elif user_role == 'Official':
+                return redirect('official_dashboard')
             else:
-                return redirect('home')  # Redirect to home page
+                return redirect('home')
+
         else:
-            # Login failed
             messages.error(request, 'Invalid username or password')
             return render(request, 'registration/login.html', {
-                'form': {'non_field_errors': ['Invalid username or password']}
+                'form': {'non_field_errors': ['Invalid username or password']},
             })
-    
-    # GET request - show login form
+
     return render(request, 'registration/login.html')
 
-
 def logout_view(request):
-    """
-    Handle logout and clear session
-    """
     logout(request)
-    # Clear Supabase session data
     request.session.flush()
     messages.success(request, 'You have been logged out successfully.')
     return redirect('login')
+
+
+# -----------------------------
+# Admin Views
+# -----------------------------
+def is_admin(user):
+    try:
+        return user.useraccount.role in ['Admin']
+    except:
+        return False
+
+@login_required
+def admin_dashboard(request):
+    if not is_admin(request.user):
+        messages.error(request, "Access denied: Admins only.")
+        return redirect('home')
+
+    jobs = Job.objects.all().order_by('-date_posted')
+    trainings = Training.objects.all().order_by('-date_scheduled')
+    return render(request, 'admin/dashboard.html', {
+        'jobs': jobs,
+        'trainings': trainings
+    })
+
+@login_required
+def admin_post_job(request):
+    if not is_admin(request.user):
+        messages.error(request, "Access denied: Admins only.")
+        return redirect('home')
+
+    official = Official.objects.filter(user=request.user.useraccount).first()
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        requirements = request.POST.get('requirements')
+        status = request.POST.get('status')
+
+        Job.objects.create(
+            title=title,
+            description=description,
+            requirements=requirements,
+            posted_by=official,
+            status=status
+        )
+        messages.success(request, "✅ Job posted successfully!")
+        return redirect('admin_dashboard')
+
+    return render(request, 'admin/post_job.html')
+
+@login_required
+def admin_post_training(request):
+    if not is_admin(request.user):
+        messages.error(request, "Access denied: Admins only.")
+        return redirect('home')
+
+    official = Official.objects.filter(user=request.user.useraccount).first()
+    if request.method == 'POST':
+        training_name = request.POST.get('training_name')
+        description = request.POST.get('description')
+        date_scheduled = request.POST.get('date_scheduled')
+        location = request.POST.get('location')
+        status = request.POST.get('status')
+
+        Training.objects.create(
+            training_name=training_name,
+            description=description,
+            date_scheduled=date_scheduled,
+            location=location,
+            status=status,
+            organizer=official
+        )
+        messages.success(request, "✅ Training posted successfully!")
+        return redirect('admin_dashboard')
+
+    return render(request, 'admin/post_training.html')
+
+
+# -----------------------------
+# Official Views
+# -----------------------------
+@login_required
+def official_dashboard(request):
+    return render(request, 'official/dashboard.html')
+
+@login_required
+def post_job(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        requirements = request.POST.get('requirements')
+        status = request.POST.get('status')
+
+        official = Official.objects.get(user=request.user.useraccount)
+
+        Job.objects.create(
+            title=title,
+            description=description,
+            requirements=requirements,
+            posted_by=official,
+            status=status
+        )
+        messages.success(request, "Job posted successfully!")
+        return redirect('official_dashboard')
+
+    return render(request, 'official/post_job.html')
+
+@login_required
+def post_training(request):
+    if request.method == 'POST':
+        training_name = request.POST.get('training_name')
+        description = request.POST.get('description')
+        date_scheduled = request.POST.get('date_scheduled')
+        location = request.POST.get('location')
+        status = request.POST.get('status')
+
+        official = Official.objects.get(user=request.user.useraccount)
+
+        Training.objects.create(
+            training_name=training_name,
+            description=description,
+            organizer=official,
+            date_scheduled=date_scheduled,
+            location=location,
+            status=status
+        )
+        messages.success(request, "Training posted successfully!")
+        return redirect('official_dashboard')
+
+    return render(request, 'official/post_training.html')
+
+@login_required
+def post_event(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        date_event = request.POST.get('date_event')
+        location = request.POST.get('location')
+        status = request.POST.get('status')
+
+        official = Official.objects.get(user=request.user.useraccount)
+
+        Event.objects.create(
+            title=title,
+            description=description,
+            date_event=date_event,
+            location=location,
+            posted_by=official,
+            status=status
+        )
+
+        messages.success(request, "Event posted successfully!")
+        return redirect('official_dashboard')
+
+    return render(request, 'official/post_event.html')

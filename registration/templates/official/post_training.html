@@ -1,0 +1,26 @@
+{% extends 'official/dashboard.html' %}
+{% block content %}
+<h2>Post a New Training</h2>
+<form method="POST">
+    {% csrf_token %}
+    <label>Training Name:</label>
+    <input type="text" name="training_name" required><br>
+
+    <label>Description:</label>
+    <textarea name="description"></textarea><br>
+
+    <label>Date Scheduled:</label>
+    <input type="date" name="date_scheduled"><br>
+
+    <label>Location:</label>
+    <input type="text" name="location"><br>
+
+    <label>Status:</label>
+    <select name="status">
+        <option value="Upcoming">Upcoming</option>
+        <option value="Completed">Completed</option>
+    </select><br>
+
+    <button type="submit">Post Training</button>
+</form>
+{% endblock %}

@@ -164,3 +164,23 @@ class TrainingParticipation(models.Model):
 
     def __str__(self):
         return f"{self.resident} → {self.training} ({self.attendance_status})"
+
+# ----------------------------------------
+# Events
+# ----------------------------------------
+class Event(models.Model):
+    STATUS_CHOICES = [
+        ('Upcoming', 'Upcoming'),
+        ('Completed', 'Completed'),
+    ]
+
+    title = models.CharField(max_length=150)
+    description = models.TextField(blank=True)
+    location = models.CharField(max_length=150, blank=True)
+    date_event = models.DateField(null=True, blank=True)
+    posted_by = models.ForeignKey(Official, on_delete=models.CASCADE)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Upcoming")
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

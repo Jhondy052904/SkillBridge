@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Official Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <h2>SkillBridge</h2>
+            <ul>
+                <li><a href="{% url 'official_dashboard' %}">🏠 Dashboard</a></li>
+                <li><a href="{% url 'post_job' %}">💼 Post Job</a></li>
+                <li><a href="{% url 'post_training' %}">🏫 Post Training</a></li>
+                <li><a href="{% url 'post_event' %}">📅 Post Event</a></li>
+                <li><a href="{% url 'logout' %}">🚪 Logout</a></li>
+            </ul>
+
+        </aside>
+
+        <main class="content">
+            <h1>Welcome, {{ request.user.username }}</h1>
+            <p>Here you can manage job postings, trainings, and events.</p>
+        </main>
+    </div>
+</body>
+
+</html>

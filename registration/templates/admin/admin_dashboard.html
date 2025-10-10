@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="admin-dashboard">
+  <div class="sidebar">
+    <ul>
+      <li><a href="{% url 'admin_dashboard' %}">🏠 Dashboard</a></li>
+      <li><a href="{% url 'post_job' %}">📋 Post Job</a></li>
+      <li><a href="{% url 'post_training' %}">🎓 Post Training</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <h2>Admin Dashboard</h2>
+
+    <section>
+      <h3>Recent Jobs</h3>
+      <ul>
+        {% for job in jobs %}
+        <li><strong>{{ job.title }}</strong> — {{ job.status }} ({{ job.date_posted|date:"M d, Y" }})</li>
+        {% empty %}
+        <li>No jobs yet.</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section>
+      <h3>Recent Trainings</h3>
+      <ul>
+        {% for training in trainings %}
+        <li><strong>{{ training.training_name }}</strong> — {{ training.status }} ({{ training.date_scheduled }})</li>
+        {% empty %}
+        <li>No trainings yet.</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </div>
+</div>
+{% endblock %}
