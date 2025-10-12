@@ -20,12 +20,12 @@ class SupabaseAuthBackend(BaseBackend):
             return None
         
         try:
-            print(f"🔍 Attempting to authenticate username: {username}")
+            print(f"Attempting to authenticate username: {username}")
             
-            # 1. Look up the user by username
+            # 1. Look up the user by username to get their email
             response = supabase.table("user_account").select("id, username, role, password_hash").eq("username", username).execute()
             
-            print(f"📊 User lookup response: {response.data}")
+            print(f"User lookup response: {response.data}")
             
             if not response.data or len(response.data) == 0:
                 print(f"Username '{username}' not found in user_account table")
@@ -33,7 +33,7 @@ class SupabaseAuthBackend(BaseBackend):
             
             user_data = response.data[0]
             user_id = user_data['id']
-            supabase_uuid = user_data['password_hash']  # This stores the Supabase Auth UUID
+            supabase_uuid = user_data['password_hash']
             
             print(f"Found user_id: {user_id}, Supabase UUID: {supabase_uuid}")
             
@@ -57,7 +57,7 @@ class SupabaseAuthBackend(BaseBackend):
                 "password": password
             })
             
-            print(f"🔑 Auth response user: {auth_response.user}")
+            print(f"Auth response user: {auth_response.user}")
             
             if auth_response.user:
                 print(f"Supabase authentication successful!")

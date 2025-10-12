@@ -6,8 +6,8 @@
 
 <h2 class="form-title">CREATE AN ACCOUNT</h2>
 
-<form method="post" class="auth-form" enctype="multipart/form-data">
-    {% csrf_token %}
+<form class="auth-form" enctype="multipart/form-data">
+    <!-- No csrf_token needed for client-side submission -->
 
     <!-- PROFILE SECTION -->
     <h2 class="section-title">Profile</h2>
@@ -40,7 +40,7 @@
             <label for="username">Username</label>
         </div>
         <div class="form-group">
-            <input type="password" id="password1" name="password1" placeholder="" required>
+            <input type="password" id="password1" name="password1" placeholder="" minlength="6" required>
             <label for="password1">Password</label>
         </div>
     </div>
@@ -50,7 +50,7 @@
             <label for="email">Valid Email</label>
         </div>
         <div class="form-group">
-            <input type="password" id="password2" name="password2" placeholder="" required>
+            <input type="password" id="password2" name="password2" placeholder="" minlength="6" required>
             <label for="password2">Confirm Password</label>
         </div>
     </div>
@@ -92,7 +92,6 @@
                 <option value="Elderly Care">Elderly Care</option>
                 <option value="Tutoring">Tutoring</option>
                 <option value="Pedicure">Pedicure</option>
-
             </select>
             <label for="skills">Skills</label>
         </div>
@@ -111,7 +110,7 @@
 </form>
 <br>
 <p class="login-link" style="color: #ffffff; font-weight: bold; margin-top: 15px;">Already have an account?
-<a href="{% url 'login' %}"style="color: #fbff03; font-weight: bold;">Login</a></p> 
+<a href="{% url 'login' %}" style="color: #fbff03; font-weight: bold;">Login</a></p> 
 
 <!-- Dependent Dropdown JS -->
 <script>
@@ -131,6 +130,145 @@
                 option.textContent = loc;
                 sublocationSelect.appendChild(option);
             });
+        }
+    });
+</script>
+
+<!-- Supabase Direct Signup -->
+<script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+    const supabase = createClient(
+        "https://sfgnccdbgmewovbogibo.supabase.co",  
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNmZ25jY2RiZ21ld292Ym9naWJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg4NTgxMjYsImV4cCI6MjA3NDQzNDEyNn0.ZPrGL60IPIuS9DClstiv21r_Ss6RGluj18b0ulOGnLc"
+    );
+
+    document.querySelector(".auth-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // Get all form values
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password1 = document.getElementById("password1").value;
+        const password2 = document.getElementById("password2").value;
+        const first_name = document.getElementById("first_name").value.trim();
+        const middle_name = document.getElementById("middle_name").value.trim();
+        const last_name = document.getElementById("last_name").value.trim();
+        const contact = document.getElementById("contact").value.trim();
+        const barangay = document.getElementById("barangay").value;
+        const sublocation = document.getElementById("sublocation").value;
+        const house_number = document.getElementById("house_number").value.trim();
+        const skills = document.getElementById("skills").value;
+        const proof_file = document.getElementById("proof_residency").files[0];
+
+        // Validate passwords
+        if (password1 !== password2) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        if (password1.length < 6) {
+            alert("Password must be at least 6 characters!");
+            return;
+        }
+
+        try {
+            console.log("Starting signup...");
+
+            // 1. Sign up with Supabase Auth
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: email,
+                password: password1
+            });
+
+            if (authError) {
+                alert("Error creating account: " + authError.message);
+                console.error("Auth error:", authError);
+                return;
+            }
+
+            if (!authData.user) {
+                alert("Signup failed. Please try again.");
+                return;
+            }
+
+            console.log("Auth user created:", authData.user.id);
+
+            // 2. Upload file to Supabase Storage
+            let file_path = null;
+            if (proof_file) {
+                const file_extension = proof_file.name.split('.').pop();
+                const file_name = `${username}_${Date.now()}.${file_extension}`;
+                
+                console.log("Uploading file:", file_name);
+                
+                const { data: uploadData, error: uploadError } = await supabase.storage
+                    .from('proof_residency')
+                    .upload(file_name, proof_file);
+
+                if (!uploadError) {
+                    const { data: urlData } = supabase.storage
+                        .from('proof_residency')
+                        .getPublicUrl(file_name);
+                    
+                    file_path = urlData.publicUrl;
+                    console.log("File uploaded:", file_path);
+                } else {
+                    console.error("File upload error:", uploadError);
+                    alert("File upload error: " + JSON.stringify(uploadError));
+                    return;
+                }
+            }
+
+            // 3. Insert into user_account
+            const { data: userData, error: userError } = await supabase
+                .from("user_account")
+                .insert([{
+                    username: username,
+                    password_hash: authData.user.id,
+                    role: "Resident"
+                }])
+                .select("id")
+                .single();
+
+            if (userError) {
+                console.error("User account error:", userError);
+                alert("Error creating user profile: " + userError.message);
+                return;
+            }
+
+            console.log("User account created:", userData.id);
+
+            // 4. Insert into resident table
+            const address = `${house_number}, ${sublocation}, ${barangay}`;
+            const { error: residentError } = await supabase
+                .from("resident")
+                .insert([{
+                    user_id: userData.id,
+                    first_name: first_name,
+                    middle_name: middle_name || null,
+                    last_name: last_name,
+                    contact_number: contact,
+                    address: address,
+                    email: email,
+                    employment_status: "Unemployed",
+                    skills: skills,
+                    proof_residency: file_path
+                }]);
+
+            if (residentError) {
+                console.error("Resident error:", residentError);
+                alert("Error creating resident profile: " + residentError.message);
+                return;
+            }
+
+            console.log("Signup complete!");
+            alert("Account created successfully! You can now login.");
+            window.location.href = "{% url 'login' %}";
+
+        } catch (err) {
+            console.error("Signup error:", err);
+            alert("An unexpected error occurred: " + err.message);
         }
     });
 </script>
