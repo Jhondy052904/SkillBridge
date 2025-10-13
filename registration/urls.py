@@ -17,4 +17,8 @@ urlpatterns = [
     path('official/post-job/', views.post_job, name='post_job'),
     path('official/post-training/', views.post_training, name='post_training'),
     path('official/post-event/', views.post_event, name='post_event'),
+
+    path('community/', views.community, name='community'),
+    path('aboutus/', views.aboutus, name='aboutus'),
+    path('jobhunt/', views.jobhunt, name='jobhunt'),
 ]

@@ -1,34 +1,104 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Home{% endblock %}
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="{% static 'registration/style.css' %}?v=2">
+<link rel="stylesheet" href="{% static 'registration/userhome.css' %}?v=3">
+
+{% block title %}User Dashboard{% endblock %}
 
 {% block no_container %}
-  <nav class="navbar">
-    <div class="nav-left">
-      <a href="#" class="logo-link">
-            <img src="{% static 'images/Logo1.png' %}" 
-                 alt="Skill Bridge Logo" class="logo">
-      </a>
-    </div>
-    <div class="nav-right">
-      <a href="#">Community</a>
-      <a href="#">About Us</a>
-      <a href="#">Job Hunt</a>
-      <a>|</a>
-      <a href="{% url 'logout' %}" class="btn">Logout</a>
-    </div>
-  </nav>
-  <body class="page-background">
 
-  <div class="index-content">
-    <p id="motto">Welcome back, {{ user.username }}!</p>
-    <h1 id="headline">This is your SkillBridge home.</h1>
-    <h4 id="subheadline">Explore opportunities, connect with others, and grow your skills.</h4>
-    <br>
-    <p id="divider">______________________________________________________________________________</p>
-    <a href="#" id="cta-button" class="btn main-btn">Explore Now</a>
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="{% static 'images/Logo1.png' %}" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="#">Community</a>
+    <a href="#">About Us</a>
+    <a href="#">Job Hunt</a>
+    <a>|</a>
+    <a href="{% url 'index' %}" class="btn">Logout</a>
+  </div>
+</nav>
+
+<div class="parent">
+  <!-- Profile Summary -->
+  <div class="card profile-card">
+    <div class="profile-header">
+      <img src="{{ user_profile.proof_residency }}" alt="Profile" class="profile-pic">
+      <h4><strong>Username:</strong> {{ user.username }} {{ user.last_name }}</h4>
+      <p class="user-role"><strong>Role - </strong> Resident</p>
+    </div>
+    <div class="profile-details">
+      <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
+      <p><strong>Address:</strong> {{ user_profile.address }}</p>
+      <p><strong>Skills:</strong> {{ user_profile.skills }}</p>
+      <div class="action-buttons">
+      <br>
+        <a href="#" class="btn-primary">Update Profile</a>
+      </div>
+    </div>
   </div>
 
-  <br>
+  <!-- Applied Jobs -->
+  <div class="card jobs-card">
+    <h3>My Applied Jobs</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Job Title</th>
+          <th>Status</th>
+          <th>Date Applied</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in applied_jobs %}
+        <tr>
+          <td>{{ job.title }}</td>
+          <td>{{ job.status }}</td>
+          <td>{{ job.date_applied }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3" class="empty-msg">No jobs applied yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Registered Trainings -->
+  <div class="card trainings-card">
+    <h3>My Registered Trainings</h3>
+    <ul class="training-list">
+      {% for training in registered_trainings %}
+      <li>
+        <span class="training-title">{{ training.title }}</span> - {{ training.status }}
+        <br><small>{{ training.schedule }}</small>
+      </li>
+      {% empty %}
+      <li>No trainings registered yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="card quick-actions-card">
+    <h3>Quick Actions</h3>
+    <div class="cta-buttons">
+      <a href="#" class="btn-primary"><i class="icon-job"></i> Browse Jobs</a>
+      <a href="#" class="btn-secondary"><i class="icon-training"></i> Find Trainings</a>
+    </div>
+  </div>
+
+  <!-- Full Width Section -->
+  <div class="card full-width-card">
+    <h3>Announcements / Footer</h3>
+    <p>Place optional content here.</p>
+  </div>
+</div>
 
 {% endblock %}

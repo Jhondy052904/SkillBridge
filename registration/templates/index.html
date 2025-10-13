@@ -11,9 +11,9 @@
       </a>
     </div>
     <div class="nav-right">
-      <a href="#">Community</a>
-      <a href="#">About Us</a>
-      <a href="#">Job Hunt</a>
+      <a href="{% url 'community' %}">Community</a>
+      <a href="{% url 'aboutus' %}">About Us</a>
+      <a href="{% url 'jobhunt' %}">Job Hunt</a>
       <a>|</a>
       <a href="{% url 'login' %}" class="btn">Sign In</a>
       <a href="{% url 'signup' %}" class="btn join">Join Us</a>
@@ -35,6 +35,8 @@
 <div class="ratings">
    <p class="stars">★★★★★ <span>4.7/5</span></p>
    <p class="reviews">from 1,561 ratings</p>
-   <p class="stories"><a href="#">Check out our customers’ stories → </a></p>
+   <p class="stories"><a href="{% url 'community' %}">Check Out Our Residents Stories → </a></p>
 </div>
+
+
 {% endblock %}

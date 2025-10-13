@@ -11,15 +11,16 @@ from django.contrib.auth.decorators import login_required
 # -----------------------------
 def index(request):
     return render(request, 'index.html')
-
 def home(request):
     return render(request, 'home.html')
-
 def signup_view(request):
-    """
-    Render signup page - actual signup is handled by Supabase in the frontend
-    """
     return render(request, 'registration/signup.html')
+def community(request):
+    return render(request, 'community.html')
+def aboutus(request):
+    return render(request, 'aboutus.html')
+def jobhunt(request):
+    return render(request, 'jobhunt.html')
 
 @csrf_protect
 def login_view(request):
@@ -208,3 +209,32 @@ def post_event(request):
         return redirect('official_dashboard')
 
     return render(request, 'official/post_event.html')
+
+# views.py =============== WALA PANI ==============
+from django.shortcuts import render, redirect
+from supabase import create_client
+
+# Supabase setup
+SUPABASE_URL = "https://sfgnccdbgmewovbogibo.supabase.co"
+SUPABASE_KEY = "YOUR_SUPABASE_KEY"
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+@login_required
+def profile_view(request):
+    # Make sure your user is authenticated
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    # Fetch resident data from Supabase
+    res = supabase.table('resident').select('*').eq('user_id', request.user.id).single()
+
+    if res.error or not res.data:
+        user_profile = None
+        print("Supabase fetch error:", res.error)
+    else:
+        user_profile = res.data
+
+    return render(request, 'profile.html', {
+        'user': request.user,
+        'user_profile': user_profile
+    })
