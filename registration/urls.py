@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.shortcuts import render
+
 
 
 urlpatterns = [
@@ -11,7 +13,8 @@ urlpatterns = [
     path('signup/', views.signup_view, name='signup'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
-
+    path('forgot-password/', views.forgot_password_view, name='forgot_password'),
+    path("reset-password/", lambda request: render(request, "registration/reset_password.html"), name="reset_password"),
     path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('official/dashboard/', views.official_dashboard, name='official_dashboard'),
     path('official/post-job/', views.post_job, name='post_job'),

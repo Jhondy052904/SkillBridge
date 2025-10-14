@@ -142,7 +142,7 @@ LOGOUT_REDIRECT_URL = 'index'        # where to go after logout
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
-    'registration.authentication.SupabaseAuthBackend',  
-    'django.contrib.auth.backends.ModelBackend',
+    'registration.authentication.SupabaseAuthBackend',  # ✅ Let Supabase handle login
+    'django.contrib.auth.backends.ModelBackend',        # ✅ Still allow Django admin login
 ]
 

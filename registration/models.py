@@ -31,6 +31,13 @@ class Resident(models.Model):
         ('Female', 'Female'),
         ('Other', 'Other'),
     ]
+    VERIFICATION_STATUS = [
+    ('Pending', 'Pending'),
+    ('Verified', 'Verified'),
+    ('Rejected', 'Rejected'),
+    ]
+
+    verification_status = models.CharField(max_length=10, choices=VERIFICATION_STATUS, default="Pending")
 
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE, null=True, blank=True)
     first_name = models.CharField(max_length=100)
@@ -39,7 +46,7 @@ class Resident(models.Model):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
     address = models.CharField(max_length=255, blank=True)
     contact_number = models.CharField(max_length=20, blank=True)
-    email = models.EmailField(unique=True, null=True, blank=True)
+    email = models.EmailField(unique=True)
     employment_status = models.CharField(max_length=20, choices=EMPLOYMENT_CHOICES, default="Unemployed")
     date_registered = models.DateTimeField(auto_now_add=True)
 

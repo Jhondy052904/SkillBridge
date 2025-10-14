@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
 
-from .models import Job, Training, Official, Event
+from .models import Job, Training, Official, Event, Resident
 from django.contrib.auth.decorators import login_required
 
 # -----------------------------
@@ -11,8 +11,27 @@ from django.contrib.auth.decorators import login_required
 # -----------------------------
 def index(request):
     return render(request, 'index.html')
+<<<<<<< HEAD
 def home(request):
     return render(request, 'home.html')
+=======
+
+@login_required(login_url='login')
+def home(request):
+    verification_status = None
+
+    if request.user.is_authenticated:
+        try:
+            resident = Resident.objects.get(user__username=request.user.username)
+            verification_status = resident.verification_status
+        except Resident.DoesNotExist:
+            verification_status = "No Profile"
+
+    return render(request, 'home.html', {'verification_status': verification_status})
+
+def forgot_password_view(request):
+    return render(request, 'registration/forgot_password.html')
+>>>>>>> 029d652 (feat: signup validation + reset password UI + session protection)
 def signup_view(request):
     return render(request, 'registration/signup.html')
 def community(request):

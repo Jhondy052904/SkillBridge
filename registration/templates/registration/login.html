@@ -25,6 +25,9 @@
     <button type="submit">Login</button>
 </form>
 <br>
+<p style="text-align:center; margin-top: 10px;">
+    <a href="{% url 'forgot_password' %}" style="color: #fbff03; font-weight:bold;">Forgot Password?</a>
+</p>
 <p style="color: #ffffff; font-weight: bold; margin-top: 15px;">Don’t have an account?
 <a href="{% url 'signup' %}" style="color: #fbff03; font-weight: bold;">Sign up</a></p>
 {% endblock %}

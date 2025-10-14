@@ -517,3 +517,9 @@ body.index-page {
     90% { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-20px); }
 }
+#status-line {
+    font-size: 14px;
+    color: #F9F5F0;  /* or #ccc if you want it dimmer */
+    margin-bottom: 8px;
+}
+
