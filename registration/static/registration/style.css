@@ -17,7 +17,7 @@ body {
 }
 
 .container {
-    background-color: #f8f6f3; 
+    background-color: #f8f6f3;
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     padding: 30px;
@@ -33,7 +33,8 @@ body {
 /* =====================
    Headings / Section Titles
 ===================== */
-h1, h2 {
+h1,
+h2 {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
     color: #1B3C53;
@@ -103,10 +104,10 @@ h2.section-title::after {
     border-radius: 4px;
 }
 
-.form-group input:focus + label,
-.form-group input:not(:placeholder-shown) + label,
-.form-group select:focus + label,
-.form-group select:not([value=""]) + label {
+.form-group input:focus+label,
+.form-group input:not(:placeholder-shown)+label,
+.form-group select:focus+label,
+.form-group select:not([value=""])+label {
     top: -10px;
     left: 12px;
     font-size: 0.75rem;
@@ -126,7 +127,7 @@ h2.section-title::after {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.4s ease;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
     align-self: center;
     margin-left: 6%;
     position: relative;
@@ -142,9 +143,7 @@ h2.section-title::after {
     appearance: none;
     padding-right: 36px;
     background:
-        rgba(249, 245, 240, 0.6)
-        url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'><polygon points='0,0 14,0 7,10' fill='%231B3C53'/></svg>")
-        no-repeat right 12px center;
+        rgba(249, 245, 240, 0.6) url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'><polygon points='0,0 14,0 7,10' fill='%231B3C53'/></svg>") no-repeat right 12px center;
     background-size: 12px 8px;
 }
 
@@ -192,7 +191,7 @@ select option {
 .section-title {
     margin-top: 30px;
     margin-bottom: 15px;
-    font-family: 'Poppins', sans-serif; 
+    font-family: 'Poppins', sans-serif;
     font-size: 1.4rem;
     color: #1B3C53;
 }
@@ -204,6 +203,7 @@ select option {
     .container {
         padding: 20px;
     }
+
     .form-row {
         flex-direction: column;
         gap: 15px;
@@ -235,6 +235,7 @@ select option {
         opacity: 0;
         transform: translateY(20px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -288,7 +289,8 @@ Navbar Styling
 }
 
 .navbar .logo:hover {
-    transform: scale(1.05); /* slight zoom effect on hover */
+    transform: scale(1.05);
+    /* slight zoom effect on hover */
     opacity: 0.9;
 }
 
@@ -341,7 +343,8 @@ Flash Messages
 }
 
 .alert {
-    background-color: #10c25a; /* green for success */
+    background-color: #10c25a;
+    /* green for success */
     color: white;
     padding: 14px 24px;
     margin-bottom: 10px;
@@ -352,7 +355,8 @@ Flash Messages
 }
 
 .alert.error {
-    background-color: #e42611; /* red for errors */
+    background-color: #e42611;
+    /* red for errors */
 }
 
 @keyframes fadeInOut {
@@ -360,14 +364,17 @@ Flash Messages
         opacity: 0;
         transform: translateY(-20px);
     }
+
     10% {
         opacity: 1;
         transform: translateY(0);
     }
+
     90% {
         opacity: 1;
         transform: translateY(0);
     }
+
     100% {
         opacity: 0;
         transform: translateY(-20px);
@@ -376,7 +383,8 @@ Flash Messages
 
 #status-line {
     font-size: 14px;
-    color: #F9F5F0; /* or #ccc if you want it dimmer */
+    color: #F9F5F0;
+    /* or #ccc if you want it dimmer */
     margin-bottom: 8px;
 }
 
@@ -396,7 +404,8 @@ GRID LAYOUT
     width: 100%;
     margin: 20px auto;
     box-sizing: border-box;
-    max-width: 1600px; /* wider grid area */
+    max-width: 1600px;
+    /* wider grid area */
     padding: 60px;
     gap: 40px;
 }
@@ -420,8 +429,10 @@ GRID LAYOUT
     grid-row-start: 4;
 
     /* make it bigger */
-    min-height: 70vh; /* almost full screen height */
-    width: 100%; /* take full width of grid container */
+    min-height: 70vh;
+    /* almost full screen height */
+    width: 100%;
+    /* take full width of grid container */
     justify-self: center;
 
     /* style */
@@ -429,8 +440,10 @@ GRID LAYOUT
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 
-    grid-column: 1 / -1; /* span entire grid */
-    margin-left: calc(-50vw + 50%); /* center it perfectly */
+    grid-column: 1 / -1;
+    /* span entire grid */
+    margin-left: calc(-50vw + 50%);
+    /* center it perfectly */
 }
 
 /* ===================== 
@@ -438,7 +451,7 @@ INDEX CONTENT DESIGN
 ===================== */
 .index-content {
     max-width: 650px;
-   /* background-color: #10c25a; vibrant green */
+    /* background-color: #10c25a; vibrant green */
     padding: 20px;
     border-radius: 8px;
     color: #F9F5F0;
@@ -515,7 +528,7 @@ INDEX CONTENT DESIGN
 RATINGS DESIGN
 ===================== */
 .ratings {
-   /* background-color: #e42611; vibrant red */
+    /* background-color: #e42611; vibrant red */
     padding: 20px;
     border-radius: 10px;
     font-family: 'Poppins', sans-serif;
@@ -553,7 +566,7 @@ CONTENT-1 DESIGN
     position: relative;
     width: 100vw;
     max-width: 100vw;
-    margin-left: calc(-50vw + 50%); 
+    margin-left: calc(-50vw + 50%);
     background-color: #F9F5F0;
     color: #1B3C53;
     font-family: 'Poppins', sans-serif;
@@ -561,16 +574,17 @@ CONTENT-1 DESIGN
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
-    padding: 100px; 
+    padding: 100px;
     box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.1);
     scroll-snap-align: start;
     overflow-x: hidden;
     z-index: 1;
-    margin-bottom: -17px;  /* remove gap below */
+    margin-bottom: -17px;
+    /* remove gap below */
     padding-bottom: 0;
 }
 
-.text-block1 {  
+.text-block1 {
     margin-top: -30px;
     margin-bottom: 20px;
     margin-left: 200px;
@@ -579,7 +593,7 @@ CONTENT-1 DESIGN
 /* ===================
 SKILLBRIDGE? SECTION
 ====================== */
-.SkillBridgeAsk{
+.SkillBridgeAsk {
     position: relative;
     width: 50vw;
     max-width: 50vw;
@@ -591,7 +605,7 @@ SKILLBRIDGE? SECTION
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 50px; 
+    padding: 50px;
     box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.1);
 }
 
@@ -601,7 +615,7 @@ SKILLBRIDGE? QUESTION
 .SkillBridgeAsk h2 {
     font-size: 1.3rem;
     font-weight: 200;
-    margin-left: 330px;
+    margin-left: 325px;
     color: #F9F5F0;
     margin-bottom: 0px;
 }
@@ -616,11 +630,16 @@ SKILLBRIDGE? QUESTION
 
 .ask-options {
     display: flex;
-    flex-direction: column; /* stack vertically */
-    gap: 15px; /* space between boxes */
-    align-items: flex-end; /* move all boxes to the right side */
-    width: 100%; /* make container take full width */
-    padding-right: 150px; /* adjust how far from the right edge */
+    flex-direction: column;
+    /* stack vertically */
+    gap: 15px;
+    /* space between boxes */
+    align-items: flex-end;
+    /* move all boxes to the right side */
+    width: 100%;
+    /* make container take full width */
+    padding-right: 150px;
+    /* adjust how far from the right edge */
 }
 
 .ask-box {
@@ -630,19 +649,53 @@ SKILLBRIDGE? QUESTION
     border-radius: 15px;
     font-weight: 600;
     font-size: 1.1rem;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
     cursor: pointer;
-    text-align: left; /* make text inside align left */
-    width: 320px; /* fixed width for consistent look */
+    text-align: left;
+    width: 320px;
+    position: relative;
+    /* needed for pseudo-element positioning */
+}
+
+/* Arrow at the end of text */
+.ask-box::after {
+    content: "⩾";
+    /* this is the arrow */
+    display: inline-block;
+    margin-left: 100px;
+    /* space between text and arrow */
+    transition: transform 0.3s ease;
+}
+
+/* Optional: animate arrow on hover */
+.ask-box:hover::after {
+    transform: translateX(5px);
+    /* arrow moves slightly right */
 }
 
 .ask-box:hover {
-  background-color: #fff;
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
 }
 
+.CirclePic {
+    position: absolute;
+    top: 15%;
+    right: 7%;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+    background-image: url('../images/workingguy.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scaleX(-1);
+}
 
 /* =====================
     CONTENT-2 TEXT
@@ -665,12 +718,13 @@ CONTENT-2 DESIGN
     align-items: center;
     justify-content: space-between;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    margin-bottom: -40px;  /* remove gap below */
+    margin-bottom: -40px;
+    /* remove gap below */
 }
 
 .Content-2 .text-block,
 .Content-2 .image-slider {
-    flex: 1;                
+    flex: 1;
 }
 
 .Content-2 h2 {
@@ -689,7 +743,7 @@ CONTENT-2 DESIGN
 .Content-2 .content-image {
     width: 480px;
     border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     object-fit: cover;
 }
 
@@ -722,7 +776,8 @@ CONTENT-2 DESIGN
     }
 }
 
-html, body {
+html,
+body {
     scroll-behavior: smooth;
     overflow-x: hidden;
 }
@@ -732,6 +787,7 @@ html, body {
         opacity: 0;
         transform: translateY(50px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -749,16 +805,16 @@ html, body {
 }
 
 .slides {
-  display: flex;
-  width: 50%;
-  height: 100%;
-  transition: transform 1s ease;
+    display: flex;
+    width: 50%;
+    height: 100%;
+    transition: transform 1s ease;
 }
 
 .slides img {
-  width: 50%;
-  height: 100%;
-  object-fit: cover;
-  flex-shrink: 0;
-  border-radius: 20px;
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border-radius: 20px;
 }
