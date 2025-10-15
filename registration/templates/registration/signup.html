@@ -60,15 +60,15 @@
     <div class="form-row">
         <div class="form-group">
             <select id="barangay" name="barangay" required>
-                <option value="" disabled selected>Choose Barangay</option>
-                <option value="Labangon">Labangon</option>
+                <option value="">Choose Barangay</option>
+                <option value="Labangon" >Labangon</option>
                 <option value="Mambaling">Mambaling</option>
             </select>
             <label for="barangay">Barangay</label>
         </div>
         <div class="form-group">
             <select id="sublocation" name="sublocation" required>
-                <option value="" disabled selected>Select Sub-location</option>
+                <option value="">Select Sub-location</option>
             </select>
             <label for="sublocation">SubLocation</label>
         </div>
@@ -105,12 +105,13 @@
             <label for="proof_residency">[Proof of Residency]</label>
         </div>
     </div>
-
-    <button type="submit">Sign Up</button>
+   <button type="submit">Sign Up</button> 
 </form>
 <br>
-<p class="login-link" style="color: #ffffff; font-weight: bold; margin-top: 15px;">Already have an account?
-<a href="{% url 'login' %}" style="color: #fbff03; font-weight: bold;">Login</a></p> 
+<p class="login-link" style="color: #000000; font-size: 17px; margin-top: 15px;">Already have an account?
+<a href="{% url 'login' %}" style="color: #234C6A; font-weight: bold; text-decoration: none;">Login</a></p> 
+
+
 
 <!-- Dependent Dropdown JS -->
 <script>

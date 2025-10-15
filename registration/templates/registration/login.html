@@ -21,13 +21,12 @@
     {% if form.non_field_errors %}
         <div class="error">{{ form.non_field_errors.0 }}</div>
     {% endif %}
-
+    <p style="text-align:left; margin-top: 1px; margin-left: 5px;">
+    <a href="{% url 'forgot_password' %}" style="color: #234C6A; font-weight:bold; text-decoration: none;">Forgot Password?</a>
+    </p>
     <button type="submit">Login</button>
 </form>
 <br>
-<p style="text-align:center; margin-top: 10px;">
-    <a href="{% url 'forgot_password' %}" style="color: #fbff03; font-weight:bold;">Forgot Password?</a>
-</p>
-<p style="color: #ffffff; font-weight: bold; margin-top: 15px;">Don’t have an account?
-<a href="{% url 'signup' %}" style="color: #fbff03; font-weight: bold;">Sign up</a></p>
+<p style="color: #000000; font-size: 17px; margin-top: 15px;">Don’t have an account?
+<a href="{% url 'signup' %}" style="color: #234C6A; font-weight: bold; text-decoration: none;">Sign up</a></p>
 {% endblock %}

@@ -9,12 +9,9 @@ from django.contrib.auth.decorators import login_required
 # -----------------------------
 # Public Views
 # -----------------------------
+
 def index(request):
     return render(request, 'index.html')
-<<<<<<< HEAD
-def home(request):
-    return render(request, 'home.html')
-=======
 
 @login_required(login_url='login')
 def home(request):
@@ -31,7 +28,7 @@ def home(request):
 
 def forgot_password_view(request):
     return render(request, 'registration/forgot_password.html')
->>>>>>> 029d652 (feat: signup validation + reset password UI + session protection)
+
 def signup_view(request):
     return render(request, 'registration/signup.html')
 def community(request):

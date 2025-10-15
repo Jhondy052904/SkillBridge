@@ -13,16 +13,16 @@ body {
     font-size: 0.9rem;
     min-height: 100vh;
     overflow-x: hidden;
+    color: #1B3C53;
 }
 
 .container {
-    background: url("/static/images/BackgroundR.jpg") no-repeat;
-    background-size: cover;
+    background-color: #f8f6f3; 
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     padding: 30px;
     border-radius: 25px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     max-width: 400px;
     width: 100%;
     margin-top: 5%;
@@ -30,14 +30,13 @@ body {
     animation: fadeInUp 1s ease forwards;
 }
 
-
 /* =====================
    Headings / Section Titles
 ===================== */
 h1, h2 {
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    color: #F9F5F0;
+    color: #1B3C53;
     margin-bottom: 15px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
@@ -49,7 +48,7 @@ h2.section-title::after {
     display: block;
     width: 60px;
     height: 2px;
-    background: #d9ff00;
+    background: #234C6A;
     margin: 6px auto 0;
     border-radius: 2px;
 }
@@ -65,9 +64,6 @@ h2.section-title::after {
     max-width: 95%;
 }
 
-/* =====================
-   Floating Labels with Animation
-===================== */
 .form-group {
     position: relative;
 }
@@ -78,9 +74,9 @@ h2.section-title::after {
     width: 100%;
     padding: 14px 16px;
     border-radius: 18px;
-    border: 1px solid rgba(255,255,255,0.3);
-    background: rgba(255,255,255,0.05);
-    color: #000000;
+    border: 1px solid #456882;
+    background: rgba(27, 60, 83, 0.05);
+    color: #1B3C53;
     font-size: 0.9rem;
     transition: all 0.4s ease;
 }
@@ -88,9 +84,9 @@ h2.section-title::after {
 .auth-form input:focus,
 .auth-form select:focus,
 .auth-form input[type="file"]:focus {
-    border-color: #d9ff00;
-    background: rgba(255,255,255,0.15);
-    box-shadow: 0 0 12px rgba(217,255,0,0.6);
+    border-color: #234C6A;
+    background: rgba(249, 245, 240, 0.3);
+    box-shadow: 0 0 12px rgba(35, 76, 106, 0.5);
 }
 
 .form-group label {
@@ -99,10 +95,10 @@ h2.section-title::after {
     top: 50%;
     transform: translateY(-50%);
     font-size: 0.9rem;
-    color: #fff;
+    color: #000000;
     pointer-events: none;
     transition: all 0.3s ease;
-    background: rgba(27,60,83,0.6);
+    background: rgba(249, 245, 240, 0.8);
     padding: 0 6px;
     border-radius: 4px;
 }
@@ -114,7 +110,7 @@ h2.section-title::after {
     top: -10px;
     left: 12px;
     font-size: 0.75rem;
-    color: #d9ff00;
+    color: #234C6A;
 }
 
 /* =====================
@@ -124,7 +120,7 @@ h2.section-title::after {
     padding: 12px 35px;
     border-radius: 25px;
     border: none;
-    background: linear-gradient(135deg, #4CAF50, #2e7d32);
+    background: linear-gradient(135deg, #1B3C53, #456882);
     color: #fff;
     font-size: 0.95rem;
     font-weight: 600;
@@ -137,73 +133,35 @@ h2.section-title::after {
     overflow: hidden;
 }
 
-.auth-form button::after {
-    content: '';
-    position: absolute;
-    width: 300%;
-    height: 300%;
-    top: -100%;
-    left: -100%;
-    background: rgba(255,255,255,0.15);
-    transform: rotate(45deg);
-    transition: all 0.5s ease;
-}
-
-.auth-form button:hover::after {
-    top: -30%;
-    left: -30%;
-}
-
-.auth-form button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-}
-
 /* =====================
-   Select arrow styling
+   Select Dropdown Arrow
 ===================== */
 .auth-form select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     padding-right: 36px;
-    background: rgba(255,255,255,0.05)
-        url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'><polygon points='0,0 14,0 7,10' fill='%23ffffff'/></svg>")
+    background:
+        rgba(249, 245, 240, 0.6)
+        url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='10' viewBox='0 0 14 10'><polygon points='0,0 14,0 7,10' fill='%231B3C53'/></svg>")
         no-repeat right 12px center;
     background-size: 12px 8px;
 }
 
 /* =====================
-   Form Row & Group Spacing
+   Option Styling
 ===================== */
-.form-row {
-    display: flex;
-    gap: 45px; /* horizontal spacing between inputs */
-    flex-wrap: wrap;
-    margin-bottom: 1px; /* vertical spacing between rows */
-}
-
-.form-row .form-group {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 10px; /* extra space under each input if needed */
-}
-
-/* Optional: increase spacing between sections */
-.section-title {
-    margin-top: 30px; /* space above each section */
-    margin-bottom: 15px; /* space below section title */
-    font-family: 'Poppins', sans-serif; 
-    font-size: 1.4rem;
-    color: #f9f5f0;
+select option {
+    background-color: #F9F5F0;
+    color: #1B3C53;
+    font-size: 0.9rem;
 }
 
 /* =====================
    Error Messages
 ===================== */
 .error {
-    color: #ff6666;
+    color: #e42611;
     font-size: 12px;
     text-align: left;
     margin-top: -6px;
@@ -212,17 +170,14 @@ h2.section-title::after {
 /* =====================
    Paragraphs / Links
 ===================== */
-.auth-form p, .auth-form a {
+.auth-form p {
+    color: #234C6A;
     font-size: 0.85rem;
     margin-top: 10px;
 }
 
-.auth-form p {
-    color: #fff;
-}
-
 .auth-form a {
-    color: #d9ff00;
+    color: #234C6A;
     text-decoration: none;
     font-weight: 600;
 }
@@ -232,7 +187,48 @@ h2.section-title::after {
 }
 
 /* =====================
-   Animations
+   Section Title
+===================== */
+.section-title {
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif; 
+    font-size: 1.4rem;
+    color: #1B3C53;
+}
+
+/* =====================
+   Responsive Adjustments
+===================== */
+@media (max-width: 500px) {
+    .container {
+        padding: 20px;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* =====================
+   Form Row
+===================== */
+.form-row {
+    display: flex;
+    gap: 45px;
+    flex-wrap: wrap;
+    margin-bottom: 1px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+/* ===================== 
+        Animations 
 ===================== */
 @keyframes fadeInUp {
     0% {
@@ -249,14 +245,15 @@ h2.section-title::after {
     .container {
         padding: 20px;
     }
+
     .form-row {
         flex-direction: column;
         gap: 15px;
     }
 }
 
-/* =====================
-   Responsive Adjustments
+/* ===================== 
+Responsive Adjustments 
 ===================== */
 @media (max-width: 1000px) {
     .main-columns {
@@ -265,8 +262,8 @@ h2.section-title::after {
     }
 }
 
-/* =====================
-   Navbar Styling
+/* ===================== 
+Navbar Styling 
 ===================== */
 .navbar {
     position: fixed;
@@ -281,33 +278,14 @@ h2.section-title::after {
     z-index: 100;
 }
 
-/* .navbar .logo3 {
-    height: 80px;
-    width: 250px;
-    margin-left: -10px;
-    border-radius: 8px;
-    object-fit: cover; 
-    transition: transform 0.3s ease, opacity 0.3s ease;
-} */
-
-/* .navbar .logo2 {
-    height: 60px;
-    width: 250px;
-    margin-left: -10px;
-    border-radius: 8px;
-    object-fit: cover; 
-    transition: transform 0.3s ease, opacity 0.3s ease;
-} */
-
 .navbar .logo {
     height: 68px;
     width: 300px;
-    margin-left: -70px;
+    margin-left: -10px;
     border-radius: 8px;
-    object-fit: cover; 
+    object-fit: cover;
     transition: transform 0.3s ease, opacity 0.3s ease;
 }
-
 
 .navbar .logo:hover {
     transform: scale(1.05); /* slight zoom effect on hover */
@@ -318,13 +296,13 @@ h2.section-title::after {
     display: flex;
     gap: 25px;
     align-items: center;
-    margin-right: 70px;
+    margin-right: 100px;
 }
 
 .navbar .nav-right a {
     color: #fff;
     text-decoration: none;
-    font-size: 15px;
+    font-size: 18px;
     transition: color 0.3s ease;
 }
 
@@ -340,7 +318,7 @@ h2.section-title::after {
     background: transparent;
     color: #fff;
     transition: all 0.3s ease;
-    font-size: 15px;
+    font-size: 18px;
 }
 
 .navbar .btn:hover {
@@ -349,145 +327,11 @@ h2.section-title::after {
 
 .navbar .btn.join:hover {
     background: #fff;
-    color: #4CAF50;
+    color: #021929;
 }
 
-/* =====================
-   Index content
-===================== */
-
-body.index-page {
-    display: block;      
-    padding: 70px;        
-}
-
-.index-content {
-    max-width: 650px;    
-    padding: 20px;
-    border-radius: 8px;
-    margin-top: 5%;
-    margin-right: 30%;   
-}
-
-.index-content p,h1,h4{
-    opacity: 1.5;
-}
-
-/* =====================
-   Div Content inside index
-===================== */
-
-#motto {
-    font-size: 25px;
-    font-weight: 200; 
-    color: #F9F5F0;
-}
-
-#headline {
-    font-size: 45px;
-    font-weight: 650;
-    color: #F9F5F0;
-    margin-top: 10px;
-    text-align: left;
-}
-
-#subheadline {
-    font-size: 16px;
-    color: #F9F5F0;
-    font-weight: 200px;
-    line-height: 1.4;
-}
-
-#divider {
-    color: #F9F5F0;
-    margin: 20px 0;
-    font-weight: 1000;
-}
-
-#cta-button {
-    display: inline-block;
-    background: linear-gradient(135deg, #4CAF50, #2e7d32);
-    color: #fff;
-    padding: 12px 24px;
-    border-radius: 15px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-/* Diagonal shimmer effect */
-#cta-button::after {
-    content: '';
-    position: absolute;
-    width: 300%;
-    height: 300%;
-    top: -100%;
-    left: -100%;
-    background: rgba(255,255,255,0.15);
-    transform: rotate(45deg);
-    transition: all 0.5s ease;
-}
-
-#cta-button:hover::after {
-    top: -30%;
-    left: -30%;
-}
-
-#cta-button:hover {
-    background: linear-gradient(135deg, #45a049, #1b5e20); /* slightly darker gradient */
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* =====================
-   RATING SECTIONS AND USER STORIES
-===================== */
-.ratings {
-    margin-top: 30px;
-    margin-right: 30px; 
-    font-family: 'Poppins', sans-serif;
-    text-align: left;
-}
-
-.stars {
-    font-size: 25px;
-    color: gold;   
-    font-weight: bold;
-}
-
-.stars span {
-    color: gold;  
-    margin-left: 8px; 
-    font-size: 25px;
-    font-family: 'Helvetica Neue', sans-serif;
-}
-
-.reviews {
-    font-size: 14px;
-    color: #FDEB9E;
-    margin-top: -5px;
-}
-
-.stories a {
-    font-size: 14px;
-    font-weight: bold;
-    color: #3498db;
-    text-decoration: none;
-}
-
-.stories a:hover {
-    text-decoration: underline;
-}
-
-/* =====================
-    Flash Messages
+/* ===================== 
+Flash Messages 
 ===================== */
 .message-container {
     position: fixed;
@@ -503,7 +347,7 @@ body.index-page {
     margin-bottom: 10px;
     border-radius: 10px;
     font-weight: 600;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     animation: fadeInOut 10s ease forwards;
 }
 
@@ -512,14 +356,409 @@ body.index-page {
 }
 
 @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(-20px); }
-    10% { opacity: 1; transform: translateY(0); }
-    90% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-20px); }
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
 }
+
 #status-line {
     font-size: 14px;
-    color: #F9F5F0;  /* or #ccc if you want it dimmer */
+    color: #F9F5F0; /* or #ccc if you want it dimmer */
     margin-bottom: 8px;
 }
 
+
+
+/* =====================
+IMPROVED DESIGN 
+===================== */
+
+/* ===================== 
+GRID LAYOUT
+===================== */
+.parent {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, auto);
+    width: 100%;
+    margin: 20px auto;
+    box-sizing: border-box;
+    max-width: 1600px; /* wider grid area */
+    padding: 60px;
+    gap: 40px;
+}
+
+/* Main section (index-content) */
+.div1 {
+    grid-column: span 3 / span 3;
+    grid-row: span 3 / span 3;
+}
+
+/* Ratings section */
+.div2 {
+    grid-column: span 2 / span 2;
+    grid-row: span 3 / span 3;
+    grid-column-start: 5;
+}
+
+.div3 {
+    margin-top: 200px;
+    grid-row: span 2 / span 2;
+    grid-row-start: 4;
+
+    /* make it bigger */
+    min-height: 70vh; /* almost full screen height */
+    width: 100%; /* take full width of grid container */
+    justify-self: center;
+
+    /* style */
+    padding: 100px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+
+    grid-column: 1 / -1; /* span entire grid */
+    margin-left: calc(-50vw + 50%); /* center it perfectly */
+}
+
+/* ===================== 
+INDEX CONTENT DESIGN
+===================== */
+.index-content {
+    max-width: 650px;
+   /* background-color: #10c25a; vibrant green */
+    padding: 20px;
+    border-radius: 8px;
+    color: #F9F5F0;
+    font-family: 'Poppins', sans-serif;
+}
+
+#motto {
+    font-size: 45px;
+    font-weight: 200;
+    color: #F9F5F0;
+}
+
+#headline {
+    font-size: 65px;
+    font-weight: 650;
+    text-align: left;
+    color: #F9F5F0;
+}
+
+#subheadline {
+    font-size: 25px;
+    font-weight: 300;
+    line-height: 1.4;
+    color: #F9F5F0;
+}
+
+#divider {
+    color: #F9F5F0;
+    margin: 20px 0;
+    font-weight: 700;
+}
+
+/* CTA Button */
+#cta-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #FDEB9E, #F9F5F0);
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 15px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+#cta-button::after {
+    content: '';
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: -100%;
+    left: -100%;
+    background: rgba(255, 255, 255, 0.15);
+    transform: rotate(45deg);
+    transition: all 0.5s ease;
+}
+
+#cta-button:hover::after {
+    top: -30%;
+    left: -30%;
+}
+
+#cta-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ===================== 
+RATINGS DESIGN
+===================== */
+.ratings {
+   /* background-color: #e42611; vibrant red */
+    padding: 20px;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    color: #FDEB9E;
+    width: 95%;
+    max-width: 500px;
+}
+
+.stars {
+    font-size: 35px;
+    color: gold;
+    font-weight: bold;
+}
+
+.reviews {
+    font-size: 20px;
+    margin-top: -20px;
+}
+
+.stories a {
+    font-size: 15px;
+    font-weight: bold;
+    color: #FDEB9E;
+    text-decoration: none;
+}
+
+.stories a:hover {
+    text-decoration: underline;
+}
+
+/* ===================== 
+CONTENT-1 DESIGN 
+===================== */
+.Content-1 {
+    position: relative;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(-50vw + 50%); 
+    background-color: #F9F5F0;
+    color: #1B3C53;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    padding: 100px; 
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.1);
+    scroll-snap-align: start;
+    overflow-x: hidden;
+    z-index: 1;
+    margin-bottom: -17px;  /* remove gap below */
+    padding-bottom: 0;
+}
+
+.text-block1 {  
+    margin-top: -30px;
+    margin-bottom: 20px;
+    margin-left: 200px;
+}
+
+/* ===================
+SKILLBRIDGE? SECTION
+====================== */
+.SkillBridgeAsk{
+    position: relative;
+    width: 50vw;
+    max-width: 50vw;
+    height: 400px;
+    background-color: #062135;
+    color: #1B3C53;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 50px; 
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ===================
+SKILLBRIDGE? QUESTION
+====================== */
+.SkillBridgeAsk h2 {
+    font-size: 1.3rem;
+    font-weight: 200;
+    margin-left: 330px;
+    color: #F9F5F0;
+    margin-bottom: 0px;
+}
+
+.SkillBridgeAsk p {
+    font-size: 1rem;
+    margin-left: 210px;
+    margin-bottom: 40px;
+    color: #F9F5F0;
+    text-align: left;
+}
+
+.ask-options {
+    display: flex;
+    flex-direction: column; /* stack vertically */
+    gap: 15px; /* space between boxes */
+    align-items: flex-end; /* move all boxes to the right side */
+    width: 100%; /* make container take full width */
+    padding-right: 150px; /* adjust how far from the right edge */
+}
+
+.ask-box {
+    background-color: #F9F5F0;
+    color: #1B3C53;
+    padding: 25px 35px;
+    border-radius: 15px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-align: left; /* make text inside align left */
+    width: 320px; /* fixed width for consistent look */
+}
+
+.ask-box:hover {
+  background-color: #fff;
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+}
+
+
+/* =====================
+    CONTENT-2 TEXT
+===================== */
+
+/* =====================
+CONTENT-2 DESIGN
+===================== */
+.Content-2 {
+    grid-row: span 2 / span 2;
+    grid-row-start: 6;
+    grid-column: 1 / -1;
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    padding: 100px;
+    background: #1b3c53;
+    color: #F9F5F0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    margin-bottom: -40px;  /* remove gap below */
+}
+
+.Content-2 .text-block,
+.Content-2 .image-slider {
+    flex: 1;                
+}
+
+.Content-2 h2 {
+    color: #F9F5F0;
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.Content-2 p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.Content-2 .content-image {
+    width: 480px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    object-fit: cover;
+}
+
+/* Button style inside Content-2 */
+.secondary-btn {
+    background: linear-gradient(135deg, #FDEB9E, #F9F5F0);
+    color: #1B3C53;
+    padding: 12px 28px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.secondary-btn:hover {
+    background: #fff;
+    transform: translateY(-3px);
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 900px) {
+    .Content-2 {
+        flex-direction: column;
+        text-align: center;
+        padding: 60px 40px;
+    }
+
+    .Content-2 .content-image {
+        width: 90%;
+    }
+}
+
+html, body {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+@keyframes fadeInPage {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Image slider inside Content-2 */
+.image-slider {
+    height: 320px;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    position: relative;
+    margin-right: 150px;
+}
+
+.slides {
+  display: flex;
+  width: 50%;
+  height: 100%;
+  transition: transform 1s ease;
+}
+
+.slides img {
+  width: 50%;
+  height: 100%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border-radius: 20px;
+}

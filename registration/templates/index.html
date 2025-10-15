@@ -3,40 +3,137 @@
 {% block title %}Home{% endblock %}
 
 {% block no_container %}
-  <nav class="navbar">
-    <div class="nav-left">
-      <a href="#" class="logo-link">
-            <img src="{% static 'images/Logo1.png' %}" 
-                 alt="Skill Bridge Logo" class="logo">
-      </a>
-    </div>
-    <div class="nav-right">
-      <a href="{% url 'community' %}">Community</a>
-      <a href="{% url 'aboutus' %}">About Us</a>
-      <a href="{% url 'jobhunt' %}">Job Hunt</a>
-      <a>|</a>
-      <a href="{% url 'login' %}" class="btn">Sign In</a>
-      <a href="{% url 'signup' %}" class="btn join">Join Us</a>
-    </div>
-  </nav>
-  <body class="page-background">
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="{% static 'images/Logo1.png' %}" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="{% url 'community' %}">Community</a>
+    <a href="{% url 'aboutus' %}">About Us</a>
+    <a href="{% url 'jobhunt' %}">Job Hunt</a>
+    <a>|</a>
+    <a href="{% url 'login' %}" class="btn">Sign In</a>
+    <a href="{% url 'signup' %}" class="btn join">Join Us</a>
+  </div>
+</nav>
 
- <div class="index-content">
-   <p id="motto">Bridging Opportunities</p>
-   <h1 id="headline">A platform that connects talent to real success.</h1>
-   <h4 id="subheadline">Where Skills create possibilities.</h4>
-   <br>
-   <p id="divider">______________________________________________________________________________</p>
-   <a href="{% url 'signup' %}" id="cta-button" class="btn main-btn">Get Started</a>
+<div class="parent">
+  <div class="main-columns div1">
+    <div class="index-content page-background">
+      <p id="motto">Welcome to your</p>
+      <h1 id="headline">platform that connects talent to real success.</h1>
+      <h4 id="subheadline">Where Skills create possibilities.</h4>
+      <p id="divider">______________________________________________________________________________</p>
+      <a href="{% url 'signup' %}" id="cta-button" class="btn main-btn" style="text-decoration: none;">Get Started</a>
+    </div>
+  </div>
+
+  <div class="ratings div2">
+    <p class="stars">★★★★★ <span>4.2/5</span></p>
+    <p class="reviews">from 1,561 ratings</p>
+    <p class="stories">
+      <a href="{% url 'community' %}">Check Out Our Residents Stories</a>
+    </p>
+  </div>
+
+  <div class="Content-1 div3">
+    <div class="text-block1">
+      <h2>Explore top Skillbridge Content</h2>
+      <p>
+        Discover relevant posts, jobs, events and trainings tailored to your skills and interests.</p>
+    </div>
+
+    <div class="SkillBridgeAsk">
+      <h2>Who is SkillBridge for?</h2>
+      <p>Anyone in the barangay.</p>
+
+      <div class="ask-options">
+        <div class="ask-box">Looking for a job seeker</div>
+        <div class="ask-box">Looking for a new job</div>
+        <div class="ask-box">Looking for a training</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="Content-2 div4">
+    <div class="text-block">
+      <h2>Building Opportunities Together</h2>
+      <p>
+        SkillBridge is more than just a platform — it’s a growing community where ambition meets opportunity. <br>
+        Join hands with professionals, mentors, and businesses who believe in skill-based growth.
+      </p>
+      <a href="{% url 'community' %}" class="btn secondary-btn">Join the Community</a>
+    </div>
+
+    <!-- SLIDER CONTAINER -->
+    <div class="image-slider">
+      <div class="slides">
+        <img src="{% static 'images/img1.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img2.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img3.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img4.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img5.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img6.jpg' %}" alt="Community" class="content-image">
+
+        <img src="{% static 'images/img1.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img2.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img3.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img4.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img5.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img6.jpg' %}" alt="Community" class="content-image">
+
+        <img src="{% static 'images/img1.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img2.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img3.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img4.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img5.jpg' %}" alt="Community" class="content-image">
+        <img src="{% static 'images/img6.jpg' %}" alt="Community" class="content-image">
+      </div>
+    </div>
+  </div>
+
+
 </div>
 
-<br>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const slides = document.querySelector(".slides");
+    const images = document.querySelectorAll(".slides img");
+    const total = images.length;
 
-<div class="ratings">
-   <p class="stars">★★★★★ <span>4.7/5</span></p>
-   <p class="reviews">from 1,561 ratings</p>
-   <p class="stories"><a href="{% url 'community' %}">Check Out Our Residents Stories → </a></p>
-</div>
+    // Clone first image
+    const firstClone = images[0].cloneNode(true);
+    slides.appendChild(firstClone);
+
+    let currentIndex = 0;
+    const slideInterval = 3000; // time per slide
+    const transitionDuration = 1000; // 1s transition
+
+    setInterval(() => {
+      currentIndex++;
+      slides.style.transition = `transform ${transitionDuration}ms ease`;
+      slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+      // When clone is reached → reset instantly (no blank)
+      if (currentIndex === total) {
+        slides.addEventListener(
+          "transitionend",
+          () => {
+            slides.style.transition = "none";
+            slides.style.transform = "translateX(0)";
+            currentIndex = 0;
+          },
+          { once: true } // only run once per loop
+        );
+      }
+    }, slideInterval);
+  });
+</script>
+
+
 
 
 {% endblock %}
