@@ -14,9 +14,21 @@ import os
 from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
+from supabase import create_client
 
 # Load environment variables from .env
 load_dotenv()
+print("DEBUG: SUPABASE_URL =", os.getenv("SUPABASE_URL"))
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+print("DEBUG: SUPABASE_URL =", SUPABASE_URL)
+print("DEBUG: SUPABASE_KEY =", "FOUND" if SUPABASE_KEY else "MISSING")
+print("DEBUG: DATABASE_URL =", "FOUND" if DATABASE_URL else "MISSING")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+print("Supabase client initialized successfully!")
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -45,6 +57,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'registration',
+    'jobs',
+    'skills',
+    'job_applications',
 ]
 
 MIDDLEWARE = [
@@ -142,7 +157,16 @@ LOGOUT_REDIRECT_URL = 'index'        # where to go after logout
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = [
-    'registration.authentication.SupabaseAuthBackend',  # ✅ Let Supabase handle login
-    'django.contrib.auth.backends.ModelBackend',        # ✅ Still allow Django admin login
+    'registration.authentication.SupabaseAuthBackend',  # Let Supabase handle login
+    'django.contrib.auth.backends.ModelBackend',        # Still allow Django admin login
 ]
+
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+print("DEBUG: SUPABASE_URL =", SUPABASE_URL)
+print("DEBUG: SUPABASE_KEY =", "FOUND" if SUPABASE_KEY else "MISSING")
+
+
 
