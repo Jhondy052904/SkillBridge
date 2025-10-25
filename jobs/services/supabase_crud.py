@@ -56,3 +56,60 @@ def delete_job(job_id: str) -> None:
             raise Exception(f"Failed to delete job: {response}")
     except Exception as e:
         raise Exception(f"Error deleting job: {str(e)}")
+
+
+# ============ JOB SKILLS RELATIONSHIP ============
+
+def get_job_skills(job_id: int) -> List[Dict[str, Any]]:
+    """Get all skills for a specific job"""
+    try:
+        response = supabase.table('job_skills').select('skills(*)').eq('jobid', int(job_id)).execute()
+        return [record['skills'] for record in response.data] if response.data else []
+    except Exception as e:
+        raise Exception(f"Error retrieving job skills: {str(e)}")
+
+def link_skills_to_job(job_id: int, skill_ids: List[str]) -> None:
+    """Link skills to a job"""
+    try:
+        if not skill_ids:
+            return
+        # Use lowercase 'jobid' and 'skillid' to match the table schema
+        job_skill_records = [{'jobid': int(job_id), 'skillid': skill_id} for skill_id in skill_ids]
+        response = supabase.table('job_skills').insert(job_skill_records).execute()
+        if not response.data:
+            raise Exception(f"Failed to link skills: {response}")
+    except Exception as e:
+        raise Exception(f"Error linking skills: {str(e)}")
+
+
+def unlink_skills_from_job(job_id: int) -> None:
+    """Remove all skills from a job"""
+    try:
+        supabase.table('job_skills').delete().eq('jobid', int(job_id)).execute()
+    except Exception as e:
+        raise Exception(f"Error unlinking skills: {str(e)}")
+
+
+# ============ JOB LISTINGS (PUBLIC VIEW) ============
+
+def get_jobs_with_skills() -> List[Dict[str, Any]]:
+    """Get all jobs with their associated skills for public listing"""
+    try:
+        jobs = get_jobs()
+        jobs_with_skills = []
+        
+        for job in jobs:
+            if job.get('Status') == 'Open':  # Only show open jobs
+                try:
+                    skills = get_job_skills(job['JobID'])
+                    job['skills'] = skills
+                    jobs_with_skills.append(job)
+                except Exception as e:
+                    # Log error but continue with other jobs
+                    print(f"Warning: Could not load skills for job {job['JobID']}: {e}")
+                    job['skills'] = []
+                    jobs_with_skills.append(job)
+        
+        return jobs_with_skills
+    except Exception as e:
+        raise Exception(f"Error retrieving jobs with skills: {str(e)}")

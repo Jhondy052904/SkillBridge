@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Update Job{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1 class="mb-4">Update Job</h1>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% if job %}
+                <form method="POST" class="card p-4 shadow-sm">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Job Title</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ job.Title }}">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Job Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="5">{{ job.Description }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="Open" {% if job.Status == 'Open' %}selected{% endif %}>Open</option>
+                            <option value="Closed" {% if job.Status == 'Closed' %}selected{% endif %}>Closed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Required Skills</label>
+                        <div class="border p-3 rounded">
+                            {% for skill in skills %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="skills" 
+                                           value="{{ skill.SkillID }}" id="skill_{{ skill.SkillID }}"
+                                           {% if skill.SkillID in selected_skill_ids %}checked{% endif %}>
+                                    <label class="form-check-label" for="skill_{{ skill.SkillID }}">
+                                        {{ skill.SkillName }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg">Update Job</button>
+                    <a href="{% url 'list_jobs' %}" class="btn btn-secondary btn-lg">Cancel</a>
+                </form>
+            {% else %}
+                <div class="alert alert-danger">Job not found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
