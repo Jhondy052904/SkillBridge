@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 
 
+
 urlpatterns = [
     path('', views.index, name='index'),
     path('index/', views.index, name='index'),
@@ -24,4 +25,5 @@ urlpatterns = [
     path('community/', views.community, name='community'),
     path('aboutus/', views.aboutus, name='aboutus'),
     path('jobhunt/', views.jobhunt, name='jobhunt'),
+
 ]

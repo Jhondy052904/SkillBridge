@@ -55,7 +55,7 @@ def login_view(request):
             
             # Redirect based on role
             if user_role == 'Admin':
-                return redirect('home')  # Update to admin dashboard if you have one
+                return redirect('admin_dashboard')  # Update to admin dashboard if you have one
             else:
                 return redirect('home')  # Redirect to home page
         else:
