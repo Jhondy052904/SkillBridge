@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from django.shortcuts import render
-
+from django.urls import path, include
 
 
 
@@ -25,5 +25,6 @@ urlpatterns = [
     path('community/', views.community, name='community'),
     path('aboutus/', views.aboutus, name='aboutus'),
     path('jobhunt/', views.jobhunt, name='jobhunt'),
+    path('jobs/', include('jobs.urls')),
 
 ]

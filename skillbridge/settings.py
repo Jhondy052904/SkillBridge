@@ -56,10 +56,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'registration',
     'jobs',
     'skills',
     'job_applications',
+    'registration.apps.RegistrationConfig',
 ]
 
 MIDDLEWARE = [

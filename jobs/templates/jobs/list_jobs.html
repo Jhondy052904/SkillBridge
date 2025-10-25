@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container" style="max-width: 650px;">
+
+    <h2 class="section-title">Job Listings</h2>
+
+    {% for job in jobs %}
+        {% if job.Status == "Open" %}
+        <div class="card" style="margin-bottom: 18px; text-align:left;">
+            <h3 style="color:#1B3C53;">{{ job.Title }}</h3>
+            <p>{{ job.Description }}</p>
+
+            <form method="POST" action="{% url 'apply_job' job.JobID %}">
+                {% csrf_token %}
+                <button class="btn-primary" style="margin-top: 10px;">Apply</button>
+            </form>
+        </div>
+        {% endif %}
+    {% empty %}
+        <p>No job postings available.</p>
+    {% endfor %}
+</div>
+
+{% endblock %}

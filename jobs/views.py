@@ -14,7 +14,7 @@ def post_job(request):
             job = create_job(
                 title=data['title'],
                 description=data['description'],
-                posted_by=str(request.user.id),
+                posted_by_id=str(request.user.id),
                 status=data.get('status', 'Open')
             )
             messages.success(request, "Job posted successfully!")
@@ -89,4 +89,62 @@ def delete_job_view(request, job_id):
         messages.success(request, "Job deleted!")
     except Exception as e:
         messages.error(request, f"Error deleting job: {str(e)}")
+    return redirect('list_jobs')
+
+# ✅ IMPORTS FOR APPLICATION MODULE
+from .services.supabase_crud import create_job_application, get_resident_by_user_id
+from skillbridge.supabase_client import supabase
+
+@login_required
+def apply_job(request, job_id):
+    try:
+        # get resident record tied to Django user (Django auth_user.id)
+        resident = get_resident_by_user_id(request.user.id)
+
+        # ✅ Auto-create resident if missing
+        if not resident:
+
+            # get matching entry in registration_useraccount
+            useraccount = supabase.table("registration_useraccount") \
+                .select("*") \
+                .eq("username", request.user.username) \
+                .execute()
+
+            if useraccount.data:
+                useraccount_id = useraccount.data[0]["id"]
+
+                # create registration_resident
+                supabase.table("registration_resident").insert({
+                    "first_name": request.user.first_name or "",
+                    "last_name": request.user.last_name or "",
+                    "email": request.user.email or "",
+                    "employment_status": "Unemployed",
+                    "verification_status": "Pending",
+                    "date_registered": datetime.datetime.now().isoformat(),
+                    "address": "",
+                    "contact_number": "",
+                    "birthdate": None,
+                    "user_id": useraccount_id
+                }).execute()
+
+                resident = get_resident_by_user_id(request.user.id)
+
+                if not resident:
+                    messages.error(request, "Could not create resident profile.")
+                    return redirect('list_jobs')
+            else:
+                messages.error(request, "User account not found!")
+                return redirect('list_jobs')
+
+        # ✅ now submit the job application
+        create_job_application(
+            resident_id=resident['id'],
+            job_id=job_id
+        )
+
+        messages.success(request, "Application submitted!")
+
+    except Exception as e:
+        messages.error(request, f"Error applying: {str(e)}")
+
     return redirect('list_jobs')

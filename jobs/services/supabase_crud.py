@@ -1,5 +1,6 @@
 from skillbridge.supabase_client import supabase
 from typing import List, Dict, Any
+from django.contrib.auth.models import User
 
 # ============ JOBS CRUD ============
 
@@ -56,3 +57,62 @@ def delete_job(job_id: str) -> None:
             raise Exception(f"Failed to delete job: {response}")
     except Exception as e:
         raise Exception(f"Error deleting job: {str(e)}")
+    
+
+# ============ JOB APPLICATION CRUD ============
+
+def create_job_application(resident_id: int, job_id: int) -> Dict[str, Any]:
+    """Create a job application entry"""
+
+    try:
+        # Prevent duplicate applications
+        check = supabase.table('JobApplication') \
+            .select('*') \
+            .eq('ResidentID', resident_id) \
+            .eq('JobID', job_id) \
+            .execute()
+
+        if check.data:
+            raise Exception("You already applied to this job.")
+
+        response = supabase.table('JobApplication').insert({
+            'ResidentID': resident_id,
+            'JobID': job_id,
+            'ApplicationStatus': "Pending"
+        }).execute()
+
+        if response.data:
+            return response.data[0]
+
+        raise Exception(f"Failed to apply: {response}")
+
+    except Exception as e:
+        raise Exception(f"Error applying to job: {str(e)}")
+
+
+# ✅ ✅ FIXED FUNCTION
+def get_resident_by_user_id(django_user_id: int):
+    # Step 1: Get username from Django auth table
+    username = User.objects.get(id=django_user_id).username
+
+    # Step 2: Find matching registration_useraccount row
+    useraccount = supabase.table("registration_useraccount") \
+        .select("*") \
+        .eq("username", username) \
+        .execute()
+
+    if not useraccount.data:
+        return None
+
+    useraccount_id = useraccount.data[0]["id"]
+
+    # Step 3: Fetch resident row using correct FK
+    resident = supabase.table("registration_resident") \
+        .select("*") \
+        .eq("user_id", useraccount_id) \
+        .execute()
+
+    if resident.data:
+        return resident.data[0]
+
+    return None

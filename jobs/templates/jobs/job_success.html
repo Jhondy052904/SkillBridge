@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container" style="max-width:400px;">
+    <h2 class="section-title">Success</h2>
+    <p>Your application was submitted successfully!</p>
+
+    <a href="{% url 'list_jobs' %}" class="btn-primary" style="margin-top:10px;">
+        Back to Jobs
+    </a>
+</div>
+
+{% endblock %}
