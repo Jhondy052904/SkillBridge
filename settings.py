@@ -14,8 +14,7 @@ import os
 from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
-from supabase.client import create_client
-
+from supabase import create_client
 
 # Load environment variables from .env
 load_dotenv()

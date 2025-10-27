@@ -3,7 +3,7 @@
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
 <link rel="stylesheet" href="{% static 'registration/style.css' %}?v=2">
-<link rel="stylesheet" href="{% static 'registration/userhome.css' %}?v=3">
+<link rel="stylesheet" href="{% static 'registration/userhome.css' %}?v=4">
 
 {% block title %}User Dashboard{% endblock %}
 
@@ -24,82 +24,95 @@
   </div>
 </nav>
 
-<div class="parent">
-  <!-- Profile Summary -->
-  <div class="card profile-card">
-    <div class="profile-header">
-      <img src="{{ user_profile.proof_residency }}" alt="Profile" class="profile-pic">
-      <h4><strong>Username:</strong> {{ user.username }} {{ user.last_name }}</h4>
-      <p class="user-role"><strong>Role - </strong> Resident</p>
-    </div>
-    <div class="profile-details">
-      <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
-      <p><strong>Address:</strong> {{ user_profile.address }}</p>
-      <p><strong>Skills:</strong> {{ user_profile.skills }}</p>
-      <div class="action-buttons">
-      <br>
-        <a href="#" class="btn-primary">Update Profile</a>
+<!-- Dashboard Wrapper -->
+<div class="dashboard-wrapper">
+
+  <!-- Welcome Banner -->
+  <div class="welcome-banner">
+    <h2>Welcome back, {{ user.username }}!</h2>
+    <p>We’re glad to see you again. Explore jobs and trainings below.</p>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="parent">
+    <div class="card profile-card">
+      <div class="profile-header">
+        <!-- <img src="{{ user_profile.proof_residency }}" alt="Profile" class="profile-pic"> -->
+      <img src="{% static 'images/snoopy.png' %}" alt="Profile" class="profile-pic">
+        <h4><strong>Username:</strong> {{ user.username }} {{ user.last_name }}</h4>
+        <p class="user-role"><strong>Role - </strong> Resident</p>
+      </div>
+     
+    
+      <div class="profile-details"> 
+        <p>____________________</p>
+        <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
+        <p><strong>Address:</strong> {{ user_profile.address }}</p>
+        <p><strong>Skills:</strong> {{ user_profile.skills }}</p>
+        <div class="action-buttons">
+          <br>
+          <a href="#" class="btn-primary">Update Profile</a>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Applied Jobs -->
-  <div class="card jobs-card">
-    <h3>My Applied Jobs</h3>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Job Title</th>
-          <th>Status</th>
-          <th>Date Applied</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for job in applied_jobs %}
-        <tr>
-          <td>{{ job.title }}</td>
-          <td>{{ job.status }}</td>
-          <td>{{ job.date_applied }}</td>
-        </tr>
+    <!-- Applied Jobs -->
+    <div class="card jobs-card">
+      <h3>My Applied Jobs</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Job Title</th>
+            <th>Status</th>
+            <th>Date Applied</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for job in applied_jobs %}
+          <tr>
+            <td>{{ job.title }}</td>
+            <td>{{ job.status }}</td>
+            <td>{{ job.date_applied }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" class="empty-msg">No jobs applied yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Registered Trainings -->
+    <div class="card trainings-card">
+      <h3>My Registered Trainings</h3>
+      <ul class="training-list">
+        {% for training in registered_trainings %}
+        <li>
+          <span class="training-title">{{ training.title }}</span> - {{ training.status }}
+          <br><small>{{ training.schedule }}</small>
+        </li>
         {% empty %}
-        <tr>
-          <td colspan="3" class="empty-msg">No jobs applied yet.</td>
-        </tr>
+        <li>No trainings registered yet.</li>
         {% endfor %}
-      </tbody>
-    </table>
-  </div>
+      </ul>
+    </div>
 
-  <!-- Registered Trainings -->
-  <div class="card trainings-card">
-    <h3>My Registered Trainings</h3>
-    <ul class="training-list">
-      {% for training in registered_trainings %}
-      <li>
-        <span class="training-title">{{ training.title }}</span> - {{ training.status }}
-        <br><small>{{ training.schedule }}</small>
-      </li>
-      {% empty %}
-      <li>No trainings registered yet.</li>
-      {% endfor %}
-    </ul>
-  </div>
+    <!-- Quick Actions -->
+    <div class="card quick-actions-card">
+      <h3>Quick Actions</h3>
+      <div class="cta-buttons">
+        <a href="{% url 'list_jobs' %}" class="btn-primary"><i class="icon-job"></i> Browse Jobs</a>
+        <a href="#" class="btn-secondary"><i class="icon-training"></i> Find Trainings</a>
+      </div>
+    </div>
 
-  <!-- Quick Actions -->
-  <div class="card quick-actions-card">
-    <h3>Quick Actions</h3>
-    <div class="cta-buttons">
-      <a href="{% url 'list_jobs' %}" class="btn-primary"><i class="icon-job"></i> Browse Jobs</a>
-      <a href="#" class="btn-secondary"><i class="icon-training"></i> Find Trainings</a>
+    <!-- Full Width Section -->
+    <div class="card full-width-card">
+      <h3>Announcements / Footer</h3>
+      <p>Place optional content here.</p>
     </div>
   </div>
-
-  <!-- Full Width Section -->
-  <div class="card full-width-card">
-    <h3>Announcements / Footer</h3>
-    <p>Place optional content here.</p>
-  </div>
 </div>
-
 
 {% endblock %}

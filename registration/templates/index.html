@@ -64,7 +64,7 @@
     <div class="text-block">
       <h2>Building Opportunities Together</h2>
       <p>
-        SkillBridge is more than just a platform — it’s a growing community where ambition meets opportunity. <br>
+        SkillBridge is more than a platform — it’s where ambitious learners and mentors grow together. <br>
         Join hands with professionals, mentors, and businesses who believe in skill-based growth.
       </p>
       <a href="{% url 'community' %}" class="btn secondary-btn">Join the Community</a>
@@ -99,41 +99,41 @@
 
 
 </div>
-
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const slides = document.querySelector(".slides");
-    const images = document.querySelectorAll(".slides img");
-    const total = images.length;
+document.addEventListener("DOMContentLoaded", () => {
+  const slides = document.querySelector(".slides");
+  const images = document.querySelectorAll(".slides img");
+  let index = 0;
 
-    // Clone first image
-    const firstClone = images[0].cloneNode(true);
-    slides.appendChild(firstClone);
+  // Clone the first slide for smooth looping
+  const firstClone = images[0].cloneNode(true);
+  slides.appendChild(firstClone);
 
-    let currentIndex = 0;
-    const slideInterval = 3000; // time per slide
-    const transitionDuration = 1000; // 1s transition
+  const totalSlides = images.length + 1; // include the clone
+  const slideDuration = 3000; // time each image stays
+  const transitionDuration = 1000; // 1s fade
 
-    setInterval(() => {
-      currentIndex++;
-      slides.style.transition = `transform ${transitionDuration}ms ease`;
-      slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+  const moveSlide = () => {
+    index++;
+    slides.style.transition = `transform ${transitionDuration}ms ease-in-out`;
+    slides.style.transform = `translateX(-${index * 100}%)`;
 
-      // When clone is reached → reset instantly (no blank)
-      if (currentIndex === total) {
-        slides.addEventListener(
-          "transitionend",
-          () => {
-            slides.style.transition = "none";
-            slides.style.transform = "translateX(0)";
-            currentIndex = 0;
-          },
-          { once: true } // only run once per loop
-        );
-      }
-    }, slideInterval);
-  });
+    // When we reach the cloned slide (last one)
+    if (index === totalSlides - 1) {
+      // Wait until transition finishes, then reset instantly
+      setTimeout(() => {
+        slides.style.transition = "none";
+        slides.style.transform = "translateX(0)";
+        index = 0;
+      }, transitionDuration);
+    }
+  };
+
+  // Run every few seconds
+  setInterval(moveSlide, slideDuration);
+});
 </script>
+
 
 
 
