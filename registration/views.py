@@ -11,7 +11,8 @@ from django.contrib.auth.decorators import login_required
 # -----------------------------
 
 def index(request):
-    return render(request, 'index.html')
+    # ✅ Updated path since index.html is inside templates/registration/
+    return render(request, 'registration/index.html')
 
 @login_required(login_url='login')
 def home(request):
@@ -24,19 +25,23 @@ def home(request):
         except Resident.DoesNotExist:
             verification_status = "No Profile"
 
-    return render(request, 'home.html', {'verification_status': verification_status})
+    return render(request, 'registration/home.html', {'verification_status': verification_status})
 
 def forgot_password_view(request):
     return render(request, 'registration/forgot_password.html')
 
 def signup_view(request):
     return render(request, 'registration/signup.html')
+
 def community(request):
-    return render(request, 'community.html')
+    return render(request, 'registration/community.html')
+
 def aboutus(request):
-    return render(request, 'aboutus.html')
+    return render(request, 'registration/aboutus.html')
+
 def jobhunt(request):
-    return render(request, 'jobhunt.html')
+    return render(request, 'registration/jobhunt.html')
+
 
 @csrf_protect
 def login_view(request):
@@ -147,7 +152,6 @@ def admin_post_training(request):
 
     return render(request, 'admin/post_training.html')
 
-
 # -----------------------------
 # Official Views
 # -----------------------------
@@ -226,22 +230,20 @@ def post_event(request):
 
     return render(request, 'official/post_event.html')
 
-# views.py =============== WALA PANI ==============
-from django.shortcuts import render, redirect
+# -----------------------------
+# Profile (Supabase)
+# -----------------------------
 from supabase import create_client
 
-# Supabase setup
 SUPABASE_URL = "https://sfgnccdbgmewovbogibo.supabase.co"
 SUPABASE_KEY = "YOUR_SUPABASE_KEY"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 @login_required
 def profile_view(request):
-    # Make sure your user is authenticated
     if not request.user.is_authenticated:
         return redirect('login')
 
-    # Fetch resident data from Supabase
     res = supabase.table('resident').select('*').eq('user_id', request.user.id).single()
 
     if res.error or not res.data:
@@ -250,7 +252,7 @@ def profile_view(request):
     else:
         user_profile = res.data
 
-    return render(request, 'profile.html', {
+    return render(request, 'registration/profile.html', {
         'user': request.user,
         'user_profile': user_profile
     })
