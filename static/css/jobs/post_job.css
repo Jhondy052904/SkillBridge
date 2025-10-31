@@ -1,0 +1,85 @@
+body {
+  font-family: "Inter", Arial, sans-serif;
+  background: url("/static/images/BackgroundR.png") no-repeat center center fixed;
+  background-size: cover;
+  /* background-color: #FFF; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  background: #f8f6f3; /* light cream */
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(33, 53, 85, 0.15); /* subtle blue tone shadow */
+  width: 400px;
+}
+
+.section-title {
+  text-align: center;
+  font-weight: 700;
+  color: #213555; /* dark blue */
+  margin-bottom: 24px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 12px 14px;
+  font-size: 15px;
+  border: 1px solid #3E5879; /* muted blue border */
+  border-radius: 10px;
+  outline: none;
+  background-color: #ffffff; /* light beige input bg */
+  color: #213555;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #213555; /* darker blue on focus */
+  box-shadow: 0 0 6px rgba(33, 53, 85, 0.2);
+}
+
+.form-group label {
+  position: absolute;
+  top: -8px;
+  left: 16px;
+  background: #f8f6f3;
+  padding: 0 5px;
+  font-size: 13px;
+  color: #3E5879; /* soft blue-gray label */
+}
+
+button {
+  background-color: #213555; /* dark blue button */
+  color: #F5EFE7; /* light text */
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #3E5879; /* lighter navy hover */
+  transform: translateY(-1px);
+}

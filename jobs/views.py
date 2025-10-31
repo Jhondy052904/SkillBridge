@@ -18,31 +18,6 @@ def job_success(request):
     return render(request, 'jobs/job_success.html')
 #========================
 
-# JOB LIST VIEW — shows analytics dashboard + job listings + calendar
-@login_required
-def job_list(request):
-    """Dashboard view with jobs, analytics, and calendar"""
-    try:
-        jobs = get_jobs() or []
-        user_count = supabase.table("auth.users").select("*").execute()
-        job_count = len(jobs)
-        application_count = supabase.table("jobs_applications").select("*").execute()
-
-        return render(request, 'joblist.html', {
-            'jobs': jobs,
-            'user_count': len(user_count.data),
-            'job_count': job_count,
-            'application_count': len(application_count.data),
-        })
-    except Exception as e:
-        messages.error(request, f"Error loading job list: {str(e)}")
-        return render(request, 'joblist.html', {
-            'jobs': [],
-            'user_count': 0,
-            'job_count': 0,
-            'application_count': 0,
-        })
-
 
 # POST JOB (normal users)
 @login_required

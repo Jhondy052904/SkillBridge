@@ -1,35 +1,41 @@
-{% extends 'registration/base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="{% static 'css/jobs/post_job.css' %}?v=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post a Job</title>
+</head>
+<body>
 
-{% block content %}
-
-<div class="container">
-
-    <h2 class="section-title">Post a Job</h2>
+  <div class="container">
+    <h2 class="section-title">POST A JOB</h2>
 
     <form method="POST" class="auth-form">
-        {% csrf_token %}
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <input type="text" name="title" placeholder=" " required>
+        <label>Job Title</label>
+      </div>
 
-        <div class="form-group">
-            <input type="text" name="title" placeholder=" " required>
-            <label>Job Title</label>
-        </div>
+      <div class="form-group">
+        <textarea name="description" placeholder=" " required style="height:120px;"></textarea>
+        <label>Description</label>
+      </div>
 
-        <div class="form-group">
-            <textarea name="description" placeholder=" " required style="height:120px; border-radius:18px; padding-top:16px;"></textarea>
-            <label>Description</label>
-        </div>
+      <div class="form-group">
+        <select name="status">
+          <option value="Open">Open</option>
+          <option value="Closed">Closed</option>
+        </select>
+        <label>Status</label>
+      </div>
 
-        <div class="form-group">
-            <select name="status">
-                <option value="Open">Open</option>
-                <option value="Closed">Closed</option>
-            </select>
-            <label>Status</label>
-        </div>
-
-        <button type="submit">Submit Job</button>
+      <button type="submit">Submit Job</button>
     </form>
+  </div>
 
-</div>
-
-{% endblock %}
+</body>
+</html>
