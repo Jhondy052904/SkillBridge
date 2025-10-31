@@ -1,11 +1,7 @@
-{% extends 'registration/base.html' %}
 {% load static %}
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
-<link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
-<link rel="stylesheet" href="{% static 'css/userhome.css' %}?v=4">
-
-{% block title %}User Dashboard{% endblock %}
+<link rel="stylesheet" href="{% static 'css/registration/userhome.css' %}?v=4">
 
 {% block no_container %}
 
@@ -30,7 +26,6 @@
   <!-- Welcome Banner -->
   <div class="welcome-banner">
     <h2>Welcome back, {{ user.username }}!</h2>
-    <p>We’re glad to see you again. Explore jobs and trainings below.</p>
   </div>
 
   <!-- Dashboard Grid -->
@@ -38,7 +33,7 @@
     <div class="card profile-card">
       <div class="profile-header">
         <!-- <img src="{{ user_profile.proof_residency }}" alt="Profile" class="profile-pic"> -->
-      <img src="{% static 'images/snoopy.png' %}" alt="Profile" class="profile-pic">
+        <img src="{% static 'images/snoopy.png' %}" alt="Profile" class="profile-pic">
         <h4><strong>Username:</strong> {{ user.username }} {{ user.last_name }}</h4>
         <p class="user-role"><strong>Role - </strong> Resident</p>
       </div>

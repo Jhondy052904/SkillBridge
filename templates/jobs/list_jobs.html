@@ -1,26 +1,139 @@
-{% extends 'registration/base.html' %}
+{% load static %}
 
-{% block content %}
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="alert 
+                        {% if message.tags %} alert-{{ message.tags }}{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 
-<div class="container" style="max-width: 650px;">
+<!DOCTYPE html>
+<html lang="en">
 
-    <h2 class="section-title">Job Listings</h2>
+<head>
+    <meta charset="UTF-8">
+    <title>Job Listings</title>
+    <link rel="stylesheet" href="{% static 'css/joblist/joblist.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <script src="{% static 'js/joblist/joblist.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
 
-    {% for job in jobs %}
-        {% if job.Status == "Open" %}
-        <div class="card" style="margin-bottom: 18px; text-align:left;">
-            <h3 style="color:#1B3C53;">{{ job.Title }}</h3>
-            <p>{{ job.Description }}</p>
+<body>
+    <!-- Back Button -->
+    <button class="btn-back" onclick="window.location.href='{% url 'home' %}'">↩&nbsp;&nbsp;Back</button>
 
-            <form method="POST" action="{% url 'apply_job' job.JobID %}">
-                {% csrf_token %}
-                <button class="btn-primary" style="margin-top: 10px;">Apply</button>
-            </form>
+    <div class="dashboard">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="welcome-banner">
+               <h2>Hello!! {{ user.first_name }} ready to land a new job?</h2>
+                <p>Explore the latest openings and take your next step today.</p>
+            </div>
+
+            <h2 class="section-title">💼 Job Listings</h2>
+
+            <input type="text" id="searchInput" placeholder="Search jobs..." onkeyup="filterJobs()">
+
+            <div class="job-listings-container">
+                {% for job in jobs %}
+                    {% if job.Status == "Open" %}
+                        <div class="card">
+                            <h3>{{ job.Title }}</h3>
+                            <p>{{ job.Description }}</p>
+                            <p><strong>Status:</strong> {{ job.Status }}</p>
+
+                            <form method="POST" action="{% url 'apply_job' job.JobID %}">
+                                {% csrf_token %}
+                                <button class="btn-primary">Apply</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <p>No job postings available.</p>
+                {% endfor %}
+            </div>
         </div>
-        {% endif %}
-    {% empty %}
-        <p>No job postings available.</p>
-    {% endfor %}
-</div>
 
-{% endblock %}
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2 class="section-title">📊 Overview</h2>
+
+            <div class="header-info">
+                <div id="current-date"></div>
+                <div id="current-time"></div>
+            </div>
+
+            <canvas id="analyticsChart"></canvas>
+            <div id="jobCalendar"></div>
+        </div>
+    </div>
+
+    <!-- JS Section -->
+    <script>
+        // Clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('current-date').innerText =
+                now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('current-time').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Search Filter
+        function filterJobs() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.card').forEach(card => {
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                card.style.display = title.includes(q) ? '' : 'none';
+            });
+        }
+
+        // Analytics Chart
+        const ctx = document.getElementById('analyticsChart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Users', 'Jobs', 'Applications'],
+                datasets: [{
+                    label: 'Platform Data',
+                    data: [
+                        {{ user_count|default:0 }},
+                        {{ job_count|default:0 }},
+                        {{ application_count|default:0 }}
+                    ],
+                    backgroundColor: ['#10B981', '#3B82F6', '#F59E0B'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+
+        // Calendar
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('jobCalendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 350,
+                events: [
+                    {% for job in jobs %}
+                        { title: '{{ job.Title|escapejs }}', start: '{{ job.CreatedAt|date:"Y-m-d" }}' },
+                    {% endfor %}
+                ]
+            });
+            calendar.render();
+        });
+    
+</script>
+</body>
+
+</html>

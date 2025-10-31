@@ -1,14 +1,15 @@
-{% extends 'registration/base.html' %}
-
-{% block content %}
-
-<div class="container" style="max-width:400px;">
-    <h2 class="section-title">Success</h2>
-    <p>Your application was submitted successfully!</p>
-
-    <a href="{% url 'list_jobs' %}" class="btn-primary" style="margin-top:10px;">
-        Back to Jobs
-    </a>
-</div>
-
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Application Success</title>
+    <link rel="stylesheet" href="{% static 'css/joblist/joblist.css' %}">
+</head>
+<body>
+    <div class="container" style="max-width:400px; margin:auto; text-align:center; padding-top:100px;">
+        <h2 class="section-title">Success</h2>
+        <p>Your application was submitted successfully!</p>
+        <a href="{% url 'list_jobs' %}" class="btn-primary" style="margin-top:10px;">Back to Jobs</a>
+    </div>
+</body>
+</html>
