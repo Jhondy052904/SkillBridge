@@ -87,10 +87,9 @@ def create_job_application(resident_id: int, job_id: int) -> Dict[str, Any]:
         raise Exception(f"Failed to apply: {response}")
 
     except Exception as e:
-        raise Exception(f"Error applying to job: {str(e)}")
+        raise Exception(str(e))
 
-
-# ✅ ✅ FIXED FUNCTION
+# FIXED FUNCTION
 def get_resident_by_user_id(django_user_id: int):
     # Step 1: Get username from Django auth table
     username = User.objects.get(id=django_user_id).username
