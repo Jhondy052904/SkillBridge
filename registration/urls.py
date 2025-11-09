@@ -3,8 +3,6 @@ from . import views
 from django.shortcuts import render
 from django.urls import path, include
 
-
-
 urlpatterns = [
     path('', views.index, name='index'),
     path('index/', views.index, name='index'),
@@ -26,5 +24,7 @@ urlpatterns = [
     path('aboutus/', views.aboutus, name='aboutus'),
     path('jobhunt/', views.jobhunt, name='jobhunt'),
     path('jobs/', include('jobs.urls')),
-
+    path('profile/', views.user_profile, name='user_profile'),
+    path('profile/edit/', views.edit_profile, name='edit_profile'),
+ 
 ]
