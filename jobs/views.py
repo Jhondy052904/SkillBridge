@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from datetime import datetime
+from skillbridge.supabase_client import supabase
 from .services.supabase_crud import (
     create_job,
     get_jobs,
@@ -9,15 +10,32 @@ from .services.supabase_crud import (
     delete_job,
     get_job_by_id,
     create_job_application,
-    get_resident_by_user_id
+    get_resident_by_user_id,
+    get_applied_jobs_by_resident,   # add this here
 )
-from skillbridge.supabase_client import supabase
+
+
+from .services.supabase_crud import get_resident_by_user_id, get_applied_jobs_by_resident
+
+@login_required
+def home(request):
+    try:
+        resident = get_resident_by_user_id(request.user.id)
+        applied_jobs = []
+
+        if resident:
+            applied_jobs = get_applied_jobs_by_resident(resident["id"])
+
+        return render(request, "home.html", {"applied_jobs": applied_jobs})
+    
+    except Exception as e:
+        messages.error(request, f"Error loading applied jobs: {str(e)}")
+        return render(request, "home.html", {"applied_jobs": []})
 
 #================== Kaled
 def job_success(request):
     return render(request, 'jobs/job_success.html')
 #========================
-
 
 # POST JOB (normal users)
 @login_required

@@ -6,26 +6,36 @@ from django.views.decorators.csrf import csrf_protect
 from .models import Job, Training, Official, Event, Resident
 from django.contrib.auth.decorators import login_required
 
+from .models import UserAccount
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from registration.models import UserAccount, Resident, JobApplication, TrainingParticipation
+
+from django.shortcuts import render, get_object_or_404
+from .models import Resident, ResidentSkill
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import ResidentForm
+
+def user_profile(request):
+    user = request.user
+    user_profile = get_object_or_404(Resident, user__username=user.username)
+    skills = ResidentSkill.objects.filter(resident=user_profile).select_related('skill')
+
+    context = {
+        'user_profile': user_profile,
+        'skills': skills,
+        'user': user,
+    }
+    return render(request, 'registration/profile.html', context)
+
 # -----------------------------
 # Public Views
 # -----------------------------
 
 def index(request):
-    # ✅ Updated path since index.html is inside templates/registration/
     return render(request, 'registration/index.html')
-
-@login_required(login_url='login')
-def home(request):
-    verification_status = None
-
-    if request.user.is_authenticated:
-        try:
-            resident = Resident.objects.get(user__username=request.user.username)
-            verification_status = resident.verification_status
-        except Resident.DoesNotExist:
-            verification_status = "No Profile"
-
-    return render(request, 'registration/home.html', {'verification_status': verification_status})
 
 def forgot_password_view(request):
     return render(request, 'registration/forgot_password.html')
@@ -41,6 +51,44 @@ def aboutus(request):
 
 def jobhunt(request):
     return render(request, 'registration/jobhunt.html')
+
+
+@login_required(login_url='login')
+def home(request):
+    verification_status = None
+    applied_jobs = []
+    registered_trainings = []
+    resident = None
+
+    # --- Get Resident linked to logged-in user ---
+    try:
+        user_account = UserAccount.objects.get(username=request.user.username)
+        resident = Resident.objects.get(user=user_account)
+        verification_status = resident.verification_status
+        user_profile = resident
+    except (UserAccount.DoesNotExist, Resident.DoesNotExist):
+        verification_status = "No Profile"
+        resident = None
+
+    # --- Fetch Applied Jobs ---
+    if resident:
+        applied_jobs = JobApplication.objects.filter(resident=resident).select_related('job').order_by('-date_applied')
+        print("✅ Applied jobs:", applied_jobs)
+
+    # --- Fetch Trainings ---
+    if resident:
+        registered_trainings = TrainingParticipation.objects.filter(resident=resident).select_related('training').order_by('-date_registered')
+        print("✅ Trainings:", registered_trainings)
+
+    # --- Render Page ---
+    return render(request, 'registration/home.html', {
+        'user': request.user,
+        'user_profile': user_profile,
+        'verification_status': verification_status,
+        'applied_jobs': applied_jobs,
+        'registered_trainings': registered_trainings,
+    })
+
 
 
 @csrf_protect
@@ -239,20 +287,52 @@ SUPABASE_URL = "https://sfgnccdbgmewovbogibo.supabase.co"
 SUPABASE_KEY = "YOUR_SUPABASE_KEY"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# @login_required
+# def profile_view(request):
+#     if not request.user.is_authenticated:
+#         return redirect('login')
+
+#     res = supabase.table('resident').select('*').eq('user_id', request.user.id).single()
+
+#     if res.error or not res.data:
+#         user_profile = None
+#         print("Supabase fetch error:", res.error)
+#     else:
+#         user_profile = res.data
+
+#     return render(request, 'registration/profile.html', {
+#         'user': request.user,
+#         'user_profile': user_profile
+#     })
+
 @login_required
 def profile_view(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
+    user = request.user
+    user_profile = get_object_or_404(Resident, user__username=user.username)
+    skills = ResidentSkill.objects.filter(resident=user_profile).select_related('skill')
 
-    res = supabase.table('resident').select('*').eq('user_id', request.user.id).single()
+    context = {
+        'user_profile': user_profile,
+        'skills': skills,
+        'user': user,
+    }
+    return render(request, 'registration/profile.html', context)
 
-    if res.error or not res.data:
-        user_profile = None
-        print("Supabase fetch error:", res.error)
+@login_required
+def edit_profile(request):
+    # Get the UserAccount linked to the current Django User
+    user_account = get_object_or_404(UserAccount, username=request.user.username)
+    
+    # Get the Resident profile linked to that UserAccount
+    resident = get_object_or_404(Resident, user=user_account)
+
+    if request.method == "POST":
+        form = ResidentForm(request.POST, instance=resident)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "✅ Profile updated successfully!")
+            return redirect('user_profile')  # go back to profile page
     else:
-        user_profile = res.data
+        form = ResidentForm(instance=resident)
 
-    return render(request, 'registration/profile.html', {
-        'user': request.user,
-        'user_profile': user_profile
-    })
+    return render(request, 'registration/edit_profile.html', {'form': form})

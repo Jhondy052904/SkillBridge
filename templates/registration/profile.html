@@ -1,0 +1,36 @@
+{% extends 'registration/base.html' %}
+{% load static %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block no_container %}
+<div class="card profile-card">
+  <div class="profile-header">
+    <img src="{% static 'images/snoopy.png' %}" alt="Profile" class="profile-pic">
+    <h4><strong>Username:</strong> {{ user.username }}</h4>
+    <p class="user-role"><strong>Role - </strong>{{ user.role }}</p>
+  </div>
+
+  <div class="profile-details"> 
+    <p>____________________</p>
+    <p><strong>Name:</strong> {{ user_profile.first_name }} {{ user_profile.last_name }}</p>
+    <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
+    <p><strong>Address:</strong> {{ user_profile.address }}</p>
+    <p><strong>Employment:</strong> {{ user_profile.employment_status }}</p>
+    <p><strong>Verification:</strong> {{ user_profile.verification_status }}</p>
+
+    <p><strong>Skills:</strong>
+      {% for s in skills %}
+        {{ s.skill.skill_name }}{% if not forloop.last %}, {% endif %}
+      {% empty %}
+        No skills added yet.
+      {% endfor %}
+    </p>
+
+    <div class="action-buttons">
+      <br>
+      <a href="{% url 'edit_profile' %}" class="btn-primary">Update Profile</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
