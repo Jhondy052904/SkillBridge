@@ -115,3 +115,25 @@ def get_resident_by_user_id(django_user_id: int):
         return resident.data[0]
 
     return None
+    
+def get_applied_jobs_by_resident(resident_id: int) -> List[Dict[str, Any]]:
+    """Get all jobs that a resident has applied to"""
+    try:
+        response = supabase.table("JobApplication") \
+            .select("ApplicationID, DateApplied, ApplicationStatus, jobs:JobID(Title, Status)") \
+            .eq("ResidentID", resident_id) \
+            .execute()
+
+        jobs = []
+        for item in response.data:
+            job = {
+                "title": item["jobs"]["Title"] if item.get("jobs") else "Unknown",
+                "status": item["ApplicationStatus"],
+                "date_applied": item.get("DateApplied", "—")
+            }
+            jobs.append(job)
+
+        return jobs
+
+    except Exception as e:
+        raise Exception(f"Error fetching applied jobs: {str(e)}")

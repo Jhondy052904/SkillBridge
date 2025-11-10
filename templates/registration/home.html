@@ -30,26 +30,30 @@
 
   <!-- Dashboard Grid -->
   <div class="parent">
-    <div class="card profile-card">
-      <div class="profile-header">
-        <!-- <img src="{{ user_profile.proof_residency }}" alt="Profile" class="profile-pic"> -->
-        <img src="{% static 'images/snoopy.png' %}" alt="Profile" class="profile-pic">
-        <h4><strong>Username:</strong> {{ user.username }} {{ user.last_name }}</h4>
-        <p class="user-role"><strong>Role - </strong> Resident</p>
-      </div>
-     
-    
-      <div class="profile-details"> 
-        <p>____________________</p>
-        <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
-        <p><strong>Address:</strong> {{ user_profile.address }}</p>
-        <p><strong>Skills:</strong> {{ user_profile.skills }}</p>
-        <div class="action-buttons">
-          <br>
-          <a href="#" class="btn-primary">Update Profile</a>
-        </div>
-      </div>
+  <div class="card profile-card">
+  <div class="profile-header">
+    <img src="{% static 'images/snoopy.png' %}" alt="Profile" class="profile-pic">
+    <h4><strong>{{ user_profile.first_name }} {{ user_profile.last_name }}</strong></h4>
+    <p class="user-role"><strong>Role:</strong> Resident</p>
+  </div>
+  
+  <div class="profile-details">
+    _______________________________
+    <p><strong>Email:</strong> {{ user_profile.email }}</p>
+    <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
+    <p><strong>Address:</strong> {{ user_profile.address }}</p>
+    {#  <p><strong>Gender:</strong> {{ user_profile.gender }}</p>  #}
+    <p><strong>Employment:</strong> {{ user_profile.employment_status }}</p>
+    <p><strong>Verification:</strong> {{ user_profile.verification_status }}</p>
+    <p><strong>Skills:</strong> {{ user_profile.skills }}</p>
+
+    <div class="action-buttons">
+      <br>
+      <a href="{% url 'edit_profile' %}" class="btn1-primary">Update Profile</a>
     </div>
+  </div>
+</div>
+
 
     <!-- Applied Jobs -->
     <div class="card jobs-card">
@@ -63,18 +67,21 @@
           </tr>
         </thead>
         <tbody>
-          {% for job in applied_jobs %}
-          <tr>
-            <td>{{ job.title }}</td>
-            <td>{{ job.status }}</td>
-            <td>{{ job.date_applied }}</td>
-          </tr>
-          {% empty %}
-          <tr>
-            <td colspan="3" class="empty-msg">No jobs applied yet.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
+      {% if applied_jobs %}
+      {% for app in applied_jobs %}
+        <tr>
+          <td>{{ app.job.title }}</td>
+          <td>{{ app.application_status }}</td>
+          <td>{{ app.date_applied|date:"M. d, Y, P" }}</td>
+        </tr>
+      {% endfor %}
+      {% else %}
+        <tr>
+          <td colspan="3" class="empty-msg">No jobs applied yet.</td>
+        </tr>
+      {% endif %}
+     </tbody>
+
       </table>
     </div>
 
