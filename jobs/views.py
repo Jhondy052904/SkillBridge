@@ -13,56 +13,78 @@ from .services.supabase_crud import (
 )
 from skillbridge.supabase_client import supabase
 
-#================== Kaled
+
+# ================== SUCCESS PAGE ==================
 def job_success(request):
     return render(request, 'jobs/job_success.html')
-#========================
 
 
-# POST JOB (normal users)
+# ================== POST JOB (OFFICIALS) ==================
 @login_required
 def post_job(request):
-    if request.method == 'POST':
-        try:
+    try:
+        # ✅ Step 1: Normalize email and find official
+        email = request.user.email.strip().lower()
+        print("DEBUG: Logged in as →", email)
+
+        # Try finding by email (case-insensitive)
+        official = supabase.table("registration_official").select("*").ilike("email", email).execute()
+
+        # If not found, try by user_id
+        if not official.data:
+            print("DEBUG: Trying backup search using user_id →", request.user.id)
+            official = supabase.table("registration_official").select("*").eq("user_id", request.user.id).execute()
+
+        # If still not found, show error
+        if not official.data:
+            print("ERROR: Official not found for", email)
+            messages.error(request, "Official profile not found.")
+            return render(request, 'official/dashboard.html', {'jobs': []})
+
+        official_data = official.data[0]
+        print("DEBUG: Official found →", official_data)
+
+        # ✅ Step 2: Handle job posting
+        if request.method == 'POST':
             data = request.POST
+            title = data['title']
+            description = data['description']
+            status = data.get('status', 'Open')
+
+            # Insert new job
             create_job(
-                title=data['title'],
-                description=data['description'],
-                posted_by_id=str(request.user.id),
-                status=data.get('status', 'Open')
+                title=title,
+                description=description,
+                posted_by_id=str(official_data['id']),
+                status=status
             )
-            messages.success(request, "Job posted successfully!")
-            return redirect('list_jobs')
-        except Exception as e:
-            messages.error(request, f"Error posting job: {str(e)}")
-    return render(request, 'jobs/post_job.html')
+
+            # ✅ Step 3: Add notification
+            try:
+                supabase.table('notifications').insert({
+                    "type": "Job Posting",
+                    "message": f"New job posted: {title[:100]}",
+                    "link_url": "/jobs/list/",
+                    "visible": True,
+                    "created_at": datetime.now().isoformat()
+                }).execute()
+                print("DEBUG: Notification added successfully.")
+            except Exception as e:
+                print("Notification insert error:", e)
+
+            messages.success(request, "✅ Job posted successfully!")
+            return redirect('official_dashboard')
+
+        # Render post job form
+        return render(request, 'jobs/post_job.html')
+
+    except Exception as e:
+        print("EXCEPTION:", e)
+        messages.error(request, f"Error posting job: {str(e)}")
+        return redirect('official_dashboard')
 
 
-# POST JOB (admin only)
-@login_required
-def admin_post_job(request):
-    if not request.user.is_staff:
-        messages.error(request, "Access denied.")
-        return redirect('home')
-
-    if request.method == 'POST':
-        try:
-            data = request.POST
-            create_job(
-                title=data['title'],
-                description=data['description'],
-                posted_by=str(request.user.id),
-                status=data.get('status', 'Open')
-            )
-            messages.success(request, "Job posted successfully!")
-            return redirect('list_jobs')
-        except Exception as e:
-            messages.error(request, f"Error posting job: {str(e)}")
-
-    return render(request, 'jobs/post_job.html')
-
-
-# LIST JOBS (simple listing for internal use)
+# ================== LIST JOBS ==================
 @login_required
 def list_jobs(request):
     try:
@@ -73,7 +95,7 @@ def list_jobs(request):
     return render(request, 'jobs/list_jobs.html', {'jobs': jobs})
 
 
-# UPDATE JOB
+# ================== UPDATE JOB ==================
 @login_required
 def update_job_view(request, job_id):
     if request.method == 'POST':
@@ -99,7 +121,7 @@ def update_job_view(request, job_id):
     return render(request, 'jobs/update_job.html', {'job': job})
 
 
-# DELETE JOB
+# ================== DELETE JOB ==================
 @login_required
 def delete_job_view(request, job_id):
     try:
@@ -109,7 +131,8 @@ def delete_job_view(request, job_id):
         messages.error(request, f"Error deleting job: {str(e)}")
     return redirect('list_jobs')
 
-# APPLY FOR JOB
+
+# ================== APPLY FOR JOB ==================
 @login_required
 def apply_job(request, job_id):
     try:
@@ -147,10 +170,8 @@ def apply_job(request, job_id):
         # Submit job application
         create_job_application(resident_id=resident['id'], job_id=job_id)
 
-        # Instead of going back to job list, go to success page
         return redirect('job_success')
 
     except Exception as e:
         messages.error(request, f"Error applying for job: {str(e)}")
         return redirect('list_jobs')
-

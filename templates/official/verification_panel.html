@@ -1,0 +1,186 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resident Verification Panel</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        thead {
+            background-color: #e2e8f0;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            border: 1px solid #d1d5db;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f5f9;
+        }
+
+        .text-muted {
+            color: #6b7280;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-info { background-color: #3b82f6; }
+        .btn-info:hover { background-color: #2563eb; }
+
+        .btn-success { background-color: #16a34a; }
+        .btn-success:hover { background-color: #15803d; }
+
+        .btn-danger { background-color: #dc2626; }
+        .btn-danger:hover { background-color: #b91c1c; }
+
+        .btn-secondary { background-color: #6b7280; }
+        .btn-secondary:hover { background-color: #4b5563; }
+
+        .back-btn-container {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .btn-back {
+            background-color: #6b7280;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .btn-back:hover {
+            background-color: #4b5563;
+        }
+
+        p.text-center {
+            text-align: center;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        /* Responsive table */
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead { display: none; }
+            tr {
+                margin-bottom: 15px;
+                background: #f9fafb;
+                border: 1px solid #e5e7eb;
+                border-radius: 8px;
+                padding: 10px;
+            }
+            td {
+                border: none;
+                display: flex;
+                justify-content: space-between;
+                padding: 8px;
+            }
+            td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: #374151;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="back-btn-container">
+        <a href="{% url 'official_dashboard' %}" class="btn-back">← Back to Dashboard</a>
+    </div>
+
+    <h2>Resident Verification Panel</h2>
+
+    {% if residents %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Proof of Residency</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in residents %}
+            <tr>
+                <td data-label="ID">{{ r.id }}</td>
+                <td data-label="Full Name">{{ r.first_name }} {{ r.last_name }}</td>
+                <td data-label="Email">{{ r.email }}</td>
+                <td data-label="Address">{{ r.address }}</td>
+                <td data-label="Proof">
+                    {% if r.proof_url %}
+                        <a href="{{ r.proof_url }}" target="_blank">View Proof</a>
+                    {% else %}
+                        <span class="text-muted">File unavailable</span>
+                    {% endif %}
+                </td>
+                <td data-label="Actions">
+                    <a href="{% url 'resident_details' r.id %}" class="btn btn-info">View</a>
+                    <a href="{% url 'approve_resident' r.id %}" class="btn btn-success">Approve</a>
+                    <a href="{% url 'deny_resident' r.id %}" class="btn btn-danger">Deny</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-center">No pending residents found.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

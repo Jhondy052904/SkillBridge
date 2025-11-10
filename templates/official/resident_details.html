@@ -1,0 +1,134 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resident Details</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            color: #1e3a8a;
+            font-size: 22px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #e5e7eb;
+            margin: 20px 0;
+        }
+
+        p {
+            font-size: 15px;
+            margin: 8px 0;
+            line-height: 1.5;
+        }
+
+        strong {
+            color: #111827;
+        }
+
+        .text-muted {
+            color: #6b7280;
+        }
+
+        img {
+            display: block;
+            margin-top: 10px;
+            max-width: 100%;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            margin: 5px 4px 0 0;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            text-decoration: none;
+            color: white;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .btn-success { background-color: #16a34a; }
+        .btn-success:hover { background-color: #15803d; }
+
+        .btn-danger { background-color: #dc2626; }
+        .btn-danger:hover { background-color: #b91c1c; }
+
+        .btn-secondary { background-color: #6b7280; }
+        .btn-secondary:hover { background-color: #4b5563; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 20px;
+            }
+            p {
+                font-size: 14px;
+            }
+            .btn {
+                display: block;
+                width: 100%;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Resident Details</h3>
+    <hr>
+
+    <p><strong>Name:</strong> {{ resident.first_name }} {{ resident.last_name }}</p>
+    <p><strong>Email:</strong> {{ resident.email }}</p>
+    <p><strong>Address:</strong> {{ resident.address }}</p>
+    <p><strong>Contact Number:</strong> {{ resident.contact_number }}</p>
+    <p><strong>Gender:</strong> {{ resident.gender }}</p>
+    <p><strong>Employment Status:</strong> {{ resident.employment_status }}</p>
+    <p><strong>Verification Status:</strong> {{ resident.verification_status }}</p>
+
+    <p><strong>Proof of Residency:</strong></p>
+    {% if resident.proof_url %}
+        <img src="{{ resident.proof_url }}" alt="Proof of Residency">
+    {% else %}
+        <span class="text-muted">File unavailable</span>
+    {% endif %}
+
+    <hr>
+    <div>
+        <a href="{% url 'approve_resident' resident.id %}" class="btn btn-success">Approve</a>
+        <a href="{% url 'deny_resident' resident.id %}" class="btn btn-danger">Deny</a>
+        <a href="{% url 'pending_residents' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+</body>
+</html>
