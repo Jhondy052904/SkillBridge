@@ -5,6 +5,16 @@
 
 {% block no_container %}
 
+{% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="alert {{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 <nav class="navbar">
   <div class="nav-left">
     <a href="#" class="logo-link">
