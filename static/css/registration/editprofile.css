@@ -1,0 +1,130 @@
+body {
+  font-family: "Inter", Arial, sans-serif;
+  background: url("/static/images/BackgroundR.png") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---- Container ---- */
+.container {
+  background: #f8f6f3; /* light cream */
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(33, 53, 85, 0.15); /* subtle blue tone shadow */
+  width: 400px;
+  max-width: 90%;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Title ---- */
+.section-title {
+  text-align: center;
+  font-weight: 700;
+  color: #213555; /* dark navy blue */
+  margin-bottom: 24px;
+  font-size: 1.6rem;
+}
+
+/* ---- Form Layout ---- */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- Input Fields ---- */
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 14px;
+  border: 1px solid #3E5879; 
+  border-radius: 10px;
+  outline: none;
+  background-color: #ffffff; 
+  color: #213555;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-appearance: none;  /* remove default arrow (Chrome/Safari) */
+  -moz-appearance: none;     /* remove default arrow (Firefox) */
+  appearance: none;          /* standard */
+  background-image: url("/static/images/arrow-down.svg"); /* custom arrow */
+  background-repeat: no-repeat;
+  background-position: right 14px center;  /* arrow aligned with padding */
+  background-size: 12px;                   /* adjust arrow size */
+}
+
+/* ---- Skill field ---- */
+textarea#id_skills,
+select#id_skills {
+  min-height: 40px; 
+  resize: vertical;
+}
+
+/* ---- Focus styling ---- */
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #213555; /* darker blue on focus */
+  box-shadow: 0 0 6px rgba(33, 53, 85, 0.2);
+}
+
+/* ---- Labels ---- */
+.form-group label {
+  position: absolute;
+  top: -8px;
+  left: 14px;
+  background: #f8f6f3;
+  padding: 0 6px;
+  font-size: 13px;
+  color: #3E5879; /* soft blue-gray */
+  font-weight: 500;
+}
+
+/* ---- Buttons ---- */
+button {
+  background-color: #213555;
+  color: #F5EFE7; 
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s, transform 0.2s ease;
+  width: 170px;            
+  display: block;           
+  margin: 0 auto;           
+  text-align: center; 
+}
+
+button:hover {
+  background-color: #3E5879;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  display: block;          
+  text-align: center;
+  text-decoration: none;   
+  color: #213555;         
+  font-weight: 500;         
+  font-size: 16px;         
+  transition: color 0.2s ease;
+}

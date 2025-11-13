@@ -320,10 +320,8 @@ def profile_view(request):
 
 @login_required
 def edit_profile(request):
-    # Get the UserAccount linked to the current Django User
     user_account = get_object_or_404(UserAccount, username=request.user.username)
     
-    # Get the Resident profile linked to that UserAccount
     resident = get_object_or_404(Resident, user=user_account)
 
     if request.method == "POST":
@@ -331,7 +329,7 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, "✅ Profile updated successfully!")
-            return redirect('user_profile')  # go back to profile page
+            return redirect('home')  # <-- redirect to home page
     else:
         form = ResidentForm(instance=resident)
 

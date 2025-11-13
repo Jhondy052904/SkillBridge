@@ -365,3 +365,35 @@ Navbar Styling
 .profile-card {
   width: 240px; 
 }
+
+/* =====================
+   MESSAGE
+===================== */
+.message-container {
+    position: fixed;
+    top: 100px; /* below navbar */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: auto;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+ 
+.alert {
+    background-color: #10c25a;
+    color: white;
+    padding: 14px 24px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: fadeInOut 10s ease forwards;
+}
+ 
+.alert.error {
+    background-color: #e42611;
+}
+ 
