@@ -8,10 +8,11 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from dotenv import load_dotenv
 import os
+import time
 from supabase import create_client
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from .models import Resident, Official, Job, Training, Event
+from .models import Resident, Official, Job, Training, Event, JobApplication, TrainingParticipation
 
 # ------------------------------------------------------------
 # Supabase Setup
@@ -32,15 +33,38 @@ def index(request):
 
 def home(request):
     """Resident dashboard."""
-    username = request.session.get("username")
+    username = request.session.get("user_email")
     verification_status = "No Profile"
+    user_profile = None
+    applied_jobs = []
+    registered_trainings = []
 
     if username:
+        # Fetch from Django Resident model for verification_status
         resident = Resident.objects.filter(email=username).first()
         if resident:
             verification_status = resident.verification_status
 
-    return render(request, 'registration/home.html', {"verification_status": verification_status})
+        # Fetch user_profile from Supabase
+        try:
+            res = supabase.table('resident').select('*').eq('email', username).single().execute()
+            user_profile = res.data if res.data else None
+        except Exception as e:
+            print("Supabase fetch error in home:", e)
+            user_profile = None
+
+        # Fetch applied jobs
+        applied_jobs = JobApplication.objects.filter(resident__email=username).select_related('job')
+
+        # Fetch registered trainings
+        registered_trainings = Training.objects.filter(trainingparticipation__resident__email=username).distinct()
+
+    return render(request, 'registration/home.html', {
+        "verification_status": verification_status,
+        "user_profile": user_profile,
+        "applied_jobs": applied_jobs,
+        "registered_trainings": registered_trainings,
+    })
 
 
 def forgot_password_view(request):
@@ -160,7 +184,6 @@ from django.shortcuts import render, redirect
 from skillbridge.supabase_client import supabase
 
 
-@csrf_protect
 def login_view(request):
     if request.method == 'POST':
         email = request.POST.get('username')
@@ -220,6 +243,8 @@ def login_view(request):
         except Exception as e:
             messages.error(request, f"Login failed: {str(e)}")
 
+    # Ensure session is saved to set CSRF token cookie
+    request.session['login_page_loaded'] = True
     return render(request, 'registration/login.html')
 
 
@@ -233,7 +258,14 @@ def logout_view(request):
     logout(request)
     request.session.flush()
     messages.success(request, 'You have been logged out successfully.')
-    return redirect('login')
+    response = redirect('login')
+    # Prevent caching to ensure fresh CSRF token on login page
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    # Add timestamp to URL to force fresh load
+    response['Location'] += '?t=' + str(int(time.time()))
+    return response
 
 
 # ------------------------------------------------------------
@@ -380,7 +412,7 @@ def profile_view(request):
         print("Supabase fetch error:", e)
         user_profile = None
 
-    return render(request, 'registration/profile.html', {'user_profile': user_profile})
+    return render(request, 'registration/edit_profile.html', {'user_profile': user_profile})
 
 
 # ------------------------------------------------------------
