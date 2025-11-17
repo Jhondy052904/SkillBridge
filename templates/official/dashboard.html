@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Dashboard | SkillBridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-700 text-white p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-xl font-bold">SkillBridge Official Dashboard</h1>
+        <div>
+            <a href="{% url 'verification_panel' %}" 
+            class="bg-green-400 hover:bg-green-500 text-gray-900 px-4 py-2 rounded font-semibold mr-2">
+            Verify Residents
+            </a>
+
+            <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded font-semibold">
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-5xl mx-auto p-6 mt-8 bg-white rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold mb-4">Welcome, {{ official.name }} 👋</h2>
+        <p class="text-gray-600 mb-6">Manage your job postings and barangay opportunities below.</p>
+
+        <!-- Message Alerts -->
+        {% if messages %}
+          <div class="mb-4">
+              {% for message in messages %}
+                  <div class="p-3 rounded text-white 
+                      {% if message.tags == 'success' %} bg-green-600 
+                      {% elif message.tags == 'error' %} bg-red-600 
+                      {% elif message.tags == 'warning' %} bg-yellow-500 text-black 
+                      {% else %} bg-blue-500 {% endif %}">
+                      {{ message }}
+                  </div>
+              {% endfor %}
+          </div>
+        {% endif %}
+
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Your Job Posts</h3>
+            <a href="{% url 'post_job' %}" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">+ Post a New Job</a>
+        </div>
+
+        {% if jobs %}
+            <table class="w-full border border-gray-300 rounded-lg overflow-hidden shadow-sm">
+                <thead class="bg-blue-100 text-gray-700 uppercase text-sm">
+                    <tr>
+                        <th class="px-4 py-3 text-left">Title</th>
+                        <th class="px-4 py-3 text-left">Status</th>
+                        <th class="px-4 py-3 text-left">Date Posted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for job in jobs %}
+                        <tr class="border-t hover:bg-blue-50 transition">
+                            <td class="px-4 py-3">{{ job.title }}</td>
+                            <td class="px-4 py-3">{{ job.status }}</td>
+                            <td class="px-4 py-3">{{ job.date_posted|date:"M d, Y" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="text-gray-500 italic mt-4 text-center">No jobs posted yet.</p>
+        {% endif %}
+    </main>
+
+    <footer class="text-center text-gray-500 text-sm py-4 mt-8">
+        SkillBridge © {{ now|date:"Y" }}
+    </footer>
+
+</body>
+</html>
