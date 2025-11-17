@@ -101,8 +101,8 @@
       <ul class="training-list">
         {% for training in registered_trainings %}
         <li>
-          <span class="training-title">{{ training.title }}</span> - {{ training.status }}
-          <br><small>{{ training.schedule }}</small>
+          <span class="training-title">{{ training.training_name }}</span> - {{ training.status }}
+          <br><small>{{ training.date_scheduled|date:"M. d, Y" }}</small>
         </li>
         {% empty %}
         <li>No trainings registered yet.</li>
