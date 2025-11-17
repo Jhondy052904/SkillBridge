@@ -13,6 +13,7 @@ from supabase import create_client
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from .models import Resident, Official, Job, Training, Event, JobApplication, TrainingParticipation
+from jobs.services.supabase_crud import get_jobs
 
 # ------------------------------------------------------------
 # Supabase Setup
@@ -32,40 +33,93 @@ def index(request):
 
 
 def home(request):
-    """Resident dashboard."""
+    """Resident dashboard view."""
+    # Restrict to residents only
+    if request.session.get('user_role') != 'Resident':
+        messages.error(request, "Access denied. Residents only.")
+        return redirect('login')
+
     username = request.session.get("user_email")
     verification_status = "No Profile"
     user_profile = None
     applied_jobs = []
     registered_trainings = []
+    all_jobs = []
+    all_trainings = []
+    notifications = []  # renamed for consistency
 
     if username:
-        # Fetch from Django Resident model for verification_status
+        # Fetch Django resident profile
         resident = Resident.objects.filter(email=username).first()
         if resident:
             verification_status = resident.verification_status
 
-        # Fetch user_profile from Supabase
+        # Fetch Supabase resident data
         try:
-            res = supabase.table('resident').select('*').eq('email', username).single().execute()
+            res = supabase.table("resident").select("*").eq("email", username).single().execute()
             user_profile = res.data if res.data else None
         except Exception as e:
-            print("Supabase fetch error in home:", e)
-            user_profile = None
+            print("Supabase user profile fetch error:", e)
 
-        # Fetch applied jobs
-        applied_jobs = JobApplication.objects.filter(resident__email=username).select_related('job')
+        # Load applied jobs
+        applied_jobs = JobApplication.objects.filter(
+            resident__email=username
+        ).select_related("job")
 
-        # Fetch registered trainings
-        registered_trainings = Training.objects.filter(trainingparticipation__resident__email=username).distinct()
+        # Load registered trainings
+        registered_trainings = Training.objects.filter(
+            trainingparticipation__resident__email=username
+        ).distinct()
 
-    return render(request, 'registration/home.html', {
+        # Fetch all active jobs
+        try:
+            all_jobs_data = get_jobs()
+            all_jobs = [job for job in all_jobs_data if job.get('Status') == 'Open']
+        except Exception as e:
+            messages.error(request, "Unable to load job listings.")
+            all_jobs = []
+
+        # Fetch all active trainings
+        try:
+            response = supabase.table("training").select("*").order("created_at", desc=True).execute()
+            all_trainings = response.data or []
+        except Exception as e:
+            messages.error(request, "Unable to load training events.")
+            all_trainings = []
+
+        # Fetch notifications
+        try:
+            notifications = get_all_notifications()
+        except Exception as e:
+            messages.error(request, "Unable to load notifications.")
+            notifications = []
+
+    return render(request, "registration/home.html", {
         "verification_status": verification_status,
         "user_profile": user_profile,
         "applied_jobs": applied_jobs,
         "registered_trainings": registered_trainings,
+        "all_jobs": all_jobs,
+        "all_trainings": all_trainings,
+        "notifications": notifications,
     })
 
+
+def get_all_notifications():
+    """Returns ALL visible notifications ordered from newest to oldest."""
+    try:
+        response = supabase.table("notifications") \
+            .select("*") \
+            .eq("visible", True) \
+            .order("created_at", desc=True) \
+            .execute()
+
+        print("DEBUG NOTIFICATIONS:", response.data)
+        return response.data or []
+
+    except Exception as e:
+        print("Notification fetch error:", e)
+        return []
 
 def forgot_password_view(request):
     return render(request, 'registration/forgot_password.html')
@@ -273,23 +327,66 @@ def logout_view(request):
 # ------------------------------------------------------------
 
 def official_dashboard(request):
-    # ✅ Check if logged in via email (new method)
+    # Check login
     if not request.session.get('user_email'):
         messages.error(request, "You must log in first.")
         return redirect('login')
 
-    # ✅ Ensure only Officials can access
+    # Restrict to officials only
     if request.session.get('user_role') != 'Official':
-        messages.error(request, "Access denied: Officials only.")
-        return redirect('home')
+        messages.error(request, "Access denied.")
+        return redirect('login')
 
-    # You can safely load data here
-    official_email = request.session.get("user_email")
+    email = request.session.get("user_email")
 
-    return render(request, 'official/dashboard.html', {
-        "official_email": official_email
+    # Fetch official profile
+    official_res = supabase.table("registration_official") \
+        .select("*") \
+        .ilike("email", email) \
+        .single() \
+        .execute()
+
+    official = official_res.data
+    official_id = str(official["id"]) if official else None
+
+    # Fetch JOBS
+    jobs = []
+    try:
+        jobs = supabase.table("jobs") \
+            .select("*") \
+            .eq("PostedBy", official_id) \
+            .order("JobID", desc=True) \
+            .execute().data
+    except:
+        messages.error(request, "Failed to load job posts")
+
+    # Fetch TRAINING
+    trainings = []
+    try:
+        trainings = supabase.table("training") \
+            .select("*") \
+            .eq("created_by", email) \
+            .order("created_at", desc=True) \
+            .execute().data
+    except:
+        messages.error(request, "Failed to load training data")
+
+    # Fetch resident statistics
+    total_residents = 0
+    total_applicants = 0
+    try:
+        total_residents = supabase.table("resident").select("id", count="exact").execute().count
+        total_applicants = supabase.table("JobApplication").select("ApplicationID", count="exact").execute().count
+    except:
+        pass  # ignore errors
+
+    return render(request, "official/dashboard.html", {
+        "official": official,
+        "jobs": jobs,
+        "trainings": trainings,
+        "total_residents": total_residents,
+        "total_applicants": total_applicants
     })
-
 
 
 
@@ -333,7 +430,7 @@ def post_training(request):
         messages.error(request, "Access denied: Officials only.")
         return redirect('home')
 
-    official_username = request.session.get("username")
+    official_username = request.session.get("user_email")
     official = Official.objects.filter(user__username=official_username).first()
 
     if request.method == 'POST':
@@ -397,22 +494,57 @@ def post_event(request):
 
 
 # ------------------------------------------------------------
-# PROFILE VIEW (from Supabase)
+# EDIT PROFILE VIEW
 # ------------------------------------------------------------
+from .forms import ResidentForm
+
 @login_required
-def profile_view(request):
+def edit_profile_view(request):
     email = request.session.get('user_email')
     if not email:
         return redirect('login')
 
+    # Fetch current profile from Supabase
     try:
         res = supabase.table('resident').select('*').eq('email', email).single().execute()
-        user_profile = res.data if res.data else None
+        user_profile = res.data if res.data else {}
     except Exception as e:
         print("Supabase fetch error:", e)
-        user_profile = None
+        user_profile = {}
 
-    return render(request, 'registration/edit_profile.html', {'user_profile': user_profile})
+    if request.method == 'POST':
+        # Get form data
+        first_name = request.POST.get('first_name')
+        middle_name = request.POST.get('middle_name')
+        last_name = request.POST.get('last_name')
+        address = request.POST.get('address')
+        contact_number = request.POST.get('contact_number')
+        employment_status = request.POST.get('employment_status')
+        skills = request.POST.get('skills')
+
+        # Update Supabase
+        try:
+            supabase.table('resident').update({
+                'first_name': first_name,
+                'middle_name': middle_name,
+                'last_name': last_name,
+                'address': address,
+                'contact_number': contact_number,
+                'employment_status': employment_status,
+                'skills': skills,
+            }).eq('email', email).execute()
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('edit_profile')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {e}')
+
+    # Create form with initial data for choices
+    form = ResidentForm(initial=user_profile)
+
+    return render(request, 'registration/edit_profile.html', {
+        'user_profile': user_profile,
+        'form': form,
+    })
 
 
 # ------------------------------------------------------------
@@ -425,115 +557,89 @@ def pending_residents(request):
     return render(request, "official/verification_panel.html", {"residents": residents})
 
 
-
 def resident_details(request, resident_id):
-    """Fetch resident details from Supabase 'resident' table."""
-    try:
-        # Fetch single record from Supabase
-        response = supabase.table("resident").select("*").eq("id", resident_id).single().execute()
+    resp = supabase.table("resident").select("*").eq("id", resident_id).single().execute()
+    resident = resp.data
 
-        if not response.data:
-            messages.error(request, "Resident not found in Supabase.")
-            return redirect('verification_panel')
+    proof_url = None
+    raw_proof = resident.get("proof_residency")
 
-        resident = response.data
+    if raw_proof:
+        try:
+            if raw_proof.startswith("\\x"):
+                raw_proof = raw_proof[2:]  # remove \x
+                proof_url = bytes.fromhex(raw_proof).decode()
+        except Exception as e:
+            print("URL Decode Error:", e)
 
-        return render(request, "official/resident_details.html", {"resident": resident})
-
-    except Exception as e:
-        messages.error(request, f"Error retrieving resident details: {e}")
-        return redirect('verification_panel')
-
+    return render(request, "official/resident_details.html", {
+        "resident": resident,
+        "proof_url": proof_url
+    })
 
 
+
+from django.core.mail import send_mail
+from django.conf import settings
 
 def approve_resident(request, resident_id):
     try:
-        #update Supabase resident table
-        update_response = supabase.table("resident").update({
+        response = supabase.table("resident").update({
             "verification_status": "verified"
         }).eq("id", resident_id).execute()
 
-        if not update_response.data:
-            return JsonResponse({
-                "success": False,
-                "message": f"Resident with ID {resident_id} not found in Supabase."
-            }, status=404)
-
-        #Get resident email for notification
-        resident = update_response.data[0]
-        email = resident.get("email")
-
-        #Send approval email
-        if email:
-            try:
-                send_mail(
-                    subject="SkillBridge Account Verified",
-                    message=(
-                        "Your SkillBridge account has been approved by your Barangay Official.\n\n"
-                        "You can now log in to the SkillBridge platform using your registered email."
-                    ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[email],
-                    fail_silently=True
-                )
-            except Exception as e:
-                print("Email sending failed:", e)
-
-        #Return success response
-        return JsonResponse({
-            "success": True,
-            "message": f"Resident ID {resident_id} approved successfully."
-        })
+        # Send email
+        try:
+            resident_email = response.data[0]["email"]
+            send_mail(
+                subject="SkillBridge Account Approved",
+                message=(
+                    "Congratulations! Your SkillBridge account has been verified.\n"
+                    "You can now log in and access job and training opportunities.\n\n"
+                    "Thank you,\nSkillBridge Team"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[resident_email],
+                fail_silently=False,
+            )
+            messages.success(request, "Resident approved and email sent!")
+        except Exception:
+            messages.warning(request, "Approved but email failed. Please notify manually.")
 
     except Exception as e:
-        return JsonResponse({
-            "success": False,
-            "message": str(e)
-        }, status=500)
+        messages.error(request, f"Error: {e}")
+
+    return redirect("verification_panel")
 
 
 def deny_resident(request, resident_id):
     try:
-        # Update Supabase
-        update_response = supabase.table("resident").update({
-            "verification_status": "rejected"
+        response = supabase.table("resident").update({
+            "verification_status": "denied"
         }).eq("id", resident_id).execute()
 
-        if not update_response.data:
-            return JsonResponse({
-                "success": False,
-                "message": f"Resident with ID {resident_id} not found in Supabase."
-            }, status=404)
-
-        resident = update_response.data[0]
-        email = resident.get("email")
-
-        if email:
-            try:
-                send_mail(
-                    subject="SkillBridge Account Rejected",
-                    message=(
-                        "Your SkillBridge account verification was not approved.\n\n"
-                        "Please contact your Barangay Office for more information."
-                    ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[email],
-                    fail_silently=True
-                )
-            except Exception as e:
-                print("Email sending failed:", e)
-
-        return JsonResponse({
-            "success": True,
-            "message": f"Resident ID {resident_id} denied successfully."
-        })
+        # Send rejection email
+        try:
+            resident_email = response.data[0]["email"]
+            send_mail(
+                subject="SkillBridge Account Verification Result",
+                message=(
+                    "Your SkillBridge registration was not approved.\n"
+                    "Please contact your barangay office if you believe this is an error.\n\n"
+                    "Thank you,\nSkillBridge Team"
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[resident_email],
+                fail_silently=False,
+            )
+            messages.success(request, "Resident denied and email sent.")
+        except Exception:
+            messages.warning(request, "Denied but email failed. Please notify manually.")
 
     except Exception as e:
-        return JsonResponse({
-            "success": False,
-            "message": str(e)
-        }, status=500)
+        messages.error(request, f"Error: {e}")
+
+    return redirect("verification_panel")
 
 
 def verification_panel(request):
@@ -551,3 +657,16 @@ def verification_panel(request):
         messages.error(request, f"Unable to retrieve pending accounts: {e}")
 
     return render(request, "official/verification_panel.html", {"residents": residents})
+
+    def get_latest_notification():
+        try:
+            response = supabase.table("notifications") \
+                .select("*") \
+                .eq("visible", True) \
+                .order("created_at", desc=True) \
+                .limit(1) \
+                .execute()
+            return response.data[0] if response.data else None
+        except Exception as e:
+            print("Notification fetch error:", e)
+            return None

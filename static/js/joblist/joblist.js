@@ -29,12 +29,32 @@ updateClock();
 
 // Search Filter
 function filterJobs() {
+    console.log('filterJobs called');
     const q = document.getElementById('searchInput').value.toLowerCase();
-    document.querySelectorAll('.card').forEach(card => {
+    console.log('Search query:', q);
+    const cards = document.querySelectorAll('.job-card');
+    console.log('Found job cards:', cards.length);
+    cards.forEach(card => {
         const title = card.querySelector('h3').innerText.toLowerCase();
-        card.style.display = title.includes(q) ? '' : 'none';
+        const descEl = card.querySelector('p.text-gray-600');
+        const description = descEl ? descEl.innerText.toLowerCase() : '';
+        console.log('Title:', title, 'Desc:', description);
+        const matches = title.includes(q) || description.includes(q);
+        card.style.display = matches ? '' : 'none';
+        console.log('Matches:', matches);
     });
 }
+
+// Real-time search
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded for search');
+    const searchInput = document.getElementById('searchInput');
+    console.log('Search input found:', !!searchInput);
+    if (searchInput) {
+        searchInput.addEventListener('input', filterJobs);
+        console.log('Event listener added');
+    }
+});
 
 // Chart (wait for DOM)
 document.addEventListener('DOMContentLoaded', function () {

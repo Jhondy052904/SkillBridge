@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Training</title>
+    <style>
+        body {
+            background: #eef2f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-container {
+            width: 400px;
+            margin: 50px auto;
+            padding: 25px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            color: #333;
+        }
+
+        .form-container label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            color: #222;
+        }
+
+        .form-container input,
+        .form-container textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 4px;
+            font-size: 14px;
+        }
+
+        .form-container textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            margin-top: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .form-container button:hover {
+            background: #1e7e34;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h2>Edit Training</h2>
+        <form method="POST" onsubmit="return confirm('Update this training?')">
+            {% csrf_token %}
+            <label>Training Name:</label>
+            <input type="text" name="training_name" value="{{ training.training_name }}" required>
+
+            <label>Description:</label>
+            <textarea name="description" required>{{ training.description }}</textarea>
+
+            <label>Date Scheduled:</label>
+            <input type="datetime-local" name="date_scheduled" value="{{ training.date_scheduled|date:'Y-m-d\\TH:i' }}" required>
+
+            <label>Slots:</label>
+            <input type="number" name="slots" value="{{ training.slots }}">
+
+            <button type="submit">Update</button>
+        </form>
+    </div>
+</body>
+</html>

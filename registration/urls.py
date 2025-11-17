@@ -26,7 +26,7 @@ urlpatterns = [
 
 
     # -------- PROFILE --------
-    path('profile/', views.profile_view, name='edit_profile'),
+    path('profile/', views.edit_profile_view, name='edit_profile'),
 
     # -------- VERIFICATION PANEL (UI) --------
     path('verify/pending/', views.pending_residents, name='pending_residents'),

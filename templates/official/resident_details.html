@@ -116,17 +116,21 @@
     <p><strong>Verification Status:</strong> {{ resident.verification_status }}</p>
 
     <p><strong>Proof of Residency:</strong></p>
-    {% if resident.proof_url %}
-        <img src="{{ resident.proof_url }}" alt="Proof of Residency">
+
+    {% if proof_url %}
+        <img src="{{ proof_url }}" alt="Proof of Residency" class="border rounded shadow max-w-full max-h-96 mb-3">
+        <br>
+        <a href="{{ proof_url }}" target="_blank" class="btn btn-outline-primary">Open Full Image</a>
     {% else %}
         <span class="text-muted">File unavailable</span>
     {% endif %}
+
 
     <hr>
     <div>
         <a href="{% url 'approve_resident' resident.id %}" class="btn btn-success">Approve</a>
         <a href="{% url 'deny_resident' resident.id %}" class="btn btn-danger">Deny</a>
-        <a href="{% url 'pending_residents' %}" class="btn btn-secondary">Back to List</a>
+        <a href="{% url 'verification_panel' %}" class="btn btn-secondary">Back to List</a>
     </div>
 </div>
 

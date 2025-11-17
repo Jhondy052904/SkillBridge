@@ -4,55 +4,133 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Edit Profile</title>
-  <link rel="stylesheet" href="{% static 'css/registration/editprofile.css' %}?v=5">
+  <title>Edit Profile | SkillBridge</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <style>
+      .soft-bg {
+          background: linear-gradient(135deg, #f7f5ff, #eff3ff);
+      }
+  </style>
 </head>
-<body>
-  <div class="container">
-    <h2 class="section-title">Edit Profile</h2>
 
-    <form method="POST" class="auth-form">
-  {% csrf_token %}
+<body class="soft-bg min-h-screen flex text-gray-900">
 
-  <div class="form-group">
-    {{ form.first_name }}
-    <label>First Name</label>
-  </div>
+  <!-- ====================== SIDEBAR ====================== -->
+  <aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
+      <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
 
-  <div class="form-group">
-    {{ form.middle_name }}
-    <label>Middle Name</label>
-  </div>
+      <nav class="space-y-2 font-medium">
+          <a href="{% url 'home' %}" class="block p-3 rounded-lg hover:bg-purple-50">Home</a>
+          <a href="{% url 'edit_profile' %}" class="block p-3 rounded-lg bg-purple-600 text-white">Edit Profile</a>
+          <a href="{% url 'list_jobs' %}" class="block p-3 rounded-lg hover:bg-purple-50">Jobs</a>
+          <a href="{% url 'list_trainings' %}" class="block p-3 rounded-lg hover:bg-purple-50">Trainings</a>
+      </nav>
 
-  <div class="form-group">
-    {{ form.last_name }}
-    <label>Last Name</label>
-  </div>
+      <div class="mt-auto pt-8">
+          <p class="font-semibold mb-2">{{ user.username }}</p>
+          <a href="{% url 'logout' %}" class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
+              Logout
+          </a>
+      </div>
+  </aside>
 
-  <div class="form-group">
-    {{ form.address }}
-    <label>Address</label>
-  </div>
 
-  <div class="form-group">
-    {{ form.contact_number }}
-    <label>Contact Number</label>
-  </div>
+  <!-- ====================== MAIN ====================== -->
+  <main class="flex-1 p-6 md:p-10">
 
-  <div class="form-group">
-    {{ form.employment_status }}
-    <label>Employment Status</label>
-  </div>
+      <h1 class="text-3xl font-bold mb-8">Edit Profile</h1>
 
-  <div class="form-group">
-    {{ form.skills }}
-    <label>Skills</label>
-  </div>
+      {% if messages %}
+          <div class="mb-4">
+              {% for message in messages %}
+                  <div class="p-3 rounded text-white mb-2
+                      {% if message.tags == 'success' %} bg-green-600
+                      {% elif message.tags == 'error' %} bg-red-600
+                      {% else %} bg-purple-600 {% endif %}">
+                      {{ message }}
+                  </div>
+              {% endfor %}
+          </div>
+      {% endif %}
 
-  <button type="submit">Save Changes</button>
-  <a href="{% url 'home' %}" class="btn-secondary">Back to Home</a>
-  </form>
 
-  </div>
+      <!-- Card Container -->
+      <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 max-w-2xl">
+
+          <form method="POST" class="space-y-5">
+              {% csrf_token %}
+
+              <div>
+                  <label class="block font-semibold mb-1">First Name</label>
+                  <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}"
+                         class="w-full border px-3 py-2 rounded" required>
+              </div>
+
+              <div>
+                  <label class="block font-semibold mb-1">Middle Name</label>
+                  <input type="text" name="middle_name" value="{{ form.middle_name.value|default:'' }}"
+                         class="w-full border px-3 py-2 rounded">
+              </div>
+
+              <div>
+                  <label class="block font-semibold mb-1">Last Name</label>
+                  <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}"
+                         class="w-full border px-3 py-2 rounded" required>
+              </div>
+
+              <div>
+                  <label class="block font-semibold mb-1">Address</label>
+                  <input type="text" name="address" value="{{ form.address.value|default:'' }}"
+                         class="w-full border px-3 py-2 rounded">
+              </div>
+
+              <div>
+                  <label class="block font-semibold mb-1">Contact Number</label>
+                  <input type="text" name="contact_number" value="{{ form.contact_number.value|default:'' }}"
+                         class="w-full border px-3 py-2 rounded">
+              </div>
+
+              <div>
+                  <label class="block font-semibold mb-1">Employment Status</label>
+                  <select name="employment_status" class="w-full border px-3 py-2 rounded">
+                      {% for value, label in form.fields.employment_status.choices %}
+                          <option value="{{ value }}" {% if form.employment_status.value == value %}selected{% endif %}>
+                              {{ label }}
+                          </option>
+                      {% endfor %}
+                  </select>
+              </div>
+
+              <div>
+                  <label class="block font-semibold mb-1">Skills</label>
+                  <select name="skills" class="w-full border px-3 py-2 rounded">
+                      <option value="Other" {% if form.skills.value == 'Other' or not form.skills.value %}selected{% endif %}>Other</option>
+                      <option value="Haircut" {% if form.skills.value == 'Haircut' %}selected{% endif %}>Haircut</option>
+                      <option value="Plumbing" {% if form.skills.value == 'Plumbing' %}selected{% endif %}>Plumbing</option>
+                      <option value="Electrical" {% if form.skills.value == 'Electrical' %}selected{% endif %}>Electrical</option>
+                      <option value="Carpentry" {% if form.skills.value == 'Carpentry' %}selected{% endif %}>Carpentry</option>
+                      <option value="Cleaning" {% if form.skills.value == 'Cleaning' %}selected{% endif %}>Cleaning</option>
+                      <option value="Cooking" {% if form.skills.value == 'Cooking' %}selected{% endif %}>Cooking</option>
+                      <option value="Driving" {% if form.skills.value == 'Driving' %}selected{% endif %}>Driving</option>
+                      <option value="Babysitting" {% if form.skills.value == 'Babysitting' %}selected{% endif %}>Babysitting</option>
+                      <option value="Elderly Care" {% if form.skills.value == 'Elderly Care' %}selected{% endif %}>Elderly Care</option>
+                      <option value="Tutoring" {% if form.skills.value == 'Tutoring' %}selected{% endif %}>Tutoring</option>
+                      <option value="Pedicure" {% if form.skills.value == 'Pedicure' %}selected{% endif %}>Pedicure</option>
+                  </select>
+              </div>
+
+              <button class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg shadow">
+                  Save Changes
+              </button>
+          </form>
+
+          <div class="mt-6">
+              <a href="{% url 'home' %}" class="text-purple-600 font-semibold hover:underline">⬅ Back</a>
+          </div>
+      </div>
+
+  </main>
 </body>
 </html>

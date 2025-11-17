@@ -35,9 +35,9 @@ supabase = None
 if SUPABASE_URL and SUPABASE_KEY:
     try:
         supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("✅ Supabase client initialized successfully!")
+        print("Supabase client initialized successfully!")
     except Exception as e:
-        print(f"❌ Failed to initialize Supabase client: {e}")
+        print(f"Failed to initialize Supabase client: {e}")
 else:
     print("⚠️ Supabase configuration missing! Please check .env file.")
 
@@ -74,6 +74,9 @@ INSTALLED_APPS = [
     'job_applications',
     'registration.apps.RegistrationConfig',
     'notifications',
+    'django_extensions',
+    'training',
+
 ]
 
 MIDDLEWARE = [

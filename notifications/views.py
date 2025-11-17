@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from skillbridge.supabase_client import supabase
+from django.shortcuts import redirect
 
 @require_GET
 def latest_notification(request):
@@ -31,3 +32,9 @@ def latest_notification(request):
         })
     except Exception as e:
         return JsonResponse({"has": False, "error": str(e)}, status=500)
+    
+ 
+def clear_notifications(request):
+    if request.method == "POST":
+        supabase.table("notifications").update({"visible": False}).eq("visible", True).execute()
+    return redirect("home")  #
