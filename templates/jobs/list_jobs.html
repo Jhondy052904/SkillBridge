@@ -1,95 +1,120 @@
 {% load static %}
 
-{% if messages %}
-  <div class="messages">
-      {% for message in messages %}
-          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-              {{ message }}
-          </div>
-      {% endfor %}
-  </div>
-{% endif %}
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings</title>
+    <link rel="stylesheet" href="{% static 'css/theme/theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/registration/userhome.css' %}">
     <link rel="stylesheet" href="{% static 'css/jobs/joblist.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
 </head>
-
 <body>
-    <!-- Back Button -->
-    <button class="btn-back" onclick="window.location.href='{% url 'home' %}'">↩&nbsp;&nbsp;Back</button>
 
-    <div class="dashboard">
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="welcome-banner">
-               <h2>Hello!! {{ user.first_name }} ready to land a new job?</h2>
-                <p>Explore the latest openings and take your next step today.</p>
-            </div>
+{% if messages %}
+<div class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full">
+  {% for message in messages %}
+  <div class="bg-green-500 text-white px-4 py-3 rounded-lg shadow-lg mb-2 animate-pulse">
+    {{ message }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
 
-            <h2 class="section-title">💼 Job Listings</h2>
+<div class="page-content">
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="{% static 'images/Logo1.png' %}" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="#">Community</a>
+    <a href="#">About Us</a>
+    <a href="#">Job Hunt</a>
+    <a>|</a>
+    <a href="{% url 'home' %}" class="btn">Back to Home</a>
+  </div>
+</nav>
 
-            <input type="text" id="searchInput" placeholder="Search jobs..." onkeyup="filterJobs()">
-
-            <div class="job-listings-container">
-                {% for job in jobs %}
-                    {% if job.Status == "Open" %}
-                        <div class="card">
-                            <h3>{{ job.Title }}</h3>
-                            <p>{{ job.Description }}</p>
-                            <p><strong>Status:</strong> {{ job.Status }}</p>
-
-                            <form method="POST" action="{% url 'apply_job' job.JobID %}">
-                                {% csrf_token %}
-                                <button class="btn-primary">Apply</button>
-                            </form>
-                        </div>
-                    {% endif %}
-                {% empty %}
-                    <p>No job postings available.</p>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <h2 class="section-title">📊 Overview</h2>
-
-            <div class="header-info">
-                <div id="current-date"></div>
-                <div id="current-time"></div>
-            </div>
-
-            <canvas id="analyticsChart"></canvas>
-            <div id="jobCalendar"></div>
-        </div>
+<!-- Welcome Section -->
+<div class="welcome-section">
+  <div class="welcome-left">
+    <h2>Hello!! {{ user.first_name }} ready to land a new job?</h2>
+    <p>Explore the latest openings and take your next step today.</p>
+  </div>
+  <div class="welcome-right">
+    <div class="quick-actions-inline">
+      <input type="text" id="searchInput" placeholder="Search jobs..." onkeyup="filterJobs()" class="search-input">
     </div>
+  </div>
+</div>
 
-    <!-- Pass Django data to JS -->
+<!-- Dashboard Grid -->
+<div class="parent">
+  <!-- Overview Cards -->
+  <div class="card overview-card">
+    <h3>📊 Overview</h3>
+    <div class="header-info">
+      <div id="current-date"></div>
+      <div id="current-time"></div>
+      <br><br><br><br><br><br>
+    </div>
+    <canvas id="analyticsChart" style="max-width: 100%; height: 200px;"></canvas>
+  </div>
+
+  <!-- Calendar Card -->
+  <div class="card calendar-card">
+    <h3>📅 Job Calendar</h3>
+    <div id="jobCalendar" style="height: 300px;"></div>
+  </div>
+
+  <!-- Job Listings -->
+  <div class="card jobs-listing-card">
+    <h3>💼 Job Listings</h3>
+    <div class="job-listings-container">
+      {% for job in jobs %}
+        {% if job.Status == "Open" %}
+          <div class="job-card">
+            <h4>{{ job.Title }}</h4>
+            <p>{{ job.Description }}</p>
+            <p><strong>Status:</strong> {{ job.Status }}</p>
+            <form method="POST" action="{% url 'apply_job' job.JobID %}">
+              {% csrf_token %}
+              <button class="btn-primary">Apply</button>
+            </form>
+          </div>
+        {% endif %}
+      {% empty %}
+        <p>No job postings available.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Pass Django data to JS -->
 <script>
-    // Chart & Calendar data from Django
-    const jobData = [
-        {% for job in jobs %}
-            { title: "{{ job.Title|escapejs }}", start: "{{ job.CreatedAt|date:'Y-m-d' }}" },
-        {% endfor %}
-    ];
+// Chart & Calendar data from Django
+const jobData = [
+  {% for job in jobs %}
+    { title: "{{ job.Title|escapejs }}", start: "{{ job.CreatedAt|date:'Y-m-d' }}" },
+  {% endfor %}
+];
 
-    const counts = {
-        users: {{ user_count|default:0 }},
-        jobs: {{ job_count|default:0 }},
-        applications: {{ application_count|default:0 }}
-    };
+const counts = {
+  users: {{ user_count|default:0 }},
+  jobs: {{ job_count|default:0 }},
+  applications: {{ application_count|default:0 }}
+};
 </script>
 
-<!-- Load the external JS (clean version) -->
-    <script src="{% static 'js/joblist/joblist.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</body>
+<!-- Load the external JS -->
+<script src="{% static 'js/joblist/joblist.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+</body>
 </html>

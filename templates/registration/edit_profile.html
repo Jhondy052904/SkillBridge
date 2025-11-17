@@ -1,58 +1,133 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Edit Profile</title>
-  <link rel="stylesheet" href="{% static 'css/registration/editprofile.css' %}?v=5">
-</head>
-<body>
-  <div class="container">
-    <h2 class="section-title">Edit Profile</h2>
 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="{% static 'css/theme/theme.css' %}">
+<link rel="stylesheet" href="{% static 'css/registration/userhome.css' %}?v=4">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fade in cards on load
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+
+    // Add click effect to buttons
+    const buttons = document.querySelectorAll('.btn-primary, .btn-secondary, .btn1-primary');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+
+    // Auto-hide messages after 5 seconds
+    const messages = document.querySelectorAll('.alert');
+    messages.forEach(msg => {
+        setTimeout(() => {
+            msg.style.transition = 'opacity 0.5s ease';
+            msg.style.opacity = '0';
+            setTimeout(() => msg.remove(), 500);
+        }, 5000);
+    });
+});
+</script>
+
+{% block no_container %}
+
+{% if messages %}
+  <div class="message-container">
+    {% for message in messages %}
+      <div class="alert {{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="{% static 'images/Logo1.png' %}" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="#">Community</a>
+    <a href="#">About Us</a>
+    <a href="#">Job Hunt</a>
+    <a>|</a>
+    <a href="{% url 'home' %}" class="btn">Back to Home</a>
+  </div>
+</nav>
+
+<!-- Welcome Section -->
+<div class="welcome-section">
+  <div class="welcome-left">
+    <h2>Edit Your Profile</h2>
+  </div>
+  <div class="welcome-right">
+    <div class="quick-actions-inline">
+      <p>Update your information to keep your profile current.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Dashboard Grid -->
+<div class="parent">
+  <div class="card edit-profile-card">
+    <h3>Profile Information</h3>
     <form method="POST" class="auth-form">
-  {% csrf_token %}
+      {% csrf_token %}
 
-  <div class="form-group">
-    {{ form.first_name }}
-    <label>First Name</label>
+      <div class="form-group">
+        {{ form.first_name }}
+        <label>First Name</label>
+      </div>
+
+      <div class="form-group">
+        {{ form.middle_name }}
+        <label>Middle Name</label>
+      </div>
+
+      <div class="form-group">
+        {{ form.last_name }}
+        <label>Last Name</label>
+      </div>
+
+      <div class="form-group">
+        {{ form.address }}
+        <label>Address</label>
+      </div>
+
+      <div class="form-group">
+        {{ form.contact_number }}
+        <label>Contact Number</label>
+      </div>
+
+      <div class="form-group">
+        {{ form.employment_status }}
+        <label>Employment Status</label>
+      </div>
+
+      <div class="form-group">
+        {{ form.skills }}
+        <label>Skills</label>
+      </div>
+
+      <div style="display: flex; gap: 20px; justify-content: center; margin-top: 20px;">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <a href="{% url 'home' %}" class="btn-secondary" style="text-decoration: none; display: inline-block; padding: 14px 32px; border-radius: 20px; font-size: 1rem; font-weight: 500; background: #6c757d; color: var(--soft-linen); border: none; transition: all 0.3s ease;">Cancel</a>
+      </div>
+    </form>
   </div>
+</div>
 
-  <div class="form-group">
-    {{ form.middle_name }}
-    <label>Middle Name</label>
-  </div>
-
-  <div class="form-group">
-    {{ form.last_name }}
-    <label>Last Name</label>
-  </div>
-
-  <div class="form-group">
-    {{ form.address }}
-    <label>Address</label>
-  </div>
-
-  <div class="form-group">
-    {{ form.contact_number }}
-    <label>Contact Number</label>
-  </div>
-
-  <div class="form-group">
-    {{ form.employment_status }}
-    <label>Employment Status</label>
-  </div>
-
-  <div class="form-group">
-    {{ form.skills }}
-    <label>Skills</label>
-  </div>
-
-  <button type="submit">Save Changes</button>
-  <a href="{% url 'home' %}" class="btn-secondary">Back to Home</a>
-  </form>
-
-  </div>
-</body>
-</html>
+{% endblock %}
