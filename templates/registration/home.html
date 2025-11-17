@@ -1,7 +1,45 @@
 {% load static %}
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap">
+<link rel="stylesheet" href="{% static 'css/theme/theme.css' %}">
 <link rel="stylesheet" href="{% static 'css/registration/userhome.css' %}?v=4">
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Fade in cards on load
+    const cards = document.querySelectorAll('.card');
+    cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+
+    // Add click effect to buttons
+    const buttons = document.querySelectorAll('.btn-primary, .btn-secondary, .btn1-primary');
+    buttons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+        });
+    });
+
+    // Auto-hide messages after 5 seconds
+    const messages = document.querySelectorAll('.alert');
+    messages.forEach(msg => {
+        setTimeout(() => {
+            msg.style.transition = 'opacity 0.5s ease';
+            msg.style.opacity = '0';
+            setTimeout(() => msg.remove(), 500);
+        }, 5000);
+    });
+});
+</script>
 
 {% block no_container %}
 
@@ -33,9 +71,17 @@
 <!-- Dashboard Wrapper -->
 <div class="dashboard-wrapper">
 
-  <!-- Welcome Banner -->
-  <div class="welcome-banner">
-    <h2>Welcome back, {{ user.username }}!</h2>
+  <!-- Welcome Section -->
+  <div class="welcome-section">
+    <div class="welcome-left">
+      <h2>Welcome back, {{ user.username }}!</h2>
+    </div>
+    <div class="welcome-right">
+      <div class="quick-actions-inline">
+        <a href="{% url 'list_jobs' %}" class="btn-primary"><i class="icon-job"></i> Browse Jobs</a>
+        <a href="#" class="btn-secondary"><i class="icon-training"></i> Find Trainings</a>
+      </div>
+    </div>
   </div>
 
   <!-- Dashboard Grid -->
@@ -46,7 +92,7 @@
     <h4><strong>{{ user_profile.first_name }} {{ user_profile.last_name }}</strong></h4>
     <p class="user-role"><strong>Role:</strong> Resident</p>
   </div>
-  
+
   <div class="profile-details">
     _______________________________
     <p><strong>Email:</strong> {{ user_profile.email }}</p>
@@ -64,9 +110,7 @@
   </div>
 </div>
 
-
-    <!-- Applied Jobs -->
-    <div class="card jobs-card">
+<div class="card jobs-card">
       <h3>My Applied Jobs</h3>
       <table class="data-table">
         <thead>
@@ -93,6 +137,7 @@
      </tbody>
 
       </table>
+       <br><br><br><br><br><br><br><br>
     </div>
 
     <!-- Registered Trainings -->
@@ -108,15 +153,7 @@
         <li>No trainings registered yet.</li>
         {% endfor %}
       </ul>
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="card quick-actions-card">
-      <h3>Quick Actions</h3>
-      <div class="cta-buttons">
-        <a href="{% url 'list_jobs' %}" class="btn-primary"><i class="icon-job"></i> Browse Jobs</a>
-        <a href="#" class="btn-secondary"><i class="icon-training"></i> Find Trainings</a>
-      </div>
+      <br><br><br><br><br><br><br><br>
     </div>
 
     <!-- Full Width Section -->
@@ -125,6 +162,5 @@
       <p>Place optional content here.</p>
     </div>
   </div>
-</div>
 
 {% endblock %}

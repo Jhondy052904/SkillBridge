@@ -1,0 +1,40 @@
+:root {
+  --reddish-brown: #A35139;
+  --charcoal-blue: #2C3B4E;
+  --jet-black: #1C2632;
+  --soft-linen: #EDE9DE;
+  --pale-oak: #C9C2B2;
+  --sandy-brown: #FEB161;
+
+  --reddish-brown-rgb: 163, 81, 57;
+  --charcoal-blue-rgb: 44, 59, 78;
+  --jet-black-rgb: 28, 38, 50;
+  --soft-linen-rgb: 237, 233, 222;
+  --pale-oak-rgb: 201, 194, 178;
+  --sandy-brown-rgb: 254, 177, 97;
+
+  --gradient-horizontal: linear-gradient(90deg, #A35139, #2C3B4E, #1C2632, #EDE9DE, #C9C2B2, #FEB161);
+  --gradient-vertical: linear-gradient(180deg, #A35139, #2C3B4E, #1C2632, #EDE9DE, #C9C2B2, #FEB161);
+  --gradient-radial: radial-gradient(circle, #A35139, #2C3B4E, #1C2632, #EDE9DE, #C9C2B2, #FEB161);
+}
+
+/* Optional default theme */
+.theme-default {
+  background-color: var(--soft-linen);
+  color: var(--jet-black);
+}
+
+.theme-default a {
+  color: var(--reddish-brown);
+}
+.theme-default a:hover {
+  color: var(--sandy-brown);
+}
+
+.theme-default .btn-primary {
+  background-color: var(--reddish-brown);
+  color: white;
+}
+.theme-default .btn-primary:hover {
+  background-color: #be604b;
+}

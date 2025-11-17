@@ -399,7 +399,7 @@ def post_event(request):
 # ------------------------------------------------------------
 # PROFILE VIEW (from Supabase)
 # ------------------------------------------------------------
-@login_required
+
 def profile_view(request):
     email = request.session.get('user_email')
     if not email:
