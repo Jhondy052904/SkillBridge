@@ -11,11 +11,18 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 # -------------------------------------------------
-# Base directory and .env loading
+# Base Directory & Environment Variables
 # -------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-env_path = BASE_DIR / '.env'
+env_path = BASE_DIR / ".env"
 load_dotenv(dotenv_path=env_path)
+
+# -------------------------------------------------
+# Security
+# -------------------------------------------------
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-development-key")
+DEBUG = os.getenv("DEBUG", "False") == "True"
+ALLOWED_HOSTS = ["*"]
 
 # -------------------------------------------------
 # Supabase Configuration
@@ -30,19 +37,19 @@ print("DEBUG: SUPABASE_KEY =", "FOUND" if SUPABASE_KEY else "MISSING")
 print("DEBUG: DATABASE_URL =", "FOUND" if DATABASE_URL else "MISSING")
 print("DEBUG: ANON_KEY =", "FOUND" if SUPABASE_ANON_KEY else "MISSING")
 
-# Safe Supabase client initialization
+# Safe Supabase Initialization
 supabase = None
 if SUPABASE_URL and SUPABASE_KEY:
     try:
         supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("✅ Supabase client initialized successfully!")
+        print("Supabase client initialized successfully!")
     except Exception as e:
-        print(f"❌ Failed to initialize Supabase client: {e}")
+        print(f"Failed to initialize Supabase client: {e}")
 else:
-    print("⚠️ Supabase configuration missing! Please check .env file.")
+    print("Supabase configuration missing. Continuing without Supabase client.")
 
 # -------------------------------------------------
-# Email Configuration
+# Email Config (Optional)
 # -------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -53,14 +60,7 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # -------------------------------------------------
-# Basic Django Settings
-# -------------------------------------------------
-SECRET_KEY = 'django-insecure-xkfm4+@+b-od03y3m1acss#dyn(3a(2=1tocjkt4)lk6q-*$dx'
-DEBUG = True
-ALLOWED_HOSTS = []
-
-# -------------------------------------------------
-# Application Definition
+# Installed Apps
 # -------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -69,50 +69,64 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Local apps
     'jobs',
     'skills',
     'job_applications',
     'registration.apps.RegistrationConfig',
     'notifications',
+    'training',
+
+    # Optional Dev Tools
+    'django_extensions',
 ]
 
+# -------------------------------------------------
+# Middleware (Whitenoise enabled)
+# -------------------------------------------------
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'skillbridge.urls'
+ROOT_URLCONF = "skillbridge.urls"
 
+# -------------------------------------------------
+# Templates
+# -------------------------------------------------
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'skillbridge.wsgi.application'
+WSGI_APPLICATION = "skillbridge.wsgi.application"
 
 # -------------------------------------------------
-# Database Configuration (Supabase PostgreSQL)
+# Database (Supabase PostgreSQL OR fallback)
 # -------------------------------------------------
 DATABASES = {
     "default": dj_database_url.config(
-        default=DATABASE_URL or "postgresql://postgres:SkillBridge9@db.sfgnccdbgmewovbogibo.supabase.co:6543/postgres",
-        conn_max_age=0,
-        ssl_require=True,
+        default=DATABASE_URL or "sqlite:///" + str(BASE_DIR / "db.sqlite3"),
+        conn_max_age=600,
+        ssl_require=False,
     )
 }
 
@@ -129,23 +143,32 @@ AUTH_PASSWORD_VALIDATORS = [
 # -------------------------------------------------
 # Internationalization
 # -------------------------------------------------
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Asia/Manila'
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "Asia/Manila"
 USE_I18N = True
 USE_TZ = True
 
 # -------------------------------------------------
-# Static Files
+# Static Files (Render + Whitenoise)
 # -------------------------------------------------
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_URL = "/static/"
+
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+print("DEBUG STATIC_ROOT =", STATIC_ROOT)
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+print("DEBUG STATICFILES_DIRS =", STATICFILES_DIRS)
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # -------------------------------------------------
-# Authentication Settings
+# Authentication
 # -------------------------------------------------
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'index'
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "index"
 
 AUTHENTICATION_BACKENDS = [
     'registration.authentication.SupabaseAuthBackend',
@@ -153,11 +176,11 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # -------------------------------------------------
-# Default Primary Key Field Type
+# Default Field Type
 # -------------------------------------------------
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # -------------------------------------------------
-# Expose Supabase globally (safe method)
+# Expose Supabase
 # -------------------------------------------------
 sys.modules[__name__].SUPABASE = supabase

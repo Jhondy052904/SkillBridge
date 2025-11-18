@@ -1,6 +1,7 @@
 from skillbridge.supabase_client import supabase
 from typing import List, Dict, Any
 from django.contrib.auth.models import User
+from datetime import datetime
 
 # ============ JOBS CRUD ============
 
@@ -12,21 +13,28 @@ def create_job(title: str, description: str, posted_by_id: str, status: str = "O
             'Description': description,
             'PostedBy': posted_by_id,
             'Status': status,
+            'dateposted': datetime.utcnow().isoformat() + 'Z',  # 🔥 FIXED
         }).execute()
+
         if response.data:
+            print("DEBUG CREATE JOB:", response.data)  # debug confirm
             return response.data[0]
+
         raise Exception(f"Failed to create job: {response}")
+
     except Exception as e:
         raise Exception(f"Error creating job: {str(e)}")
 
 
-def get_jobs() -> List[Dict[str, Any]]:
-    """Retrieve all jobs"""
-    try:
-        response = supabase.table('jobs').select('*').execute()
-        return response.data
-    except Exception as e:
-        raise Exception(f"Error retrieving jobs: {str(e)}")
+
+def get_jobs():
+    response = supabase.table("jobs").select("*").order("JobID", desc=True).execute()
+    print("DEBUG GET JOBS:", response.data)  # TEMPORARY DEBUG
+    # Fix missing dateposted for existing jobs
+    for job in response.data:
+        if not job.get('dateposted'):
+            job['dateposted'] = datetime.utcnow().isoformat() + 'Z'  # Set to now as default
+    return response.data
 
 
 def get_job_by_id(job_id: str) -> Dict[str, Any]:
@@ -115,3 +123,25 @@ def get_resident_by_user_id(django_user_id: int):
         return resident.data[0]
 
     return None
+    
+def get_applied_jobs_by_resident(resident_id: int) -> List[Dict[str, Any]]:
+    """Get all jobs that a resident has applied to"""
+    try:
+        response = supabase.table("JobApplication") \
+            .select("ApplicationID, DateApplied, ApplicationStatus, jobs:JobID(Title, Status)") \
+            .eq("ResidentID", resident_id) \
+            .execute()
+
+        jobs = []
+        for item in response.data:
+            job = {
+                "title": item["jobs"]["Title"] if item.get("jobs") else "Unknown",
+                "status": item["ApplicationStatus"],
+                "date_applied": item.get("DateApplied", "—")
+            }
+            jobs.append(job)
+
+        return jobs
+
+    except Exception as e:
+        raise Exception(f"Error fetching applied jobs: {str(e)}")

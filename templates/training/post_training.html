@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Training</title>
+    <style>
+        body {
+            background: #eef2f5;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-container {
+            width: 400px;
+            margin: 50px auto;
+            padding: 25px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 18px;
+            color: #333;
+        }
+
+        .form-container label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            color: #222;
+        }
+
+        .form-container input,
+        .form-container textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-top: 4px;
+            font-size: 14px;
+        }
+
+        .form-container textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            margin-top: 18px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .form-container button:hover {
+            background: #0056b3;
+        }
+
+        /* Optional back link */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 12px;
+            color: #0056b3;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .back-link:hover{
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-container">
+        <h2>Add Training</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p style="background:#e6ffe6; border:1px solid #99d599; padding:8px; margin-bottom:10px; border-radius:6px; font-size:14px;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <label>Training Name:</label>
+            <input type="text" name="training_name" value="{{ form.training_name.value|default:'' }}" required>
+
+            <label>Description:</label>
+            <textarea name="description" required>{{ form.description.value|default:'' }}</textarea>
+
+            <label>Date Scheduled:</label>
+            <input type="datetime-local" name="date_scheduled" value="{{ form.date_scheduled.value|default:'' }}" required>
+
+            <label>Slots:</label>
+            <input type="number" name="slots" value="{{ form.slots.value|default:'20' }}">
+
+            <button type="submit">Save</button>
+        </form>
+
+        <a href="{% url 'official_dashboard' %}" class="back-link">← Back</a>
+    </div>
+</body>
+</html>

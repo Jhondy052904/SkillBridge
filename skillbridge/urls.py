@@ -24,6 +24,10 @@ urlpatterns = [
     path('skills/', include('skills.urls')),
     path('applications/', include('job_applications.urls')),
     path('notifications/', include('notifications.urls')),
+    path("notifications/", include("notifications.urls")),
+    path("training/", include("training.urls")),
+
+
 
     
 ]
