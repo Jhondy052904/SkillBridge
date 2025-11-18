@@ -25,16 +25,34 @@ function updateClock() {
     }
 }
 setInterval(updateClock, 1000);
-updateClock();
+updateClock();// Filter jobs by search text and category
 
-// Search Filter
 function filterJobs() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    document.querySelectorAll('.card').forEach(card => {
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const selectedType = document.getElementById('filterSelect').value;
+    const cards = document.querySelectorAll('.job-card');
+
+    cards.forEach(card => {
         const title = card.querySelector('h3').innerText.toLowerCase();
-        card.style.display = title.includes(q) ? '' : 'none';
+        const desc = card.querySelector('p.text-gray-600')?.innerText.toLowerCase() || '';
+        const jobType = card.getAttribute('data-type') || '';
+
+        // Match search query
+        const matchesSearch = title.includes(searchQuery) || desc.includes(searchQuery);
+
+        // Match selected filter: All Types or matching type
+        const matchesFilter = selectedType === "" || selectedType === jobType;
+
+        card.style.display = (matchesSearch && matchesFilter) ? "" : "none";
     });
 }
+
+// Add event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('searchInput').addEventListener('input', filterJobs);
+    document.getElementById('filterSelect').addEventListener('change', filterJobs);
+});
+
 
 // Chart (wait for DOM)
 document.addEventListener('DOMContentLoaded', function () {

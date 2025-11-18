@@ -4,83 +4,98 @@ from django.contrib import messages
 from datetime import datetime
 from skillbridge.supabase_client import supabase
 from .services.supabase_crud import (
-    create_job,
     get_jobs,
     update_job,
     delete_job,
     get_job_by_id,
     create_job_application,
     get_resident_by_user_id,
-    get_applied_jobs_by_resident,   # add this here
+    get_applied_jobs_by_resident,
 )
 
+# ========== LOGGING FOR AUDIT TRAIL ==========
+def log_action(action, entity, entity_id, request):
+    try:
+        supabase.table("audit_logs").insert({
+            "entity": entity,
+            "entity_id": entity_id,
+            "action": action,
+            "performed_by": request.session.get("user_email"),
+            "timestamp": datetime.utcnow().isoformat()
+        }).execute()
+    except Exception as e:
+        print("Audit log error:", e)
 
-from .services.supabase_crud import get_resident_by_user_id, get_applied_jobs_by_resident
 
+# ========== HOME (RESIDENT) ==========
 @login_required
 def home(request):
     try:
         resident = get_resident_by_user_id(request.user.id)
-        applied_jobs = []
-
-        if resident:
-            applied_jobs = get_applied_jobs_by_resident(resident["id"])
-
+        applied_jobs = get_applied_jobs_by_resident(resident["id"]) if resident else []
         return render(request, "home.html", {"applied_jobs": applied_jobs})
-    
+
     except Exception as e:
         messages.error(request, f"Error loading applied jobs: {str(e)}")
         return render(request, "home.html", {"applied_jobs": []})
 
-#================== Kaled
+
 def job_success(request):
     return render(request, 'jobs/job_success.html')
-#========================
 
-# POST JOB (normal users)
+
+# ==========================================================
+# POST JOB (OFFICIAL)
+# ==========================================================
 @login_required
 def post_job(request):
-    if request.method == 'POST':
-        try:
+    try:
+        email = request.user.email.strip().lower()
+        official = supabase.table("registration_official").select("*").ilike("email", email).execute()
+
+        if not official.data:
+            official = supabase.table("registration_official").select("*").eq("user_id", request.user.id).execute()
+
+        if not official.data:
+            messages.error(request, "Official profile not found.")
+            return redirect("official_dashboard")
+
+        official_data = official.data[0]
+
+        if request.method == 'POST':
             data = request.POST
-            create_job(
-                title=data['title'],
-                description=data['description'],
-                posted_by_id=str(request.user.id),
-                status=data.get('status', 'Open')
-            )
+            title = data['title']
+            description = data['description']
+            status = data.get('status', 'Open')
+
+            result = supabase.table("jobs").insert({
+                "Title": title,
+                "Description": description,
+                "PostedBy": str(official_data["id"]),
+                "Status": status,
+                "dateposted": datetime.utcnow().isoformat()  # FINAL + CORRECT
+            }).execute()
+
+            print("DEBUG INSERT RESULT:", result.data)
+
+            job = result.data[0]
+            job_id = job.get("JobID")
+
+            log_action("create", "job", job_id, request)
             messages.success(request, "Job posted successfully!")
-            return redirect('list_jobs')
-        except Exception as e:
-            messages.error(request, f"Error posting job: {str(e)}")
-    return render(request, 'jobs/post_job.html')
+            return redirect("official_dashboard")
+
+        return render(request, 'jobs/post_job.html')
+
+    except Exception as e:
+        print("EXCEPTION:", e)
+        messages.error(request, f"Error posting job: {str(e)}")
+        return redirect('official_dashboard')
 
 
-# POST JOB (admin only)
-@login_required
-def admin_post_job(request):
-    if not request.user.is_staff:
-        messages.error(request, "Access denied.")
-        return redirect('home')
-
-    if request.method == 'POST':
-        try:
-            data = request.POST
-            create_job(
-                title=data['title'],
-                description=data['description'],
-                posted_by=str(request.user.id),
-                status=data.get('status', 'Open')
-            )
-            messages.success(request, "Job posted successfully!")
-            return redirect('list_jobs')
-        except Exception as e:
-            messages.error(request, f"Error posting job: {str(e)}")
-
-    return render(request, 'jobs/post_job.html')
-
-
-# LIST JOBS (simple listing for internal use)
+# ==========================================================
+# LIST JOBS
+# ==========================================================
 @login_required
 def list_jobs(request):
     try:
@@ -91,20 +106,30 @@ def list_jobs(request):
     return render(request, 'jobs/list_jobs.html', {'jobs': jobs})
 
 
+# ==========================================================
 # UPDATE JOB
+# ==========================================================
 @login_required
 def update_job_view(request, job_id):
+
+    email = request.user.email.strip().lower()
+    official = supabase.table("registration_official").select("*").ilike("email", email).execute()
+    official_data = official.data[0] if official.data else None
+
     if request.method == 'POST':
         try:
             updates = {
-                'Title': request.POST.get('title'),
-                'Description': request.POST.get('description'),
-                'Status': request.POST.get('status'),
+                "Title": request.POST.get('title'),
+                "Description": request.POST.get('description'),
+                "Status": request.POST.get('status'),
             }
             updates = {k: v for k, v in updates.items() if v}
+
             update_job(job_id, updates)
+            log_action("edit", "job", job_id, request)
             messages.success(request, "Job updated successfully!")
-            return redirect('list_jobs')
+            return redirect('official_dashboard')
+
         except Exception as e:
             messages.error(request, f"Error updating job: {str(e)}")
 
@@ -114,26 +139,31 @@ def update_job_view(request, job_id):
         messages.error(request, f"Error loading job: {str(e)}")
         job = None
 
-    return render(request, 'jobs/update_job.html', {'job': job})
+    return render(request, 'jobs/update_job.html', {'job': job, 'official': official_data})
 
 
+# ==========================================================
 # DELETE JOB
+# ==========================================================
 @login_required
 def delete_job_view(request, job_id):
     try:
         delete_job(job_id)
+        log_action("delete", "job", job_id, request)
         messages.success(request, "Job deleted successfully!")
     except Exception as e:
         messages.error(request, f"Error deleting job: {str(e)}")
-    return redirect('list_jobs')
+    return redirect('official_dashboard')
 
+
+# ==========================================================
 # APPLY FOR JOB
+# ==========================================================
 @login_required
 def apply_job(request, job_id):
     try:
         resident = get_resident_by_user_id(request.user.id)
 
-        # Auto-create resident if missing
         if not resident:
             useraccount = supabase.table("registration_useraccount") \
                 .select("*").eq("username", request.user.username).execute()
@@ -147,7 +177,7 @@ def apply_job(request, job_id):
                     "email": request.user.email or "",
                     "employment_status": "Unemployed",
                     "verification_status": "Pending",
-                    "date_registered": datetime.now().isoformat(),
+                    "date_registered": datetime.utcnow().isoformat(),
                     "address": "",
                     "contact_number": "",
                     "birthdate": None,
@@ -155,20 +185,14 @@ def apply_job(request, job_id):
                 }).execute()
 
                 resident = get_resident_by_user_id(request.user.id)
-                if not resident:
-                    messages.error(request, "Could not create resident profile.")
-                    return redirect('list_jobs')
+
             else:
                 messages.error(request, "User account not found!")
                 return redirect('list_jobs')
 
-        # Submit job application
         create_job_application(resident_id=resident['id'], job_id=job_id)
-
-        # Instead of going back to job list, go to success page
         return redirect('job_success')
 
     except Exception as e:
         messages.error(request, f"Error applying for job: {str(e)}")
         return redirect('list_jobs')
-

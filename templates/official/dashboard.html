@@ -1,0 +1,190 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Dashboard | SkillBridge</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        .soft-bg {
+            background: linear-gradient(135deg, #f7f5ff, #eff3ff);
+        }
+    </style>
+</head>
+
+<body class="soft-bg min-h-screen flex text-gray-900">
+
+    <!-- ====================== SIDEBAR ====================== -->
+    <aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
+        <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
+
+        <nav class="space-y-2 font-medium">
+            <a href="#" class="block p-3 rounded-lg bg-purple-600 text-white">Dashboard</a>
+            <a href="{% url 'verification_panel' %}" class="block p-3 rounded-lg hover:bg-purple-50">Verify Accounts</a>
+        </nav>
+
+        {% if official.role == "admin" or official.role == "moderator" %}
+        <div class="mt-10">
+            <a href="#audit" class="block p-3 rounded-lg hover:bg-purple-50">Audit Logs</a>
+        </div>
+        {% endif %}
+
+        <div class="mt-auto pt-8">
+            <a href="{% url 'logout' %}" class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
+                Logout
+            </a>
+        </div>
+    </aside>
+
+
+
+    <!-- ================== MAIN ================== -->
+    <main class="flex-1 p-6 md:p-10">
+
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-bold">Welcome, {{ official.name }}</h1>
+
+            <a href="{% url 'logout' %}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 md:hidden">
+                Logout
+            </a>
+        </header>
+
+        <!-- ================== Status & Messages ================== -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="p-3 rounded text-white mb-2
+                    {% if message.tags == 'success' %} bg-green-600
+                    {% elif message.tags == 'error' %} bg-red-600
+                    {% else %} bg-purple-600 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+
+        <!-- ================= DASHBOARD CARDS ================= -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white rounded-2xl p-6 shadow border-l-4 border-purple-500">
+                <h3 class="text-sm text-gray-500">Total Residents</h3>
+                <p class="text-3xl font-bold">{{ total_residents }}</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow border-l-4 border-green-500">
+                <h3 class="text-sm text-gray-500">Applicants</h3>
+                <p class="text-3xl font-bold">{{ total_applicants }}</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow border-l-4 border-yellow-400">
+                <h3 class="text-sm text-gray-500">Pending Verifications</h3>
+                <p class="text-3xl font-bold">{{ pending_verifications|default:"0" }}</p>
+            </div>
+        </div>
+
+
+
+        <!-- ================= JOB POSTS ================= -->
+        <section id="jobs" class="mt-12">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Job Posts</h2>
+
+                <a href="{% url 'post_job' %}"
+                   class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow">
+                   + Add Job
+                </a>
+            </div>
+
+            {% if jobs %}
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {% for job in jobs %}
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition">
+                    <h3 class="text-xl font-semibold text-gray-900">{{ job.Title }}</h3>
+                    <p class="text-gray-600 text-sm mt-2">{{ job.Description|truncatechars:100 }}</p>
+
+                    {% if job.dateposted %}
+                        <p class="text-gray-500 text-sm mt-1">{{ job.dateposted|date:"M d, Y" }}</p>
+                    {% else %}
+                        <p class="text-gray-400 text-sm mt-1 italic">No date</p>
+                    {% endif %}
+
+                    <span class="inline-block mt-3 text-xs px-3 py-1 rounded-full bg-purple-100 text-purple-700 font-semibold">
+                        {{ job.Status }}
+                    </span>
+
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t">
+                        <a href="{% url 'update_job' job.JobID %}" class="text-blue-600 font-semibold">Edit</a>
+                        <a href="{% url 'delete_job' job.JobID %}"
+                           onclick="return confirm('Delete this job?')"
+                           class="text-red-600 font-semibold">Delete</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <p class="text-gray-400 italic">No jobs posted yet.</p>
+            {% endif %}
+        </section>
+
+
+
+        <!-- ================= TRAININGS ================= -->
+        <section id="trainings" class="mt-16">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Training Events</h2>
+
+                <a href="{% url 'post_training' %}"
+                   class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow">
+                   + Add Training
+                </a>
+            </div>
+
+            {% if trainings %}
+            <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {% for t in trainings %}
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 hover:shadow-lg transition">
+                    <h3 class="text-xl font-semibold text-gray-900">{{ t.training_name }}</h3>
+                    <p class="text-gray-500 text-sm mt-1">{{ t.date_scheduled|date:"M d, Y" }}</p>
+
+                    <span class="inline-block mt-3 text-xs px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold">
+                        {{ t.slots }} slots
+                    </span>
+
+                    <div class="flex justify-between items-center mt-6 pt-4 border-t">
+                        <a href="{% url 'edit_training' t.id %}" class="text-blue-600 font-semibold">Edit</a>
+                        <form action="{% url 'delete_training' t.id %}" method="POST"
+                              onsubmit="return confirm('Delete this training?')" class="inline">
+                            {% csrf_token %}
+                            <button class="text-red-600 font-semibold">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <p class="text-gray-400 italic">No training events posted yet.</p>
+            {% endif %}
+        </section>
+
+
+
+        {% if official.role == "admin" or official.role == "moderator" %}
+        <!-- ================= AUDIT LOGS ================= -->
+        <section id="audit" class="mt-16">
+            <h2 class="text-2xl font-bold mb-6">Audit Logs</h2>
+
+            {% if audits %}
+                <p class="text-gray-500">(Display logs here)</p>
+            {% else %}
+                <p class="text-gray-400 italic">No audit logs yet.</p>
+            {% endif %}
+        </section>
+        {% endif %}
+
+    </main>
+</body>
+</html>

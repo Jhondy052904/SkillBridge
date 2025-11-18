@@ -1,95 +1,213 @@
 {% load static %}
-
-{% if messages %}
-  <div class="messages">
-      {% for message in messages %}
-          <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-              {{ message }}
-          </div>
-      {% endfor %}
-  </div>
-{% endif %}
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Job Listings</title>
-    <link rel="stylesheet" href="{% static 'css/jobs/joblist.css' %}">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <title>Job Listings | SkillBridge</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        .soft-bg {
+            background: linear-gradient(135deg, #f7f5ff, #eff3ff);
+        }
+    </style>
 </head>
 
-<body>
-    <!-- Back Button -->
-    <button class="btn-back" onclick="window.location.href='{% url 'home' %}'">↩&nbsp;&nbsp;Back</button>
+<body class="soft-bg min-h-screen flex text-gray-900">
 
-    <div class="dashboard">
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="welcome-banner">
-               <h2>Hello!! {{ user.first_name }} ready to land a new job?</h2>
-                <p>Explore the latest openings and take your next step today.</p>
+<!-- ====================== SIDEBAR ====================== -->
+<aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
+    <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
+
+    <nav class="space-y-2 font-medium">
+        <a href="{% url 'home' %}" class="block p-3 rounded-lg hover:bg-purple-50">Dashboard</a>
+        <a href="{% url 'list_jobs' %}" class="block p-3 rounded-lg bg-purple-600 text-white">Jobs</a>
+        <a href="{% url 'list_trainings' %}" class="block p-3 rounded-lg hover:bg-purple-50">Trainings</a>
+        
+    </nav>
+
+    <div class="mt-auto pt-8">
+        <a href="{% url 'logout' %}"
+           class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
+           Logout
+        </a>
+    </div>
+</aside>
+
+<!-- ====================== MAIN ====================== -->
+<main class="flex-1 p-6 md:p-10">
+
+    <!-- HEADER -->
+    <header class="flex justify-between items-center mb-10">
+        <h1 class="text-3xl font-bold">Job Listings</h1>
+
+        <!-- Mobile back -->
+        <button onclick="window.location.href='{% url 'home' %}'"
+            class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 md:hidden">
+            ⬅ Back
+        </button>
+    </header>
+
+
+    <!-- ================= ALERTS ================= -->
+    {% if messages %}
+    <div class="mb-6">
+        {% for message in messages %}
+            <div class="p-3 rounded text-white mb-2
+            {% if message.tags == 'success' %} bg-green-600
+            {% elif message.tags == 'error' %} bg-red-600
+            {% elif message.tags == 'warning' %} bg-yellow-500 text-black
+            {% else %} bg-purple-600 {% endif %}">
+                {{ message }}
             </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-            <h2 class="section-title">💼 Job Listings</h2>
 
-            <input type="text" id="searchInput" placeholder="Search jobs..." onkeyup="filterJobs()">
 
-            <div class="job-listings-container">
-                {% for job in jobs %}
-                    {% if job.Status == "Open" %}
-                        <div class="card">
-                            <h3>{{ job.Title }}</h3>
-                            <p>{{ job.Description }}</p>
-                            <p><strong>Status:</strong> {{ job.Status }}</p>
-
-                            <form method="POST" action="{% url 'apply_job' job.JobID %}">
-                                {% csrf_token %}
-                                <button class="btn-primary">Apply</button>
-                            </form>
-                        </div>
-                    {% endif %}
-                {% empty %}
-                    <p>No job postings available.</p>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <h2 class="section-title">📊 Overview</h2>
-
-            <div class="header-info">
-                <div id="current-date"></div>
-                <div id="current-time"></div>
-            </div>
-
-            <canvas id="analyticsChart"></canvas>
-            <div id="jobCalendar"></div>
-        </div>
+    <!-- ================= WELCOME ================= -->
+    <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-purple-500 mb-10">
+        <h2 class="text-xl font-bold">
+            Hello {{ user.first_name }}! Ready to land a new job?
+        </h2>
+        <p class="text-gray-600">Explore open positions and apply now.</p>
     </div>
 
-    <!-- Pass Django data to JS -->
-<script>
-    // Chart & Calendar data from Django
-    const jobData = [
-        {% for job in jobs %}
-            { title: "{{ job.Title|escapejs }}", start: "{{ job.CreatedAt|date:'Y-m-d' }}" },
-        {% endfor %}
-    ];
+    <!-- ================= SEARCH ================= -->
+    <div class="mb-6 flex gap-2 items-center">
+        <!-- Search input -->
+        <input type="text"
+            id="searchInput"
+            placeholder="Search jobs..."
+            class="flex-1 md:w-96 border px-4 py-2 rounded-lg shadow-sm">
 
-    const counts = {
-        users: {{ user_count|default:0 }},
-        jobs: {{ job_count|default:0 }},
-        applications: {{ application_count|default:0 }}
-    };
+        <!-- Filter dropdown with arrow -->
+    <div class="relative inline-block w-64">
+    <select id="filterSelect" class="block appearance-none w-full border border-gray-300 px-4 py-2 pr-8 rounded-lg shadow-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+        <option value="">All Types</option>
+        <option value="Healthcare">Healthcare</option>
+        <option value="Services">Services</option>
+        <option value="Full-Time">Full-Time</option>
+        <option value="Part-Time">Part-Time</option>
+        <option value="Internship">Internship</option>
+        <option value="Freelance">Freelance</option>
+    </select>
+        <!-- Arrow -->
+    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+            <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
+                <path d="M5.516 7.548L10 12.033l4.484-4.485 1.032 1.031L10 14.096 4.484 8.579z"/>
+            </svg>
+        </div>
+    </div>
+        <!-- Search button -->
+        <button onclick="filterJobs()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">
+        Search
+        </button>
+    </div>
+
+    <!-- ================= JOB LIST ================= -->
+    <section>
+    <h2 class="text-2xl font-bold mb-4">Available Jobs</h2>
+
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" id="jobList">
+        {% for job in jobs %}
+            {% if job.Status == "Open" %}
+            <div class="job-card bg-white p-6 rounded-2xl shadow border hover:shadow-lg transition"
+                 data-type="{% if job.Title == 'Senior Python Developer' %}Full-Time,All Types{% else %}All Types{% endif %}">
+                <h3 class="text-xl font-semibold">{{ job.Title }}</h3>
+                <p class="text-gray-600 text-sm mt-2">{{ job.Description|truncatechars:120 }}</p>
+
+                <p class="text-xs text-gray-500 mt-1">Posted: {{ job.dateposted|date:"M d, Y" }}</p>
+
+                <form method="POST" action="{% url 'apply_job' job.JobID %}" class="mt-4">
+                    {% csrf_token %}
+                    <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg w-full">
+                        Apply
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        {% empty %}
+            <p class="text-gray-500 italic">No job postings available.</p>
+        {% endfor %}
+    </div>
+    </section>
+
+    <!--  <section>
+        <h2 class="text-2xl font-bold mb-4">Available Jobs</h2>
+
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" id="jobList">
+            {% for job in jobs %}
+                {% if job.Status == "Open" %}
+                <div class="bg-white p-6 rounded-2xl shadow border hover:shadow-lg transition job-card">
+                    <h3 class="text-xl font-semibold">{{ job.Title }}</h3>
+                    <p class="text-gray-600 text-sm mt-2">{{ job.Description|truncatechars:120 }}</p>
+
+                    <p class="text-xs text-gray-500 mt-1">Posted: {{ job.dateposted|date:"M d, Y" }}</p>
+
+                    <form method="POST" action="{% url 'apply_job' job.JobID %}" class="mt-4">
+                        {% csrf_token %}
+                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg w-full">
+                            Apply
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            {% empty %}
+                <p class="text-gray-500 italic">No job postings available.</p>
+            {% endfor %}
+        </div>
+    </section>  -->
+
+
+
+    <!-- ================= SIDEBAR WIDGETS ================= -->
+    <section class="mt-16">
+        <h2 class="text-2xl font-bold mb-6">Overview</h2>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl p-6 shadow border">
+                <p id="current-date" class="text-lg font-semibold"></p>
+                <p id="current-time" class="text-gray-500"></p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow border col-span-2">
+                <canvas id="analyticsChart"></canvas>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow border col-span-3">
+                <div id="jobCalendar"></div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+
+
+<!-- =============== DATA FOR JS =============== -->
+<script>
+const jobData = [
+    {% for job in jobs %}
+        { title: "{{ job.Title|escapejs }}", start: "{{ job.dateposted|date:'Y-m-d' }}" },
+    {% endfor %}
+];
+
+const counts = {
+    users: {{ user_count|default:0 }},
+    jobs: {{ job_count|default:0 }},
+    applications: {{ application_count|default:0 }}
+};
 </script>
 
-<!-- Load the external JS (clean version) -->
-    <script src="{% static 'js/joblist/joblist.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</body>
 
+<!-- =============== JS FILES =============== -->
+<script src="{% static 'js/joblist/joblist.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</body>
 </html>

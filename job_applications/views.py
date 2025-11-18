@@ -10,7 +10,7 @@ from .services.supabase_crud import (
     get_applications_by_job
 )
 
-@login_required
+
 def apply_for_job(request, job_id):
     """Allow residents to apply for a job"""
     if request.method == 'POST':
@@ -27,7 +27,7 @@ def apply_for_job(request, job_id):
     
     return render(request, 'job_applications/apply_for_job.html', {'job_id': job_id})
 
-@login_required
+
 def my_applications(request):
     """View resident's own job applications"""
     try:
@@ -37,7 +37,7 @@ def my_applications(request):
         applications = []
     return render(request, 'job_applications/my_applications.html', {'applications': applications})
 
-@login_required
+
 def list_all_applications(request):
     """Admin view - list all job applications"""
     if not request.user.is_staff:
@@ -51,7 +51,7 @@ def list_all_applications(request):
         applications = []
     return render(request, 'job_applications/list_applications.html', {'applications': applications})
 
-@login_required
+
 def job_applications(request, job_id):
     """Admin view - see all applications for a specific job"""
     if not request.user.is_staff:
@@ -68,7 +68,7 @@ def job_applications(request, job_id):
         'job_id': job_id
     })
 
-@login_required
+
 def update_application_status(request, application_id):
     """Update application status (admin only)"""
     if not request.user.is_staff:
@@ -95,7 +95,7 @@ def update_application_status(request, application_id):
     
     return render(request, 'job_applications/update_application.html', {'application': application})
 
-@login_required
+
 def delete_application_view(request, application_id):
     """Delete a job application (admin or applicant only)"""
     try:

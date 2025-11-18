@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Job | SkillBridge</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        .soft-bg {
+            background: linear-gradient(135deg, #f7f5ff, #eff3ff);
+        }
+    </style>
+</head>
+
+<body class="soft-bg min-h-screen flex text-gray-900">
+
+    <!-- ====================== SIDEBAR ====================== -->
+    <aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
+        <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
+
+        <nav class="space-y-2 font-medium">
+            <a href="{% url 'official_dashboard' %}" class="block p-3 rounded-lg hover:bg-purple-50">Dashboard</a>
+            <a href="{% url 'verification_panel' %}" class="block p-3 rounded-lg hover:bg-purple-50">Verify Accounts</a>
+            <a href="{% url 'post_training' %}" class="block p-3 rounded-lg bg-purple-600 text-white">Training Management</a>
+        </nav>
+
+        {% if official.role == "admin" or official.role == "moderator" %}
+        <div class="mt-10">
+            <a href="#audit" class="block p-3 rounded-lg hover:bg-purple-50">Audit Logs</a>
+        </div>
+        {% endif %}
+
+        <div class="mt-auto pt-8">
+            <p class="font-semibold mb-2">{{ official.name }}</p>
+            <a href="{% url 'logout' %}" class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
+                Logout
+            </a>
+        </div>
+    </aside>
+
+
+
+    <!-- ====================== MAIN CONTENT ====================== -->
+    <main class="flex-1 p-6 md:p-10">
+
+        <h1 class="text-3xl font-bold mb-8">Edit Job</h1>
+
+        <!-- Alerts -->
+        {% if messages %}
+          <div class="mb-4">
+              {% for message in messages %}
+                  <div class="p-3 rounded text-white
+                      {% if message.tags == 'success' %} bg-green-600
+                      {% elif message.tags == 'error' %} bg-red-600
+                      {% elif message.tags == 'warning' %} bg-yellow-500 text-black
+                      {% else %} bg-purple-600 {% endif %}">
+                      {{ message }}
+                  </div>
+              {% endfor %}
+          </div>
+        {% endif %}
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 max-w-2xl">
+
+            <form method="POST" class="space-y-5">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block font-semibold mb-1">Job Title</label>
+                    <input type="text" name="title" value="{{ job.Title }}"
+                           class="w-full border px-3 py-2 rounded" required>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Description</label>
+                    <textarea name="description" class="w-full border px-3 py-2 rounded" rows="4" required>{{ job.Description }}</textarea>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Status</label>
+                    <select name="status" class="w-full border px-3 py-2 rounded" required>
+                        <option value="Open" {% if job.Status == 'Open' %}selected{% endif %}>Open</option>
+                        <option value="Closed" {% if job.Status == 'Closed' %}selected{% endif %}>Closed</option>
+                    </select>
+                </div>
+
+                <button class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg shadow">
+                    Save Job
+                </button>
+            </form>
+
+            <div class="mt-6">
+                <a href="{% url 'official_dashboard' %}" class="text-purple-600 font-semibold hover:underline">Back</a>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+</html>

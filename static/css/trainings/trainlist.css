@@ -1,0 +1,255 @@
+/* ==========================
+   GLOBAL STYLING
+========================== */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #F5EFE7;
+    color: #3E5879;
+}
+
+/* ==========================
+   SIDEBAR
+========================== */
+.sidebar {
+    width: 250px;
+    background-color: #fff;
+    border-right: 1px solid #ccc;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+}
+
+.sidebar .logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #6B46C1; /* purple */
+    margin-bottom: 30px;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    color: #3E5879;
+    transition: all 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    background-color: #6B46C1;
+    color: #fff;
+}
+
+.user-section {
+    margin-top: auto;
+}
+
+.user-section p {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.logout-btn {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background-color: #E53E3E;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #C53030;
+}
+
+/* ==========================
+   MAIN CONTENT
+========================== */
+.main-content {
+    margin-left: 270px;
+    padding: 40px 60px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* ==========================
+   HEADER
+========================== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.btn-add-training {
+    background-color: #6B46C1;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-add-training:hover {
+    background-color: #553C9A;
+}
+
+/* ==========================
+   MESSAGES
+========================== */
+.messages {
+    margin-bottom: 30px;
+}
+
+.alert {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.alert.success {
+    background-color: #38A169; /* green */
+    color: white;
+}
+
+.alert.error {
+    background-color: #E53E3E; /* red */
+    color: white;
+}
+
+.alert.info {
+    background-color: #6B46C1; /* purple */
+    color: white;
+}
+
+/* ==========================
+   TRAININGS TABLE
+========================== */
+.trainings-table-container {
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: 1px solid #ccc;
+}
+
+.trainings-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.trainings-table th,
+.trainings-table td {
+    padding: 14px 16px;
+    text-align: left;
+}
+
+.trainings-table thead {
+    background-color: #EDF2F7;
+    font-weight: bold;
+    color: #3E5879;
+}
+
+.trainings-table tbody tr {
+    border-top: 1px solid #ccc;
+    transition: all 0.2s ease;
+}
+
+.trainings-table tbody tr:hover {
+    background-color: #F7FAFC;
+}
+
+/* ==========================
+   ACTION BUTTONS
+========================== */
+.btn-edit,
+.btn-register {
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background-color: #3182CE;
+}
+
+.btn-edit:hover {
+    background-color: #2B6CB0;
+}
+
+.btn-delete {
+    background-color: #E53E3E;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background-color: #C53030;
+}
+
+.btn-register {
+    background-color: #38A169;
+}
+
+.btn-register:hover {
+    background-color: #2F855A;
+}
+
+.inline-form {
+    display: inline;
+}
+
+/* ==========================
+   NO TRAININGS MESSAGE
+========================== */
+.no-trainings {
+    text-align: center;
+    color: #718096;
+    font-style: italic;
+    margin-top: 50px;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+@media (max-width: 1024px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        padding: 20px;
+    }
+}

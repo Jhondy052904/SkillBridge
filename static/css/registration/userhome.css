@@ -266,12 +266,12 @@ Navbar Styling
 }
 
 .tbody {
-  color #00000ff;
+  color: #000000ff;
 }
 .data-table th,
 .data-table td {
   padding: 12px 10px;
-  color #000000ff;
+  color: #000000ff;
   text-align: left;
 }
 
