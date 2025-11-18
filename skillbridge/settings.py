@@ -39,7 +39,7 @@ if SUPABASE_URL and SUPABASE_KEY:
     except Exception as e:
         print(f"Failed to initialize Supabase client: {e}")
 else:
-    print("⚠️ Supabase configuration missing! Please check .env file.")
+    print("Supabase configuration missing! Please check .env file.")
 
 # -------------------------------------------------
 # Email Configuration
@@ -57,7 +57,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # -------------------------------------------------
 SECRET_KEY = 'django-insecure-xkfm4+@+b-od03y3m1acss#dyn(3a(2=1tocjkt4)lk6q-*$dx'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 # -------------------------------------------------
 # Application Definition
@@ -87,6 +87,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware"
 ]
 
 ROOT_URLCONF = 'skillbridge.urls'
@@ -142,6 +144,13 @@ USE_TZ = True
 # -------------------------------------------------
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),  # if you have a /static folder
+]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # -------------------------------------------------
 # Authentication Settings
