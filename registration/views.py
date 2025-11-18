@@ -328,8 +328,8 @@ def edit_profile(request):
         form = ResidentForm(request.POST, instance=resident)
         if form.is_valid():
             form.save()
-            messages.success(request, "✅ Profile updated successfully!")
-            return redirect('home')  # <-- redirect to home page
+            messages.success(request, "Profile Updated Successfully!")
+            return redirect('home')
     else:
         form = ResidentForm(instance=resident)
 

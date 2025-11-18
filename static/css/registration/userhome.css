@@ -266,7 +266,7 @@ Navbar Styling
 }
 
 .tbody {
-  color #000000ff;
+  color #00000ff;
 }
 .data-table th,
 .data-table td {
@@ -371,15 +371,15 @@ Navbar Styling
 ===================== */
 .message-container {
     position: fixed;
-    top: 100px; /* below navbar */
+    top: 150px; /* below navbar */
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
     width: auto;
-    max-width: 90%;
+    max-width: 30%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 30px;
 }
  
 .alert {

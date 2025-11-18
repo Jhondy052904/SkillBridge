@@ -64,7 +64,6 @@
   </div>
 </div>
 
-
     <!-- Applied Jobs -->
     <div class="card jobs-card">
       <h3>My Applied Jobs</h3>
@@ -126,5 +125,24 @@
     </div>
   </div>
 </div>
+
+  <script>
+    // Wait for the DOM to load
+    document.addEventListener("DOMContentLoaded", function() {
+      // Select all alert messages
+      const alerts = document.querySelectorAll('.alert');
+      
+      // Remove each alert after 5 seconds (5000 ms)
+      alerts.forEach(alert => {
+        setTimeout(() => {
+          alert.style.transition = "opacity 0.5s ease-out";
+          alert.style.opacity = 0;
+
+          // Remove element from DOM after fade out
+          setTimeout(() => alert.remove(), 500);
+        }, 5000);
+      });
+    });
+  </script>
 
 {% endblock %}
