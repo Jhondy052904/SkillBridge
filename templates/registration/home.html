@@ -5,205 +5,266 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard | SkillBridge</title>
-
-    <!-- Tailwind CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    {#  <link rel="stylesheet" href="{% static 'css/registration/home.css' %}">  #}
-
+    <link rel="stylesheet" href="{% static 'css/registration/home.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
-<body class="soft-bg min-h-screen flex text-gray-900">
+<body>
 
-    <!-- ====================== SIDEBAR ====================== -->
-    <aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
-        <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
-        <nav class="space-y-2 font-medium">
-            <a href="{% url 'home' %}" class="block p-3 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition">Dashboard</a>
-            <a href="{% url 'list_jobs' %}" class="block p-3 rounded-lg hover:bg-purple-50 transition">Jobs</a>
-            <a href="{% url 'list_trainings' %}" class="block p-3 rounded-lg hover:bg-purple-50 transition">Trainings</a>
-        </nav>
-        <div class="mt-auto pt-8">
-            <a href="{% url 'logout' %}" class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg transition">
-                Logout
-            </a>
-        </div>
-    </aside>
+<!-- ====================== NAVBAR ====================== -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="{% url 'home' %}" class="active">Dashboard</a>
+    <a href="{% url 'list_jobs' %}">Jobs</a>
+    <a href="{% url 'list_trainings' %}">Trainings</a>
+    <div class="underline"></div>
+    <a>|</a>
+    <a href="{% url 'edit_profile' %}">Profile</a>
+    <a href="{% url 'login' %}" id="logoutLink">Logout</a>
 
-    <!-- ====================== MAIN ====================== -->
-    <main class="flex-1 p-10">
-        <header class="flex justify-between items-center mb-10 flex-wrap gap-4">
-            <h1 class="text-3xl font-bold">Welcome, {{ user.username }}!</h1>
+  </div>
+</nav>
 
-            <!-- Mobile logout -->
-            <a href="{% url 'logout' %}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 md:hidden transition">
-                Logout
-            </a>
+<!-- ====================== MAIN ====================== -->
+<main class="main-content">
 
-            <!-- Notification Bell -->
-            <div class="relative">
-                <button onclick="toggleNotifDropdown()" id="notifBtn" class="text-2xl relative hover:scale-110 transition">
-                    🔔
-                    {% if notifications %}
-                        <span class="w-3 h-3 bg-red-500 border-2 border-white rounded-full absolute top-0 right-0"></span>
-                    {% endif %}
-                </button>
-                <div id="notifDropdown" class="hidden absolute right-0 top-10 bg-white w-72 rounded-xl shadow-lg border max-h-80 overflow-y-auto animate-fadeIn z-50">
-                    {% if notifications %}
-                        {% for notif in notifications %}
-                            <div onclick="window.location.href='{{ notif.link_url }}'" class="p-3 border-b hover:bg-gray-50 cursor-pointer transition">
-                                <p class="font-medium">{{ notif.message }}</p>
-                                <small class="text-gray-500 text-xs">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
-                            </div>
-                        {% endfor %}
-                        <form method="POST" action="{% url 'clear_notifications' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-sm w-full rounded-b-xl py-2 font-semibold transition">Clear All</button>
-                        </form>
-                    {% else %}
-                        <p class="p-3 text-gray-500 text-center">No notifications.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </header>
+    <!-- HEADER -->
+    <header class="header">
+        <h1 class="header-title">Welcome, {{ user.username }}!</h1>
 
-        <!-- Messages -->
-        {% if messages %}
-        <div class="mb-4">
-            {% for message in messages %}
-                <div class="p-4 rounded-lg text-white mb-2 shadow-md transition animate-fadeIn
-                    {% if message.tags == 'success' %} bg-green-500
-                    {% elif message.tags == 'error' %} bg-red-500
-                    {% else %} bg-purple-500 {% endif %}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+        <!-- Notification Bell -->
+        <div class="notifications">
+            <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
+                🔔
+                {% if notifications %}
+                    <span class="notif-indicator"></span>
+                {% endif %}
+            </button>
 
-        <!-- Profile Card -->
-        {% if user_profile %}
-        <div class="bg-white rounded-2xl p-6 shadow border-l-4 border-purple-500 mb-10 hover:shadow-lg transition">
-            <div class="flex items-center space-x-6 flex-wrap gap-4">
-                <img src="{% static 'images/snoopy.png' %}" class="w-20 h-20 rounded-full shadow-md hover:scale-105 transition">
-                <div>
-                    <h3 class="text-xl font-bold text-gray-800">{{ user_profile.first_name }} {{ user_profile.last_name }}</h3>
-                    <p class="text-gray-600"><strong>Role:</strong> Resident</p>
-                </div>
-            </div>
-
-            <div class="mt-6 text-sm text-gray-700 space-y-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                <p><strong class="text-gray-900">Email:</strong> {{ user_profile.email }}</p>
-                <p><strong class="text-gray-900">Contact:</strong> {{ user_profile.contact_number }}</p>
-                <p><strong class="text-gray-900">Address:</strong> {{ user_profile.address }}</p>
-                <p><strong class="text-gray-900">Employment:</strong> {{ user_profile.employment_status }}</p>
-                <p><strong class="text-gray-900">Verification:</strong> <span class="px-2 py-1 bg-green-100 text-green-700 rounded">{{ user_profile.verification_status }}</span></p>
-                <p><strong class="text-gray-900">Skills:</strong> <span class="text-purple-600">{{ user_profile.skills }}</span></p>
-            </div>
-
-            <a href="{% url 'edit_profile' %}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg inline-block mt-6 transition hover:shadow-md">
-                Update Profile
-            </a>
-        </div>
-        {% endif %}
-
-        <!-- Applied Jobs -->
-        <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">My Applied Jobs</h2>
-            <div class="bg-white shadow-md rounded-2xl overflow-hidden hover:shadow-lg transition">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead class="bg-gradient-to-r from-purple-50 to-purple-100 font-semibold border-b">
-                            <tr>
-                                <th class="p-4 text-gray-700">Job Title</th>
-                                <th class="p-4 text-gray-700">Status</th>
-                                <th class="p-4 text-gray-700">Date Applied</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if applied_jobs %}
-                                {% for app in applied_jobs %}
-                                    <tr class="border-b hover:bg-gray-50 transition">
-                                        <td class="p-4 text-gray-800">{{ app.job.title }}</td>
-                                        <td class="p-4">
-                                            <span class="px-3 py-1 rounded-full text-sm font-medium
-                                            {% if app.application_status == 'Accepted' %} bg-green-100 text-green-700
-                                            {% elif app.application_status == 'Rejected' %} bg-red-100 text-red-700
-                                            {% elif app.application_status == 'Pending' %} bg-yellow-100 text-yellow-700
-                                            {% else %} bg-gray-100 text-gray-700 {% endif %}">
-                                                {{ app.application_status }}
-                                            </span>
-                                        </td>
-                                        <td class="p-4 text-gray-600">{{ app.date_applied|date:"M d, Y" }}</td>
-                                    </tr>
-                                {% endfor %}
-                            {% else %}
-                                <tr>
-                                    <td colspan="3" class="p-4 text-gray-400 italic text-center">No jobs applied yet.</td>
-                                </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Registered Trainings -->
-        <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">My Registered Trainings</h2>
-            <div class="bg-white rounded-2xl p-6 shadow hover:shadow-lg transition">
-                {% if registered_trainings %}
-                    <ul class="space-y-3">
-                        {% for training in registered_trainings %}
-                            <li class="border-b pb-3 last:border-b-0 hover:bg-gray-50 p-3 rounded transition">
-                                <strong class="text-gray-800">{{ training.training_name }}</strong>
-                                <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-700 rounded text-sm font-medium">{{ training.status }}</span>
-                                <br><span class="text-xs text-gray-500">📅 {{ training.date_scheduled|date:"M d, Y" }}</span>
-                            </li>
-                        {% endfor %}
-                    </ul>
+            <!-- DROPDOWN -->
+            <div id="notifDropdown" class="notif-dropdown hidden">
+                {% if notifications %}
+                    {% for notif in notifications %}
+                    <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
+                        <p class="notif-message">{{ notif.message }}</p>
+                        <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
+                    </div>
+                    {% endfor %}
+                    <form method="POST" action="{% url 'clear_notifications' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="notif-clear-btn">Clear All</button>
+                    </form>
                 {% else %}
-                    <p class="text-gray-400 italic text-center py-6">No trainings registered yet. <a href="{% url 'list_trainings' %}" class="text-purple-600 hover:underline">Find trainings</a></p>
+                    <p class="notif-empty">No notifications.</p>
                 {% endif %}
             </div>
-        </section>
+        </div>
+    </header>
 
-        <!-- Quick Actions 
-        <section class="mb-10">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Quick Actions</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <a href="{% url 'list_jobs' %}" class="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white p-6 rounded-2xl shadow-md hover:shadow-lg text-center font-bold text-lg transition transform hover:scale-105">
-                    Browse Jobs
-                </a>
-                <a href="{% url 'list_trainings' %}" class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white p-6 rounded-2xl shadow-md hover:shadow-lg text-center font-bold text-lg transition transform hover:scale-105">
-                    Find Trainings
-                </a>
+    <!-- MESSAGES -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
+                {{ message }}
             </div>
-        </section>-->
+        {% endfor %}
+    </div>
+    {% endif %}
 
-    </main>
+    <!-- ================= PROFILE CARD ================= -->
+    {% if user_profile %} 
+    <div class="profile-card">   
+        <div class="profile-header">
+            <img src="{% static 'images/snoopy.png' %}" class="profile-img" alt="Profile Image">
+            <div class="profile-info">
+                <h3 class="profile-name">{{ user_profile.first_name }} {{ user_profile.last_name }}</h3>
+                <p class="profile-role"><strong>Role:</strong> Resident</p>
+            </div>
+        </div>
 
-    <script>
-    function toggleNotifDropdown() {
-        const box = document.getElementById("notifDropdown");
-        box.classList.toggle("hidden");
+        <div class="profile-details">
+            <p><strong>Email:</strong> {{ user_profile.email }}</p>
+            <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
+            <p><strong>Address:</strong> {{ user_profile.address }}</p>
+            <p><strong>Employment:</strong> {{ user_profile.employment_status }}</p>
+            <p><strong>Verification:</strong> <span class="verification-status">{{ user_profile.verification_status }}</span></p>
+            <p><strong>Skills:</strong> <span class="skills">{{ user_profile.skills }}</span></p>
+        </div>
+
+        <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
+    </div>
+    {% else %}
+    <div class="profile-card error-card">
+        <p>Profile data not found. Please contact support.</p>
+        <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
+    </div>
+    {% endif %}
+
+    <!-- ================= APPLIED JOBS ================= -->
+    <section class="applied-jobs">
+        <h2 class="section-title">My Applied Jobs</h2>
+
+        <div class="table-container">
+            <table class="jobs-table">
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Status</th>
+                        <th>Date Applied</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if applied_jobs %}
+                        {% for app in applied_jobs %}
+                        <tr>
+                            <td>{{ app.job.title }}</td>
+                            <td><span class="status {{ app.application_status|lower }}">{{ app.application_status }}</span></td>
+                            <td>{{ app.date_applied|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="empty-table">No jobs applied yet.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ================= REGISTERED TRAININGS ================= -->
+    <section class="registered-trainings">
+        <h2 class="section-title">My Registered Trainings</h2>
+
+        <div class="trainings-list">
+            {% if registered_trainings %}
+                <ul>
+                    {% for training in registered_trainings %}
+                        <li class="training-item">
+                            <strong>{{ training.training_name }}</strong>
+                            <span class="training-status">{{ training.status }}</span>
+                            <br><span class="training-date">{{ training.date_scheduled|date:"M d, Y" }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-trainings">No trainings registered yet. <a href="{% url 'list_trainings' %}" class="link-primary">Find trainings</a></p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- ================= QUICK ACTIONS ================= -->
+    <section class="quick-actions">
+        <h2 class="section-title">Quick Actions</h2>
+        <div class="actions-grid">
+            <a href="{% url 'list_jobs' %}" class="action-btn jobs-btn">Browse Jobs</a>
+            <a href="{% url 'list_trainings' %}" class="action-btn trainings-btn">Find Trainings</a>
+        </div>
+    </section>
+
+</main>
+
+<script>
+const notifBtn = document.getElementById('notifBtn');
+const notifDropdown = document.getElementById('notifDropdown');
+
+function toggleNotifDropdown() {
+    notifDropdown.classList.toggle('hidden');
+}
+
+// Click outside to close
+document.addEventListener('click', (e) => {
+    if (!notifDropdown.contains(e.target) && !notifBtn.contains(e.target)) {
+        notifDropdown.classList.add('hidden');
     }
+});
 
-    document.addEventListener("click", function(e){
-        const bell = document.getElementById("notifBtn");
-        const box = document.getElementById("notifDropdown");
-        if (bell && box && !bell.contains(e.target) && !box.contains(e.target)) {
-            box.classList.add("hidden");
-        }
+// Escape key to close
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') notifDropdown.classList.add('hidden');
+});
+
+const menuLinks = document.querySelectorAll('.nav-right a');
+const underline = document.querySelector('.nav-right .underline');
+
+function moveUnderline(el) {
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.closest('.nav-right').getBoundingClientRect();
+    underline.style.width = rect.width + 'px';
+    underline.style.left = (rect.left - parentRect.left) + 'px';
+}
+
+// Initialize on active link
+const activeLink = document.querySelector('.nav-right a.active');
+if (activeLink) moveUnderline(activeLink);
+
+// Hover effect
+menuLinks.forEach(link => {
+    link.addEventListener('mouseenter', e => moveUnderline(e.target));
+});
+
+// Reset to active link on mouse leave
+document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+    if (activeLink) moveUnderline(activeLink);
+});
+
+//logout 
+const logoutLink = document.getElementById('logoutLink');
+
+logoutLink.addEventListener('click', function(e) {
+    e.preventDefault(); // prevent default navigation
+
+    // Create pop-up container
+    const popup = document.createElement('div');
+    popup.className = 'logout-popup';
+    popup.innerHTML = `
+        <p>End Session?</p>
+        <div class="popup-buttons">
+            <button id="confirmLogout">Yes</button>
+            <button id="cancelLogout">No</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Button actions
+    document.getElementById('confirmLogout').addEventListener('click', () => {
+        window.location.href = logoutLink.href; // proceed to logout
     });
 
-    document.addEventListener("keydown", function(e){
-        if (e.key === "Escape") {
-            const box = document.getElementById("notifDropdown");
-            if (box) box.classList.add("hidden");
-        }
+    document.getElementById('cancelLogout').addEventListener('click', () => {
+        popup.remove(); // close popup
     });
-    </script>
+});
+
+//Welcome message
+
+document.addEventListener('DOMContentLoaded', () => {
+    const messages = document.querySelectorAll('.editprofile-message');
+
+    messages.forEach(msg => {
+        setTimeout(() => {
+            // Fade out + slide right
+            msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateX(50px)';
+
+            // Remove from DOM after transition
+            setTimeout(() => {
+                msg.remove();
+            }, 500);
+        }, 5000); // 5 seconds
+    });
+});
+
+
+
+
+</script>
 
 </body>
 </html>

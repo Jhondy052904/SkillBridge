@@ -30,67 +30,140 @@ def index(request):
     """Landing page."""
     return render(request, 'registration/index.html')
 
+# def home(request):
+#     """Resident dashboard view."""
+#     # Restrict to residents only
+#     if request.session.get('user_role') != 'Resident':
+#         messages.error(request, "Access denied. Residents only.")
+#         return redirect('login')
+
+#     username = request.session.get("user_email")
+#     verification_status = "No Profile"
+#     user_profile = None
+#     applied_jobs = []
+#     registered_trainings = []
+#     all_jobs = []
+#     all_trainings = []
+#     notifications = []  # renamed for consistency
+
+#     if username:
+#         # Fetch Django resident profile
+#         resident = Resident.objects.filter(email=username).first()
+#         if resident:
+#             verification_status = resident.verification_status
+
+#         # Fetch Supabase resident data
+#         try:
+#             res = supabase.table("resident").select("*").eq("email", username).single().execute()
+#             user_profile = res.data if res.data else None
+#         except Exception as e:
+#             print("Supabase user profile fetch error:", e)
+
+#         # Load applied jobs
+#         applied_jobs = JobApplication.objects.filter(
+#             resident__email=username
+#         ).select_related("job")
+
+#         # Load registered trainings
+#         registered_trainings = Training.objects.filter(
+#             trainingparticipation__resident__email=username
+#         ).distinct()
+
+#         # Fetch all active jobs
+#         try:
+#             all_jobs_data = get_jobs()
+#             all_jobs = [job for job in all_jobs_data if job.get('Status') == 'Open']
+#         except Exception as e:
+#             messages.error(request, "Unable to load job listings.")
+#             all_jobs = []
+
+#         # Fetch all active trainings
+#         try:
+#             response = supabase.table("training").select("*").order("created_at", desc=True).execute()
+#             all_trainings = response.data or []
+#         except Exception as e:
+#             messages.error(request, "Unable to load training events.")
+#             all_trainings = []
+
+#         # Fetch notifications
+#         try:
+#             notifications = get_all_notifications()
+#         except Exception as e:
+#             messages.error(request, "Unable to load notifications.")
+#             notifications = []
+
+#     return render(request, "registration/home.html", {
+#         "verification_status": verification_status,
+#         "user_profile": user_profile,
+#         "applied_jobs": applied_jobs,
+#         "registered_trainings": registered_trainings,
+#         "all_jobs": all_jobs,
+#         "all_trainings": all_trainings,
+#         "notifications": notifications,
+#     })
+
 def home(request):
     """Resident dashboard view."""
-    # Restrict to residents only
-    if request.session.get('user_role') != 'Resident':
-        messages.error(request, "Access denied. Residents only.")
-        return redirect('login')
-
     username = request.session.get("user_email")
+    user_role = request.session.get("user_role")
+
+    # Guest user: show public landing page
+    if not username or user_role != "Resident":
+        return render(request, "registration/index.html")  # public view
+
+    # Resident dashboard logic
     verification_status = "No Profile"
     user_profile = None
     applied_jobs = []
     registered_trainings = []
     all_jobs = []
     all_trainings = []
-    notifications = []  # renamed for consistency
+    notifications = []
 
-    if username:
-        # Fetch Django resident profile
-        resident = Resident.objects.filter(email=username).first()
-        if resident:
-            verification_status = resident.verification_status
+    # Fetch Django resident profile
+    resident = Resident.objects.filter(email=username).first()
+    if resident:
+        verification_status = resident.verification_status
 
-        # Fetch Supabase resident data
-        try:
-            res = supabase.table("resident").select("*").eq("email", username).single().execute()
-            user_profile = res.data if res.data else None
-        except Exception as e:
-            print("Supabase user profile fetch error:", e)
+    # Fetch Supabase resident data
+    try:
+        res = supabase.table("resident").select("*").eq("email", username).single().execute()
+        user_profile = res.data if res.data else None
+    except Exception as e:
+        print("Supabase user profile fetch error:", e)
 
-        # Load applied jobs
-        applied_jobs = JobApplication.objects.filter(
-            resident__email=username
-        ).select_related("job")
+    # Applied jobs
+    applied_jobs = JobApplication.objects.filter(
+        resident__email=username
+    ).select_related("job")
 
-        # Load registered trainings
-        registered_trainings = Training.objects.filter(
-            trainingparticipation__resident__email=username
-        ).distinct()
+    # Registered trainings
+    registered_trainings = Training.objects.filter(
+        trainingparticipation__resident__email=username
+    ).distinct()
 
-        # Fetch all active jobs
-        try:
-            all_jobs_data = get_jobs()
-            all_jobs = [job for job in all_jobs_data if job.get('Status') == 'Open']
-        except Exception as e:
-            messages.error(request, "Unable to load job listings.")
-            all_jobs = []
+    # All jobs
+    try:
+        all_jobs_data = get_jobs()
+        all_jobs = [job for job in all_jobs_data if job.get('Status') == 'Open']
+    except Exception as e:
+        messages.error(request, "Unable to load job listings.")
+        all_jobs = []
 
-        # Fetch all active trainings
-        try:
-            response = supabase.table("training").select("*").order("created_at", desc=True).execute()
-            all_trainings = response.data or []
-        except Exception as e:
-            messages.error(request, "Unable to load training events.")
-            all_trainings = []
+    # All trainings
+    try:
+        response = supabase.table("training").select("*").order("created_at", desc=True).execute()
+        all_trainings = response.data or []
+    except Exception as e:
+        messages.error(request, "Unable to load training events.")
+        all_trainings = []
 
-        # Fetch notifications
-        try:
-            notifications = get_all_notifications()
-        except Exception as e:
-            messages.error(request, "Unable to load notifications.")
-            notifications = []
+    # Notifications
+    try:
+        notifications = get_all_notifications()
+    except Exception as e:
+        messages.error(request, "Unable to load notifications.")
+        notifications = []
 
     return render(request, "registration/home.html", {
         "verification_status": verification_status,
@@ -101,7 +174,6 @@ def home(request):
         "all_trainings": all_trainings,
         "notifications": notifications,
     })
-
 
 def get_all_notifications():
     """Returns ALL visible notifications ordered from newest to oldest."""

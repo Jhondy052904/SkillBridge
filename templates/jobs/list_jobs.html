@@ -5,188 +5,121 @@
 <head>
     <meta charset="UTF-8">
     <title>Job Listings | SkillBridge</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-    <style>
-        .soft-bg {
-            background: linear-gradient(135deg, #f7f5ff, #eff3ff);
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/jobs/list_jobs.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
 
-<body class="soft-bg min-h-screen flex text-gray-900">
+<body>
 
-<!-- ====================== SIDEBAR ====================== -->
-<aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
-    <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
+<!-- ====================== NAVBAR ====================== -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="{% url 'home' %}">Dashboard</a>
+    <a href="{% url 'list_jobs' %}" class="active">Jobs</a>
+    <a href="{% url 'list_trainings' %}">Trainings</a>
+    <div class="underline"></div>
+    <a>|</a>
+    <a href="{% url 'edit_profile' %}">Profile</a>
+    <a href="{% url 'login' %}" id="logoutLink">Logout</a>
 
-    <nav class="space-y-2 font-medium">
-        <a href="{% url 'home' %}" class="block p-3 rounded-lg hover:bg-purple-50">Dashboard</a>
-        <a href="{% url 'list_jobs' %}" class="block p-3 rounded-lg bg-purple-600 text-white">Jobs</a>
-        <a href="{% url 'list_trainings' %}" class="block p-3 rounded-lg hover:bg-purple-50">Trainings</a>
-        
-    </nav>
-
-    <div class="mt-auto pt-8">
-        <a href="{% url 'logout' %}"
-           class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
-           Logout
-        </a>
-    </div>
-</aside>
+  </div>
+</nav>
 
 <!-- ====================== MAIN ====================== -->
-<main class="flex-1 p-6 md:p-10">
-
-    <!-- HEADER -->
-    <header class="flex justify-between items-center mb-10">
-        <h1 class="text-3xl font-bold">Job Listings</h1>
-
-        <!-- Mobile back -->
-        <button onclick="window.location.href='{% url 'home' %}'"
-            class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 md:hidden">
-            ⬅ Back
-        </button>
-    </header>
-
+<main>
 
     <!-- ================= ALERTS ================= -->
     {% if messages %}
-    <div class="mb-6">
+    <div>
         {% for message in messages %}
-            <div class="p-3 rounded text-white mb-2
-            {% if message.tags == 'success' %} bg-green-600
-            {% elif message.tags == 'error' %} bg-red-600
-            {% elif message.tags == 'warning' %} bg-yellow-500 text-black
-            {% else %} bg-purple-600 {% endif %}">
+            <div>
                 {{ message }}
             </div>
         {% endfor %}
     </div>
     {% endif %}
 
-
-
     <!-- ================= WELCOME ================= -->
-    <div class="bg-white rounded-2xl p-6 shadow-md border-l-4 border-purple-500 mb-10">
-        <h2 class="text-xl font-bold">
-            Hello {{ user.first_name }}! Ready to land a new job?
-        </h2>
-        <p class="text-gray-600">Explore open positions and apply now.</p>
+    <div>
+        <h2 class="section-title">Hello {{ user.first_name }}! Ready to land a new job?</h2>
+        <p class="section-subtitle">Explore open positions and apply now.</p>
     </div>
 
     <!-- ================= SEARCH ================= -->
-    <div class="mb-6 flex gap-2 items-center">
-        <!-- Search input -->
-        <input type="text"
-            id="searchInput"
-            placeholder="Search jobs..."
-            class="flex-1 md:w-96 border px-4 py-2 rounded-lg shadow-sm">
+    <div>
+        <input type="text" id="searchInput" placeholder="Search jobs...">
 
-        <!-- Filter dropdown with arrow -->
-    <div class="relative inline-block w-64">
-    <select id="filterSelect" class="block appearance-none w-full border border-gray-300 px-4 py-2 pr-8 rounded-lg shadow-sm bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-        <option value="">All Types</option>
-        <option value="Healthcare">Healthcare</option>
-        <option value="Services">Services</option>
-        <option value="Full-Time">Full-Time</option>
-        <option value="Part-Time">Part-Time</option>
-        <option value="Internship">Internship</option>
-        <option value="Freelance">Freelance</option>
-    </select>
-        <!-- Arrow -->
-    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-            <svg class="fill-current h-4 w-4" viewBox="0 0 20 20">
-                <path d="M5.516 7.548L10 12.033l4.484-4.485 1.032 1.031L10 14.096 4.484 8.579z"/>
-            </svg>
-        </div>
-    </div>
-        <!-- Search button -->
-        <button onclick="filterJobs()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">
-        Search
-        </button>
+        <select id="filterSelect">
+            <option value="">All Types</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Services">Services</option>
+            <option value="Full-Time">Full-Time</option>
+            <option value="Part-Time">Part-Time</option>
+            <option value="Internship">Internship</option>
+            <option value="Freelance">Freelance</option>
+        </select>
+
+        <button onclick="filterJobs()">Search</button>
     </div>
 
     <!-- ================= JOB LIST ================= -->
-    <section>
-    <h2 class="text-2xl font-bold mb-4">Available Jobs</h2>
+<section>
+    <h2 class="section-title">Available Jobs</h2>
 
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" id="jobList">
+    <div id="jobList">
         {% for job in jobs %}
             {% if job.Status == "Open" %}
-            <div class="job-card bg-white p-6 rounded-2xl shadow border hover:shadow-lg transition"
-                 data-type="{% if job.Title == 'Senior Python Developer' %}Full-Time,All Types{% else %}All Types{% endif %}">
-                <h3 class="text-xl font-semibold">{{ job.Title }}</h3>
-                <p class="text-gray-600 text-sm mt-2">{{ job.Description|truncatechars:120 }}</p>
+            <div class="job-card" data-type="{% if job.Title == 'Senior Python Developer' %}Full-Time,All Types{% else %}All Types{% endif %}">
+                <h3>{{ job.Title }}</h3>
+                
+                <p class="job-meta">
+                    <strong>Company:</strong> {{ job.Company }} |
+                    <strong>Type:</strong> {{ job.JobType }} |
+                    <strong>Location:</strong> {{ job.Location }}
+                </p>
 
-                <p class="text-xs text-gray-500 mt-1">Posted: {{ job.dateposted|date:"M d, Y" }}</p>
+                <p>{{ job.Description|truncatechars:120 }}</p>
+                <p class="job-date">Posted: {{ job.dateposted|date:"M d, Y" }}</p>
 
-                <form method="POST" action="{% url 'apply_job' job.JobID %}" class="mt-4">
+                <form method="POST" action="{% url 'apply_job' job.JobID %}">
                     {% csrf_token %}
-                    <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg w-full">
-                        Apply
-                    </button>
+                    <button>Apply</button>
                 </form>
             </div>
             {% endif %}
         {% empty %}
-            <p class="text-gray-500 italic">No job postings available.</p>
+            <p>No job postings available.</p>
         {% endfor %}
     </div>
-    </section>
-
-    <!--  <section>
-        <h2 class="text-2xl font-bold mb-4">Available Jobs</h2>
-
-        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3" id="jobList">
-            {% for job in jobs %}
-                {% if job.Status == "Open" %}
-                <div class="bg-white p-6 rounded-2xl shadow border hover:shadow-lg transition job-card">
-                    <h3 class="text-xl font-semibold">{{ job.Title }}</h3>
-                    <p class="text-gray-600 text-sm mt-2">{{ job.Description|truncatechars:120 }}</p>
-
-                    <p class="text-xs text-gray-500 mt-1">Posted: {{ job.dateposted|date:"M d, Y" }}</p>
-
-                    <form method="POST" action="{% url 'apply_job' job.JobID %}" class="mt-4">
-                        {% csrf_token %}
-                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg w-full">
-                            Apply
-                        </button>
-                    </form>
-                </div>
-                {% endif %}
-            {% empty %}
-                <p class="text-gray-500 italic">No job postings available.</p>
-            {% endfor %}
-        </div>
-    </section>  -->
-
+</section>
 
 
     <!-- ================= SIDEBAR WIDGETS ================= -->
-    <section class="mt-16">
-        <h2 class="text-2xl font-bold mb-6">Overview</h2>
+    <section>
+        <h2 class="section-title">Overview</h2>
 
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="bg-white rounded-2xl p-6 shadow border">
-                <p id="current-date" class="text-lg font-semibold"></p>
-                <p id="current-time" class="text-gray-500"></p>
+        <div>
+            <div>
+                <p id="current-date"></p>
+                <p id="current-time"></p>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 shadow border col-span-2">
+            <div>
                 <canvas id="analyticsChart"></canvas>
             </div>
 
-            <div class="bg-white rounded-2xl p-6 shadow border col-span-3">
+            <div>
                 <div id="jobCalendar"></div>
             </div>
         </div>
     </section>
 
 </main>
-
-
 
 <!-- =============== DATA FOR JS =============== -->
 <script>
@@ -203,11 +136,66 @@ const counts = {
 };
 </script>
 
-
-<!-- =============== JS FILES =============== -->
+<!-- JS FILES -->
 <script src="{% static 'js/joblist/joblist.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    
+const menuLinks = document.querySelectorAll('.nav-right a');
+const underline = document.querySelector('.nav-right .underline');
 
+function moveUnderline(el) {
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.closest('.nav-right').getBoundingClientRect();
+    underline.style.width = rect.width + 'px';
+    underline.style.left = (rect.left - parentRect.left) + 'px';
+}
+
+// Initialize on active link
+const activeLink = document.querySelector('.nav-right a.active');
+if (activeLink) moveUnderline(activeLink);
+
+// Hover effect
+menuLinks.forEach(link => {
+    link.addEventListener('mouseenter', e => moveUnderline(e.target));
+});
+
+// Reset to active link on mouse leave
+document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+    if (activeLink) moveUnderline(activeLink);
+
+    
+});
+
+//logout 
+const logoutLink = document.getElementById('logoutLink');
+
+logoutLink.addEventListener('click', function(e) {
+    e.preventDefault(); // prevent default navigation
+
+    // Create pop-up container
+    const popup = document.createElement('div');
+    popup.className = 'logout-popup';
+    popup.innerHTML = `
+        <p>End Session?</p>
+        <div class="popup-buttons">
+            <button id="confirmLogout">Yes</button>
+            <button id="cancelLogout">No</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Button actions
+    document.getElementById('confirmLogout').addEventListener('click', () => {
+        window.location.href = logoutLink.href; // proceed to logout
+    });
+
+    document.getElementById('cancelLogout').addEventListener('click', () => {
+        popup.remove(); // close popup
+    });
+});
+
+</script>
 </body>
 </html>

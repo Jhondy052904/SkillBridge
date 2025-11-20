@@ -1,300 +1,574 @@
 /* =====================
-   GLOBAL STYLES
+   General Page Styling
 ===================== */
 body {
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 0;
-  color: #3E5879;
-  background: #F5EFE7;
-  box-sizing: border-box;
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #1B3C53;
+    overflow-x: hidden;
+
+    background: url("/static/images/wall.jpg") no-repeat center 70% / cover;.
+  
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/static/images/plant.jpg") no-repeat center 80% / cover;
+    filter: blur(3px);       /* adjust blur intensity */
+    z-index: -1;             /* behind all content */
 }
 
 /* =====================
-   SIDEBAR
+   Navigation Bar
 ===================== */
-aside {
-  width: 256px;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  background: #ffffff;
-  border-right: 1px solid #e5e7eb;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  z-index: 50;
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 25px;
+    background: #EBF4F6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 800px;
+    z-index: 100;
 }
 
-aside h2 {
-  color: #6B21A8;
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 2rem;
+.navbar .logo {
+    height: 70px;
+    width: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-aside nav a {
-  display: block;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 500;
-  margin-bottom: 8px;
-  color: #3E5879;
-  text-decoration: none;
-  transition: background 0.3s;
+.navbar .logo:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
 }
 
-aside nav a:hover {
-  background: #F3E8FF;
+.navbar .nav-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-right: 80px; /* remove extra margin */
 }
 
-aside a.logout {
-  margin-top: auto;
-  background: #EF4444;
-  color: #fff;
-  text-align: center;
-  padding: 12px;
-  border-radius: 8px;
-  transition: background 0.3s;
+.navbar .nav-right a {
+    color: #021526;
+    text-decoration: none;
+    font-size: 20px;
+    transition: color 0.3s ease;
 }
 
-aside a.logout:hover {
-  background: #DC2626;
+.navbar .nav-right a:hover {
+    color: #088395;
 }
 
+.navbar .btn.join {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #021526;
+    background: transparent;
+    color: #021526;
+    transition: all 0.3s ease;
+    font-size: 20px;
+}
+
+.navbar .btn:hover {
+    color: #088395;
+}
+
+.navbar .btn.join:hover {
+    background: #088395;
+    color: #021526;
+}
 /* =====================
-   HEADER
+   Navbar Underline Animation
 ===================== */
-header {
-  margin-left: 256px;
-  padding: 20px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
+.navbar .nav-right {
+    position: relative; /* needed for underline positioning */
 }
 
-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #213555;
+.navbar .nav-right .underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background-color: #088395;
+    border-radius: 2px;
+    transition: all 0.4s ease; /* gentle slide */
 }
+
 
 /* =====================
-   NOTIFICATIONS
+  MAIN CONTENT
 ===================== */
-#notifDropdown {
-  display: none;
-  position: absolute;
-  right: 0;
-  top: 2.5rem;
-  width: 18rem;
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 8px 25px rgba(33,53,85,0.2);
-  max-height: 20rem;
-  overflow-y: auto;
-  z-index: 50;
-  animation: fadeIn 0.3s ease;
-}
-
-#notifDropdown.show {
-  display: block;
-}
-
-#notifDropdown div {
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-#notifDropdown div:hover {
-  background: #f3f4f6;
-}
-
-#notifDropdown small {
-  color: #6b7280;
-  font-size: 0.75rem;
-}
-
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(-6px);}
-  to {opacity: 1; transform: translateY(0);}
-}
 
 /* =====================
-   MESSAGES
+   MAIN CONTENT
 ===================== */
-.message-container {
-  position: fixed;
-  top: 150px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-width: 30%;
-}
-
-.alert {
-  background-color: #10c25a;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 10px;
-  font-weight: 600;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  animation: fadeInOut 10s ease forwards;
-}
-
-.alert.error {
-  background-color: #e42611;
+.main-content {
+    margin-top: 120px; /* leave space for fixed navbar */
+    width: 90%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-bottom: 60px;
 }
 
 /* =====================
-   CARDS
+   Header
 ===================== */
-.card {
-  background: #D8C4B6;
-  border-radius: 20px;
-  padding: 24px;
-  color: #213555;
-  box-shadow: 0 6px 25px rgba(33,53,85,0.2);
-  border: 1px solid #3E5879;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin-bottom: 2rem;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
-.card:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 10px 35px rgba(33,53,85,0.3);
+.header-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #021526;
+}
+
+.notifications {
+    position: relative;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.notif-btn {
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #021526;
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.notif-btn:hover {
+    transform: scale(1.1);
+}
+
+.notif-indicator {
+    width: 10px;
+    height: 10px;
+    background-color: #FF4C4C;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    width: 280px;
+    max-height: 360px;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 10px 0;
+    z-index: 1000;
+}
+
+.notif-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.notif-item:hover {
+    background-color: #f5f5f5;
+}
+
+.notif-message {
+    font-size: 0.9rem;
+    color: #021526;
+    margin-bottom: 4px;
+}
+
+.notif-date {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.notif-clear-btn {
+    width: 100%;
+    padding: 8px 0;
+    background-color: #088395;
+    color: #fff;
+    border: none;
+    border-radius: 0 0 12px 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.notif-clear-btn:hover {
+    background-color: #37b7c3;
+}
+
+.notif-empty {
+    text-align: center;
+    padding: 20px 0;
+    color: #888;
 }
 
 /* =====================
-   PROFILE CARD
+   Messages
+===================== */
+.messages {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.message {
+    padding: 12px 20px;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 500;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    animation: fadeIn 0.3s ease forwards;
+}
+
+.message.success { background-color: #4CAF50; }
+.message.error { background-color: #F44336; }
+.message.info { background-color: #673AB7; }
+
+/* =====================
+   Profile Card
 ===================== */
 .profile-card {
-  max-width: 600px;
-  margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
 }
 
-.profile-pic {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #D8C4B6;
-  margin-bottom: 1rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.profile-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
 }
 
-.profile-pic:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(33,53,85,0.4);
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
-.profile-details p {
-  margin: 4px 0;
-  padding: 6px 10px;
-  background: #F5EFE7;
-  border-radius: 10px;
-  border: 1px solid #213555;
-  box-shadow: 0 1px 4px rgba(33,53,85,0.15);
+.profile-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* =====================
-   TABLES
-===================== */
-.applied-jobs-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
+.profile-info h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #021526;
 }
 
-.applied-jobs-table th,
-.applied-jobs-table td {
-  padding: 12px;
-  text-align: left;
+.profile-info p {
+    font-size: 0.9rem;
+    color: #666;
 }
 
-.applied-jobs-table th {
-  background: #213555;
-  color: #F5EFE7;
-  font-weight: 600;
-}
-
-.applied-jobs-table tr:nth-child(even) {
-  background: rgba(216,196,182,0.1);
-}
-
-/* =====================
-   TRAININGS LIST
-===================== */
-.training-list {
-  list-style: none;
-  padding: 0;
-}
-
-.training-list li {
-  background: rgba(216,196,182,0.1);
-  padding: 10px 14px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
-
-/* =====================
-   QUICK ACTIONS / BUTTONS
-===================== */
-.btn-primary,
-.btn-secondary {
-  display: inline-block;
-  padding: 12px 28px;
-  border-radius: 15px;
-  font-size: 1rem;
-  font-weight: 500;
-  text-decoration: none;
-  background: #213555;
-  color: #F5EFE7;
-  border: none;
-  box-shadow: 0 3px 8px rgba(33,53,85,0.25);
-  transition: all 0.25s ease;
-  cursor: pointer;
-}
-
-.btn-primary:hover,
-.btn-secondary:hover {
-  background: #3E5879;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(33,53,85,0.3);
-}
-
-/* =====================
-   RESPONSIVE
-===================== */
-@media (max-width: 768px) {
-  header {
-    margin-left: 0;
-    padding: 12px 20px;
-  }
-
-  aside {
-    width: 100%;
-    height: auto;
-    position: relative;
-    border-right: none;
-    border-bottom: 1px solid #e5e7eb;
-    flex-direction: row;
-    padding: 12px;
-  }
-
-  .profile-card {
-    width: 100%;
-  }
-
-  .applied-jobs-table th,
-  .applied-jobs-table td {
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px 24px;
     font-size: 0.85rem;
-  }
+    color: #021526;
+}
+
+.verification-status {
+    background-color: #DFF6FF;
+    color: #088395;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+.skills {
+    color: #673AB7;
+    font-weight: 500;
+}
+
+.btn-update {
+    display: inline-block;
+    padding: 10px 16px;
+    color: #fff;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    width: 500px;
+    margin-top: 12px;
+    transition: background 0.2s ease, transform 0.2s ease;
+    background: linear-gradient(135deg, #088395, #37B7C3);
+}
+
+.btn-update:hover {
+    transform: translateY(-2px);
+}
+
+/* Error card */
+.error-card {
+    border-left: 4px solid #F44336;
+    color: #F44336;
+}
+
+/* =====================
+   Tables
+===================== */
+.table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.jobs-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+.jobs-table th, .jobs-table td {
+    padding: 12px 16px;
+    text-align: left;
+}
+
+.jobs-table th {
+    background: #F0F5F9;
+    color: #021526;
+    font-weight: 600;
+}
+
+.jobs-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+}
+
+.status.accepted { background-color: #4CAF50; }
+.status.rejected { background-color: #F44336; }
+.status.pending { background-color: #FFC107; }
+.status.other { background-color: #888; }
+
+.empty-table {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+}
+
+/* =====================
+   Registered Trainings
+===================== */
+.registered-trainings {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.registered-trainings ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.training-item {
+    padding: 12px 16px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.training-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.training-status {
+    background-color: #DFF6FF;
+    color: #088395;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    margin-left: 8px;
+}
+
+.training-date {
+    color: #888;
+    font-size: 0.75rem;
+}
+
+/* Empty trainings */
+.empty-trainings {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+}
+
+/* =====================
+   Quick Actions
+===================== */
+.quick-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.action-btn {
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trainings-btn,
+.jobs-btn {
+    background: linear-gradient(135deg, #088395, #37B7C3);
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* =====================
+   Animations
+===================== */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+.section-title{
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  letter-spacing: 1.5px;
+  color: #EBF4F6;
+  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+/* ==========
+MESSAGE
+=============*/
+
+/* =====================
+   Messages Styling with Pop-up Animation (Right Side)
+===================== */
+.editprofile-message {
+    position: fixed;       /* overlay above everything */
+    top: 130px;            /* distance from top */
+    right: 20px;           /* distance from right */
+    z-index: 999999;       /* highest priority */
+    border-radius: 8px;
+    padding: 10px 20px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    /* Pop-up animation */
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    animation: messagePopRight 0.5s forwards;
+    margin-bottom: 10px;   /* spacing if multiple messages */
+}
+
+/* Animation keyframes for right-side pop */
+@keyframes messagePopRight {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(5px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Success message */
+.editprofile-message.success {
+    background: #37B7C3; /* light mint green */
+    color: #EBF4F6;      /* ivory text */
+    border: 1px solid #088395; /* mint green border */
+}
+
+/* Error message */
+.editprofile-message.error {
+    background: #EBF4F6;  /* ivory background */
+    color: #071952;       /* navy blue text */
+    border: 1px solid #071952;
+}
+
+/* Info message */
+.editprofile-message.info {
+    background: #088395; /* mint green */
+    color: #EBF4F6;      /* ivory text */
+    border: 1px solid #021526; /* black border */
 }

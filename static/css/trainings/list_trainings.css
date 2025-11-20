@@ -1,0 +1,279 @@
+/* =====================
+   Navigation Bar
+===================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 25px;
+    background: #EBF4F6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 800px;
+    z-index: 100;
+}
+
+.navbar .logo {
+    height: 70px;
+    width: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar .logo:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.navbar .nav-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-right: 80px; /* remove extra margin */
+}
+
+.navbar .nav-right a {
+    color: #021526;
+    text-decoration: none;
+    font-size: 20px;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-right a:hover {
+    color: #088395;
+}
+
+.navbar .btn.join {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #021526;
+    background: transparent;
+    color: #021526;
+    transition: all 0.3s ease;
+    font-size: 20px;
+}
+
+.navbar .btn:hover {
+    color: #088395;
+}
+
+.navbar .btn.join:hover {
+    background: #088395;
+    color: #021526;
+}
+/* =====================
+   Navbar Underline Animation
+===================== */
+.navbar .nav-right {
+    position: relative; /* needed for underline positioning */
+}
+
+.navbar .nav-right .underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background-color: #088395;
+    border-radius: 2px;
+    transition: all 0.4s ease; /* gentle slide */
+}
+
+/* =====================
+   General Page Styling
+===================== */
+body {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* align everything to left */
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #1B3C53;
+    overflow-x: hidden;
+
+    background: url("/static/images/wall.jpg") no-repeat center 70% / cover;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/static/images/plant.jpg") no-repeat center 80% / cover;
+    filter: blur(3px);
+    z-index: -1;
+}
+
+/* =====================
+   Main Content
+===================== */
+main {
+    max-width: 1600px; /* increased max-width for bigger table */
+    margin: 120px auto 60px auto;
+    padding: 0 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
+    align-items: flex-start; /* align main content to left */
+}
+
+.section-subtitle{
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  letter-spacing: 1.5px;
+  color: #EBF4F6;
+  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.9);
+} 
+
+/* =====================
+   Header
+===================== */
+header h1 {
+    font-size: 3rem; /* slightly bigger */
+    font-weight: 700;
+    color: #021526;
+    margin-bottom: 20px;
+    text-align: left; /* ensure left alignment */
+}
+
+/* =====================
+   Messages
+===================== */
+div.success {
+    background-color: #088395;
+    color: #EBF4F6;
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+div.error {
+    background-color: #071952;
+    color: #EBF4F6;
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+div.info {
+    background-color: #37B7C3;
+    color: #021526;
+    padding: 12px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+/* =====================
+   Trainings Table
+===================== */
+table {
+    width: 100%;
+    max-width: 1500px; /* larger table */
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(2,21,38,0.12); /* slightly bigger shadow */
+    font-size: 1.2rem; /* bigger font */
+}
+
+thead {
+    background-color: #088395;
+    color: #EBF4F6;
+}
+
+th, td {
+    padding: 22px 28px; /* bigger cells */
+    text-align: left;
+}
+
+tr:nth-child(even) {
+    background-color: #EBF4F6;
+}
+
+tr:hover {
+    background-color: inherit; /* no hover effect */
+}
+
+/* =====================
+   Actions (Buttons & Links)
+===================== */
+a {
+    text-decoration: none;
+    color: #021526;
+}
+
+a:hover {
+    color: #088395;
+}
+
+button {
+    padding: 14px 24px; /* bigger buttons */
+    border-radius: 8px;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+/* Delete Button */
+button.delete {
+    background-color: #071952;
+    color: #EBF4F6;
+}
+
+button.delete:hover {
+    background-color: #088395;
+}
+
+/* Register Button */
+button.register {
+    background-color: #37B7C3;
+    color: #021526;
+}
+
+button.register:hover {
+    background-color: #088395;
+}
+
+/* =====================
+   Responsive
+===================== */
+@media (max-width: 1024px) {
+    main {
+        max-width: 95%;
+        margin: 100px 15px 40px 15px;
+    }
+
+    table, th, td {
+        font-size: 1rem;
+        padding: 16px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    main {
+        margin: 80px 15px 40px 15px;
+    }
+
+    table, th, td {
+        font-size: 0.95rem;
+        padding: 12px 16px;
+    }
+}

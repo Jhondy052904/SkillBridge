@@ -1,0 +1,109 @@
+/* Reset Password Page Styles (based on login.css) */
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Page Centering */
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  background: url("/static/images/b1.jpg") no-repeat center center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+/* Card Container */
+.login-container {
+  background: rgba(235, 244, 246, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7);
+  padding: 40px 50px;
+  max-width: 380px;
+  width: 90%;
+  text-align: center;
+}
+
+/* Title */
+.login-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #021526;
+  margin-bottom: 30px;
+}
+
+/* Form Fields */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 0.8s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.login-form label {
+  text-align: left;
+  font-weight: 600;
+  color: #021526;
+  font-size: 0.95rem;
+}
+
+.login-form input {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 0.95rem;
+}
+
+/* Buttons */
+.sign-in-btn {
+  background: linear-gradient(135deg, #1B3C53, #456882);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Back to login link */
+.back-to-login {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.back-link {
+  color: #1B3C53;
+  font-size: 1rem;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+/* Optional: Fade-in effect for inputs and button */
+.login-form input,
+.sign-in-btn {
+  transition: all 0.3s ease;
+}
+
+.login-form input:focus {
+  border-color: #1B3C53;
+  box-shadow: 0 0 5px rgba(27, 60, 83, 0.5);
+}

@@ -1,0 +1,257 @@
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+html {
+    overflow-y: scroll; /* prevent shifting due to scrollbar */
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;   /* avoid tiny horizontal offset */
+    width: 100%;
+    padding: 12px 25px;
+    background: #EBF4F6;
+    display: flex;
+    justify-content: space-between; /* safer than center */
+    align-items: center;
+    gap: 80px;
+    z-index: 1000;
+}
+
+
+/* =====================
+   Navigation Bar
+===================== */
+.navbar {
+    position: fixed;
+    top: 0px;
+    left: 2.2px;
+    width: 100%;
+    padding: 12px 25px;
+    background: #EBF4F6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 80px;
+    z-index: 990;
+}
+
+.navbar .logo {
+    height: 70px;
+    width: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar .logo:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.navbar .nav-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-right: 80px; /* remove extra margin */
+}
+
+.navbar .nav-right a {
+    color: #021526;
+    text-decoration: none;
+    font-size: 20px;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-right a:hover {
+    color: #088395;
+}
+
+.navbar .btn.join {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #021526;
+    background: transparent;
+    color: #021526;
+    transition: all 0.3s ease;
+    font-size: 20px;
+}
+
+.navbar .btn:hover {
+    color: #088395;
+}
+
+.navbar .btn.join:hover {
+    background: #088395;
+    color: #021526;
+}
+/* =====================
+   Navbar Underline Animation
+===================== */
+.navbar .nav-right {
+    position: relative; /* needed for underline positioning */
+}
+
+.navbar .nav-right .underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background-color: #088395;
+    border-radius: 2px;
+    transition: all 0.4s ease; /* gentle slide */
+}
+
+/* grid */
+.parent {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.div1, .div2 { display: none !important; }
+
+/* CONTENT-1 */
+.Content-1 {
+  width: 100%;
+  background: url("/static/images/table.jpg") no-repeat center 50% / cover;
+  padding: 140px;
+  margin: 0;
+  border-radius: 0;
+}
+
+.text-block1{
+    margin-top: 60px;
+    color: #EBF4F6;
+}
+/* SKILLBRIDGE ASK */
+.SkillBridgeAsk {
+  width: 45%;
+  background: #EBF4F6;
+  color: #021526;
+  padding: 100px;
+  margin-top: 60px;
+  border-radius: 10px;
+  margin-right: 290px;
+  margin-left: -150px;
+  text-align: flex-end;
+}
+
+.SkillBridgeAsk h2 {
+  margin-bottom: 10px;
+  margin-left: 515px;
+}
+
+.ask-options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 350px;
+  margin: 0 auto;
+  margin-right: 0px;
+}
+
+.ask-box {
+  background: #213555;
+  border-radius: 20px;
+  padding: 25px;
+  color: #EBF4F6;
+  transition: 0.3s ease;
+}
+.ask-box:hover { transform: translateY(-6px); }
+
+.CirclePic {
+  position: absolute;
+  top: 63%;
+  right: 150px;
+  transform: translateY(-50%) scaleX(-1);
+  width: 590px;
+  height: 590px;
+  border-radius: 50%;
+  background: url("/static/images/work.jpg") no-repeat center 120% / cover;
+  background-size: cover;
+  background-position: center;
+}
+
+
+
+/* CONTENT-3 (Footer) */
+/* Footer Styles */
+.site-footer {
+  background: #021526;
+  color: #fff;
+  padding: 40px 20px 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.footer-section {
+  flex: 1 1 200px;
+}
+
+.footer-section h4 {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #fbff03;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+  color: #fff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-section ul li a:hover {
+  color: #fbff03;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.social-icons a {
+  color: #fff;
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+.social-icons a:hover {
+  color: #fbff03;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  border-top: 1px solid #444;
+  padding-top: 15px;
+  font-size: 0.9rem;
+  color: #ccc;
+}

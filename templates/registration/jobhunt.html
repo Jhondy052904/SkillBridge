@@ -1,13 +1,64 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Hunt</title>
+    <!--NAVBAR-->
+    <link rel="stylesheet" href="{% static 'css/registration/index.css' %}?v=3">
+
 </head>
 <body>
-    <p>
-        Job Hunt Page
-    </p>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'aboutus' %}">About Us</a>
+    <a href="{% url 'jobhunt' %}" class="active">Job Hunt</a>
+    <div class="underline"></div>
+    <a>|</a>
+    <a href="{% url 'login' %}" class="btn">Sign In</a>
+    <a href="{% url 'signup' %}" class="btn join">Join Us</a>
+  </div>
+</nav>
+
+
+
+
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const menuLinks = document.querySelectorAll('.nav-right a');
+  const underline = document.querySelector('.nav-right .underline');
+
+  function moveUnderline(el) {
+      const rect = el.getBoundingClientRect();
+      const parentRect = el.closest('.nav-right').getBoundingClientRect();
+      underline.style.width = rect.width + 'px';
+      underline.style.left = (rect.left - parentRect.left) + 'px';
+  }
+
+  const activeLink = document.querySelector('.nav-right a.active');
+  if (activeLink) moveUnderline(activeLink);
+
+  menuLinks.forEach(link => {
+      link.addEventListener('mouseenter', e => moveUnderline(e.target));
+  });
+
+  document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+      if (activeLink) moveUnderline(activeLink);
+  });
+});
+
+</script>
 </body>
 </html>

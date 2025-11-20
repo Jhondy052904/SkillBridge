@@ -1,13 +1,147 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us</title>
+    <link rel="stylesheet" href="{% static 'css/registration/aboutus.css' %}?v=3">
+    
 </head>
 <body>
-    <p>
-        About Us Page
-    </p>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="{% url 'home' %}">Home</a>
+    <a href="{% url 'aboutus' %}" class="active">About Us</a>
+    <a href="{% url 'jobhunt' %}">Job Hunt</a>
+    <div class="underline"></div>
+    <a>|</a>
+    <a href="{% url 'login' %}" class="btn">Sign In</a>
+    <a href="{% url 'signup' %}" class="btn join">Join Us</a>
+  </div>
+</nav>
+<div class="parent">
+
+  <!-- CONTENT 1 -->
+  <div class="Content-1">
+    <div class="text-block1">
+      <h1>Explore top Skillbridge Content</h1>
+      <h3>Discover relevant posts, jobs, events and trainings tailored to your skills and interests.</h3>
+    </div>
+
+    <!-- SkillBridgeAsk inside Content-1 -->
+    <div class="SkillBridgeAsk">
+      <h2>Anyone in the barangay can?</h2>
+      <br>
+      <div class="ask-options">
+        <div class="ask-box">Look for a job</div>
+        <div class="ask-box">Look for a training</div>
+        <div class="ask-box">Look for a opportunity</div>
+      </div>
+    </div>
+
+    <div class="CirclePic"></div>
+  </div>
+
+  <!-- CONTENT 3 (Footer) -->
+<div class="Content-3">
+  <footer class="site-footer">
+    <div class="footer-container">
+      <!-- Column 1 -->
+      <div class="footer-section">
+        <h4>General</h4>
+        <ul>
+          <li><a href="signup.html">Sign Up</a></li>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="aboutus.html">About</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Developers</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 2 -->
+      <div class="footer-section">
+        <h4>Browse SkillBridge</h4>
+        <ul>
+          <li><a href="community.html">Community</a></li>
+          <li><a href="jobs.html">Jobs</a></li>
+          <li><a href="#">Learning</a></li>
+          <li><a href="#">Games</a></li>
+          <li><a href="#">Mobile</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3 -->
+      <div class="footer-section">
+        <h4>Services & Products</h4>
+        <ul>
+          <li><a href="#">Business Solutions</a></li>
+          <li><a href="#">Talent</a></li>
+          <li><a href="#">Marketing</a></li>
+          <li><a href="#">Sales</a></li>
+          <li><a href="#">Learning</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4 -->
+      <div class="footer-section">
+        <h4>Connect With Us</h4>
+        <div class="social-icons">
+          <a href="https://github.com/" target="_blank" title="GitHub"><i class="fab fa-github"></i></a>
+          <a href="https://facebook.com/" target="_blank" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://instagram.com/" target="_blank" title="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="https://linkedin.com/" target="_blank" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://google.com/" target="_blank" title="Google"><i class="fab fa-google"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 SkillBridge. All rights reserved.</p>
+    </div>
+  </footer>
+</div>
+
+</div>
+
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+<!-- JS Slider -->
+<script>
+
+document.addEventListener('DOMContentLoaded', () => {
+  const menuLinks = document.querySelectorAll('.nav-right a');
+  const underline = document.querySelector('.nav-right .underline');
+
+  function moveUnderline(el) {
+      const rect = el.getBoundingClientRect();
+      const parentRect = el.closest('.nav-right').getBoundingClientRect();
+      underline.style.width = rect.width + 'px';
+      underline.style.left = (rect.left - parentRect.left) + 'px';
+  }
+
+  const activeLink = document.querySelector('.nav-right a.active');
+  if (activeLink) moveUnderline(activeLink);
+
+  menuLinks.forEach(link => {
+      link.addEventListener('mouseenter', e => moveUnderline(e.target));
+  });
+
+  document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+      if (activeLink) moveUnderline(activeLink);
+  });
+});
+
+</script>
+
 </body>
 </html>
