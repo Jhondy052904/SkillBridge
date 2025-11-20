@@ -13,6 +13,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('forgot-password/', views.forgot_password_view, name='forgot_password'),
+    path("reset-password/", views.supabase_reset_page, name="supabase_reset"),
 
     # -------- OFFICIAL DASHBOARD --------
     path('official/dashboard/', views.official_dashboard, name='official_dashboard'),
@@ -21,8 +22,6 @@ urlpatterns = [
     path('official/post-event/', views.post_event, name='post_event'),
     path('official/verification-panel/', views.verification_panel, name='verification_panel'),
     path('verify/resident/<int:resident_id>/', views.resident_details, name='resident_details'),
-
-
 
     # -------- PROFILE --------
     path('profile/', views.edit_profile_view, name='edit_profile'),

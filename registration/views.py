@@ -206,6 +206,8 @@ def aboutus(request):
 def jobhunt(request):
     return render(request, 'registration/jobhunt.html')
 
+def supabase_reset_page(request):
+    return render(request, "registration/reset_password.html")
 
 # ------------------------------------------------------------
 # SIGNUP — create new account in Supabase
