@@ -25,36 +25,34 @@ function updateClock() {
     }
 }
 setInterval(updateClock, 1000);
-updateClock();
+updateClock();// Filter jobs by search text and category
 
-// Search Filter
 function filterJobs() {
-    console.log('filterJobs called');
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    console.log('Search query:', q);
+    const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+    const selectedType = document.getElementById('filterSelect').value;
     const cards = document.querySelectorAll('.job-card');
-    console.log('Found job cards:', cards.length);
+
     cards.forEach(card => {
         const title = card.querySelector('h3').innerText.toLowerCase();
-        const descEl = card.querySelector('p.text-gray-600');
-        const description = descEl ? descEl.innerText.toLowerCase() : '';
-        console.log('Title:', title, 'Desc:', description);
-        const matches = title.includes(q) || description.includes(q);
-        card.style.display = matches ? '' : 'none';
-        console.log('Matches:', matches);
+        const desc = card.querySelector('p.text-gray-600')?.innerText.toLowerCase() || '';
+        const jobType = card.getAttribute('data-type') || '';
+
+        // Match search query
+        const matchesSearch = title.includes(searchQuery) || desc.includes(searchQuery);
+
+        // Match selected filter: All Types or matching type
+        const matchesFilter = selectedType === "" || selectedType === jobType;
+
+        card.style.display = (matchesSearch && matchesFilter) ? "" : "none";
     });
 }
 
-// Real-time search
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOMContentLoaded for search');
-    const searchInput = document.getElementById('searchInput');
-    console.log('Search input found:', !!searchInput);
-    if (searchInput) {
-        searchInput.addEventListener('input', filterJobs);
-        console.log('Event listener added');
-    }
+// Add event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('searchInput').addEventListener('input', filterJobs);
+    document.getElementById('filterSelect').addEventListener('change', filterJobs);
 });
+
 
 // Chart (wait for DOM)
 document.addEventListener('DOMContentLoaded', function () {

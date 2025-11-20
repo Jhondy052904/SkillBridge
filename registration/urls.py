@@ -5,7 +5,6 @@ urlpatterns = [
     # -------- PUBLIC ROUTES --------
     path('', views.index, name='index'),
     path('home/', views.home, name='home'),
-    path('community/', views.community, name='community'),
     path('aboutus/', views.aboutus, name='aboutus'),
     path('jobhunt/', views.jobhunt, name='jobhunt'),
 

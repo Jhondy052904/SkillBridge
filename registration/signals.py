@@ -47,3 +47,4 @@ def create_user_profiles(sender, instance, created, **kwargs):
                 "birthdate": None,      # 👈 optional
                 "user_id": useraccount_id
             }).execute()
+

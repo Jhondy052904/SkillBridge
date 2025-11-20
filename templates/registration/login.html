@@ -1,38 +1,68 @@
-{% extends "registration/base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Login{% endblock %}</title>
 
-{% block title %}Login{% endblock %}
+    {% block extra_head %}
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    {% endblock %}
 
-{% block extra_head %}
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-{% endblock %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-{% block content %}
-<h2 class="section-title">Welcome Back!</h2>
-<br>
-<form method="post" class="auth-form">
-    {% csrf_token %}
+    <link rel="stylesheet" href="{% static 'css/registration/login.css' %}?v=2">
+</head>
+<body>
 
-    <div class="form-group floating-label">
-        <input type="text" id="username" name="username" placeholder=" " required>
-        <label for="username">Username</label>
+<div class="login-page">
+ 
+    <button class="back-btn" onclick="window.location.href='/'">
+        <i class="fas fa-arrow-left back-icon"></i> Back
+    </button>
+
+    <div class="login-container">
+        <h1 class="login-title">LOGIN</h1>
+
+        <form method="post" class="login-form">
+            {% csrf_token %}
+
+            <label>Username</label>
+            <div class="input-with-icon">
+                <i class="fas fa-envelope input-icon"></i>
+                <input type="username" name="username" placeholder="yourname@gmail.com" required>
+            </div>
+
+            <label>Password</label>
+            <div class="input-with-icon">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="error">{{ form.non_field_errors.0 }}</div>
+            {% endif %}
+
+            <p class="forgot-password">
+                <a href="{% url 'forgot_password' %}">Forgot password?</a>
+            </p>
+
+            <!-- Sign in button -->
+            <button type="submit" class="sign-in-btn">Sign In</button>
+
+            <!-- Divider -->
+            <div class="divider">DON'T HAVE ANY ACCOUNT?</div>
+
+            <!-- Create account button -->
+            <button type="button" class="create-account-btn" onclick="window.location.href='{% url 'signup' %}'">
+                Create New Account
+            </button>
+        </form>
     </div>
+</div>
 
-    <div class="form-group floating-label">
-        <input type="password" id="password" name="password" placeholder=" " required>
-        <label for="password">Password</label>
-    </div>
-
-    {% if form.non_field_errors %}
-        <div class="error">{{ form.non_field_errors.0 }}</div>
-    {% endif %}
-    <p style="text-align:left; margin-top: 1px; margin-left: 5px;">
-    <a href="{% url 'forgot_password' %}" style="color: #234C6A; font-weight:bold; text-decoration: none;">Forgot Password?</a>
-    </p>
-    <button type="submit">Login</button>
-</form>
-<br>
-<p style="color: #000000; font-size: 17px; margin-top: 15px;">Don’t have an account?
-<a href="{% url 'signup' %}" style="color: #234C6A; font-weight: bold; text-decoration: none;">Sign up</a></p>
-{% endblock %}
+</body>
+</html>

@@ -1,216 +1,122 @@
-{% extends 'registration/base.html' %}
 {% load static %}
-{% block title %}Home{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
 
-{% block no_container %}
+    <!-- Link to your CSS -->
+    <link rel="stylesheet" href="{% static 'css/registration/index.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
+</head>
+<body>
+
+<!-- Navbar -->
 <nav class="navbar">
   <div class="nav-left">
     <a href="#" class="logo-link">
-      <img src="{% static 'images/Logo1.png' %}" alt="Skill Bridge Logo" class="logo">
+      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
     </a>
   </div>
   <div class="nav-right">
-    <a href="{% url 'community' %}">Community</a>
+    <a href="{% url 'home' %}"class="active">Home</a>
     <a href="{% url 'aboutus' %}">About Us</a>
     <a href="{% url 'jobhunt' %}">Job Hunt</a>
+    <div class="underline"></div>
     <a>|</a>
     <a href="{% url 'login' %}" class="btn">Sign In</a>
     <a href="{% url 'signup' %}" class="btn join">Join Us</a>
   </div>
 </nav>
 
-<div class="parent">
-  <div class="main-columns div1">
-    <div class="index-content page-background">
-      <p id="motto">Welcome to your</p>
-      <h1 id="headline">platform that connects talent to real success.</h1>
-      <h4 id="subheadline">Where Skills create possibilities.</h4>
-      <p id="divider">______________________________________________________________________________</p>
-      <a href="{% url 'signup' %}" id="cta-button" class="btn main-btn" style="text-decoration: none;">Get Started</a>
-    </div>
-  </div>
-
-  <div class="ratings div2">
-    <p class="stars">★★★★★ <span>4.2/5</span></p>
-    <p class="reviews">from 1,561 ratings</p>
-    <p class="stories">
-      <a href="{% url 'community' %}">Check Out Our Residents Stories</a>
-    </p>
-  </div>
-
-  <div class="Content-1 div3">
-    <div class="text-block1">
-      <h2>Explore top Skillbridge Content</h2>
-      <p>
-        Discover relevant posts, jobs, events and trainings tailored to your skills and interests.</p>
+<!-- Main Content -->
+<div class="content">
+    <div class="upper-section">
+        <h1 class="title">Where Skill Meets Opportunity</h1>
+        <h3 class="subtitle">
+            Unlock Your Potential.
+        </h3>
     </div>
 
-    <div class="SkillBridgeAsk">
-      <h2>Who is SkillBridge for?</h2>
-      <p>Anyone in the barangay.</p>
-
-      <div class="ask-options">
-        <div class="ask-box">Looking for a job seeker</div>
-        <div class="ask-box">Looking for a new job&nbsp; &nbsp;&nbsp;</div>
-        <div class="ask-box">Looking for a training&nbsp;&nbsp;&nbsp;&nbsp;</div>
-      </div>
+    <div class="lower-section">
+        <a href="{% url 'login' %}" class="btn-get-started">
+            Get Started
+        </a>
     </div>
-
-    <div class="CirclePic"></div>
-
-  </div>
-
-  <div class="Content-2 div4">
-    <div class="text-block">
-      <h2>Building Opportunities Together</h2>
-      <p>
-        SkillBridge is more than a platform — it’s where ambitious learners and mentors grow together. <br>
-        Join hands with professionals, mentors, and businesses who believe in skill-based growth.
-      </p>
-      <a href="{% url 'community' %}" class="btn secondary-btn">Join the Community</a>
-    </div>
-
-    <!-- SLIDER CONTAINER -->
-    <div class="image-slider">
-      <div class="slides">
-        <img src="{% static 'images/img1.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img2.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img3.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img4.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img5.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img6.jpg' %}" alt="Community" class="content-image">
-
-        <img src="{% static 'images/img1.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img2.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img3.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img4.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img5.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img6.jpg' %}" alt="Community" class="content-image">
-
-        <img src="{% static 'images/img1.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img2.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img3.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img4.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img5.jpg' %}" alt="Community" class="content-image">
-        <img src="{% static 'images/img6.jpg' %}" alt="Community" class="content-image">
-      </div>
-    </div>
-  </div>
-
-
-  <div class="Content-3 div5">
-      <footer class="site-footer">
-        <div class="footer-container">
-          <!-- Column 1 -->
-          <div class="footer-section">
-            <h4>General</h4>
-            <ul>
-              <li><a href="{% url 'signup' %}">Sign Up</a></li>
-              <li><a href="#">Help Center</a></li>
-              <li><a href="{% url 'aboutus' %}">About</a></li>
-              <li><a href="#">Press</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">Careers</a></li>
-              <li><a href="#">Developers</a></li>
-            </ul>
-          </div>
- 
-          <!-- Column 2 -->
-          <div class="footer-section">
-            <h4>Browse SkillBridge</h4>
-            <ul>
-              <li><a href="{% url 'community' %}">Community</a></li>
-              <li><a href="{% url 'jobhunt' %}">Jobs</a></li>
-              <li><a href="#">Learning</a></li>
-              <li><a href="#">Games</a></li>
-              <li><a href="#">Mobile</a></li>
-            </ul>
-          </div>
- 
-          <!-- Column 3 -->
-          <div class="footer-section">
-            <h4>Services & Products</h4>
-            <ul>
-              <li><a href="#">Business Solutions</a></li>
-              <li><a href="#">Talent</a></li>
-              <li><a href="#">Marketing</a></li>
-              <li><a href="#">Sales</a></li>
-              <li><a href="#">Learning</a></li>
-            </ul>
-          </div>
- 
-          <!-- Column 4 -->
-          <div class="footer-section">
-            <h4>Directories</h4>
-            <ul>
-              <li><a href="#">Members</a></li>
-              <li><a href="#">Jobs</a></li>
-              <li><a href="#">Companies</a></li>
-              <li><a href="#">Learning</a></li>
-              <li><a href="#">Posts</a></li>
-              <li><a href="#">Articles</a></li>
-              <li><a href="#">Schools</a></li>
-              <li><a href="#">News</a></li>
-              <li><a href="#">Newsletters</a></li>
-            </ul>
-          </div>
-        </div>
- 
-        <div class="footer-bottom">
-          <div class="footer-bottom-links">
-            <a href="#">About</a>
-            <a href="#">Accessibility</a>
-            <a href="#">User Agreement</a>
-            <a href="#">Privacy Policy</a>
-            <a href="#">Cookie Policy</a>
-            <a href="#">Copyright Policy</a>
-            <a href="#">Brand Policy</a>
-            <a href="#">Guest Controls</a>
-            <a href="#">Community Guidelines</a>
-          </div>
-          <p>© 2025 SkillBridge</p>
-        </div>
-      </footer>
-    </div>
- 
 </div>
+
+<!-- Decorative Rectangle -->
+<div class="rectangle-section">
+    <div class="rectangle-text">
+        Welcome to Skill Bridge! Connect, Learn, and Grow. <br><br>
+        Welcome to Skill Bridge! Connect, Learn, and Grow.
+    </div>
+</div>
+
+<!-- Decorative Square -->
+<div class="square-section"></div>
+
+<!-- Footer -->
+<footer class="footer">
+    © 2025 Skill Bridge. All rights reserved.
+</footer>
+
+<!-- JS Slider -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const slides = document.querySelector(".slides");
-  const images = document.querySelectorAll(".slides img");
-  let index = 0;
 
-  // Clone the first slide for smooth looping
-  const firstClone = images[0].cloneNode(true);
-  slides.appendChild(firstClone);
+const menuLinks = document.querySelectorAll('.nav-right a');
+const underline = document.querySelector('.nav-right .underline');
 
-  const totalSlides = images.length + 1; // include the clone
-  const slideDuration = 3000; // time each image stays
-  const transitionDuration = 1000; // 1s fade
+function moveUnderline(el) {
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.closest('.nav-right').getBoundingClientRect();
+    underline.style.width = rect.width + 'px';
+    underline.style.left = (rect.left - parentRect.left) + 'px';
+}
 
-  const moveSlide = () => {
-    index++;
-    slides.style.transition = `transform ${transitionDuration}ms ease-in-out`;
-    slides.style.transform = `translateX(-${index * 100}%)`;
+// Initialize on active link
+const activeLink = document.querySelector('.nav-right a.active');
+if (activeLink) moveUnderline(activeLink);
 
-    // When we reach the cloned slide (last one)
-    if (index === totalSlides - 1) {
-      // Wait until transition finishes, then reset instantly
-      setTimeout(() => {
-        slides.style.transition = "none";
-        slides.style.transform = "translateX(0)";
-        index = 0;
-      }, transitionDuration);
-    }
-  };
-
-  // Run every few seconds
-  setInterval(moveSlide, slideDuration);
+// Hover effect
+menuLinks.forEach(link => {
+    link.addEventListener('mouseenter', e => moveUnderline(e.target));
 });
+
+// Reset to active link on mouse leave
+document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+    if (activeLink) moveUnderline(activeLink);
+});
+
+//logout 
+const logoutLink = document.getElementById('logoutLink');
+
+logoutLink.addEventListener('click', function(e) {
+    e.preventDefault(); // prevent default navigation
+
+    // Create pop-up container
+    const popup = document.createElement('div');
+    popup.className = 'logout-popup';
+    popup.innerHTML = `
+        <p>End Session?</p>
+        <div class="popup-buttons">
+            <button id="confirmLogout">Yes</button>
+            <button id="cancelLogout">No</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Button actions
+    document.getElementById('confirmLogout').addEventListener('click', () => {
+        window.location.href = logoutLink.href; // proceed to logout
+    });
+
+    document.getElementById('cancelLogout').addEventListener('click', () => {
+        popup.remove(); // close popup
+    });
+});
+
 </script>
-
-
-
-
-
-{% endblock %}
+</body>
+</html>

@@ -22,75 +22,6 @@ body {
 }
 
 /* =====================
-Navbar Styling
-===================== */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 15px 40px;
-    background: #1f3b52;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 100;
-}
- 
-.navbar .logo {
-    height: 68px;
-    width: 300px;
-    margin-left: -10px;
-    border-radius: 8px;
-    object-fit: cover;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
- 
-.navbar .logo:hover {
-    transform: scale(1.05);
-    /* slight zoom effect on hover */
-    opacity: 0.9;
-}
- 
-.navbar .nav-right {
-    display: flex;
-    gap: 25px;
-    align-items: center;
-    margin-right: 100px;
-}
- 
-.navbar .nav-right a {
-    color: #F5EFE7;
-    text-decoration: none;
-    font-size: 18px;
-    transition: color 0.3s ease;
-}
- 
-.navbar .nav-right a:hover {
-    color:  #F5EFE7;
-}
- 
-/* Buttons inside navbar */
-.navbar .btn.join {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid #fff;
-    background: transparent;
-    color: #fff;
-    transition: all 0.3s ease;
-    font-size: 18px;
-}
- 
-.navbar .btn:hover {
-    color: #000B58;
-}
- 
-.navbar .btn.join:hover {
-    background: #fff;
-    color: #021929;
-}
-
-/* =====================
    WELCOME BANNER
 ===================== */
 .welcome-banner {
@@ -266,12 +197,12 @@ Navbar Styling
 }
 
 .tbody {
-  color #000000ff;
+  color: #000000ff;
 }
 .data-table th,
 .data-table td {
   padding: 12px 10px;
-  color #000000ff;
+  color: #000000ff;
   text-align: left;
 }
 
@@ -371,15 +302,15 @@ Navbar Styling
 ===================== */
 .message-container {
     position: fixed;
-    top: 100px; /* below navbar */
+    top: 150px; /* below navbar */
     left: 50%;
     transform: translateX(-50%);
     z-index: 9999;
     width: auto;
-    max-width: 90%;
+    max-width: 30%;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 30px;
 }
  
 .alert {

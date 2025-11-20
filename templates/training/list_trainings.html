@@ -1,99 +1,79 @@
-{% extends "registration/base.html" %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Management | SkillBridge</title>
 
-{% block no_container %}
+    <link rel="stylesheet" href="{% static 'css/trainings/list_trainings.css' %}">
+    <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
+</head>
+<body>
+        <!-- ====================== NAVBAR ====================== -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="#" class="logo-link">
+      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+    </a>
+  </div>
+  <div class="nav-right">
+    <a href="{% url 'home' %}">Dashboard</a>
+    <a href="{% url 'list_jobs' %}">Jobs</a>
+    <a href="{% url 'list_trainings' %}" class="active">Trainings</a>
+    <div class="underline"></div>
+    <a>|</a>
+    <a href="{% url 'edit_profile' %}">Profile</a>
+    <a href="{% url 'login' %}" id="logoutLink">Logout</a>
 
-<div class="soft-bg min-h-screen flex text-gray-900">
+  </div>
+</nav>
+    <!-- ====================== MAIN CONTENT ====================== -->
+    <main>
 
-    {% if user_role == 'Official' %}
-    <aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
-        <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
-
-        <nav class="space-y-2 font-medium">
-            <a href="{% url 'official_dashboard' %}" class="block p-3 rounded-lg hover:bg-purple-50">Dashboard</a>
-            <a href="{% url 'verification_panel' %}" class="block p-3 rounded-lg hover:bg-purple-50">Verify Residents</a>
-            <a href="{% url 'post_training' %}" class="block p-3 rounded-lg bg-purple-600 text-white">
-                Training Management
-            </a>
-        </nav>
-
-        <div class="mt-auto pt-8">
-            <p class="font-semibold mb-2">{{ user.username }}</p>
-            <a href="{% url 'logout' %}" class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
-                Logout
-            </a>
-        </div>
-    </aside>
-    {% endif %}
-
-
-    <main class="flex-1 p-6 md:p-10">
-
-        <header class="flex justify-between items-center mb-10">
-            <h1 class="text-3xl font-bold">
-                {% if user_role == 'Official' %} Training Management {% else %} Available Trainings {% endif %}
-            </h1>
-
-            {% if user_role == 'Official' %}
-            <a href="{% url 'post_training' %}"
-               class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg shadow">
-                + Add Training
-            </a>
-            {% endif %}
+        <!-- Header -->
+        <header>
+            <h1 class="section-subtitle">Available Trainings</h1>
         </header>
 
-
+        <!-- Messages -->
         {% if messages %}
-        <div class="mb-6">
+        <div>
             {% for message in messages %}
-                <div class="p-3 rounded text-white mb-2
-                {% if message.tags == 'success' %} bg-green-600
-                {% elif message.tags == 'error' %} bg-red-600
-                {% else %} bg-purple-600 {% endif %}">
+                <div class="{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
                     {{ message }}
                 </div>
             {% endfor %}
         </div>
         {% endif %}
 
-
+        <!-- Trainings Table -->
         {% if trainings %}
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-gray-100 font-semibold text-gray-700">
+        <div>
+            <table>
+                <thead>
                     <tr>
-                        <th class="p-3">Training Name</th>
-                        <th class="p-3">Date</th>
-                        <th class="p-3">Slots</th>
-                        <th class="p-3">Actions</th>
+                        <th>Training Name</th>
+                        <th>Date</th>
+                        <th>Slots</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {% for t in trainings %}
-                    <tr class="border-t hover:bg-gray-50 transition">
-                        <td class="p-3">{{ t.training_name }}</td>
-                        <td class="p-3">{{ t.date_scheduled|date:"M d, Y" }}</td>
-                        <td class="p-3">{{ t.slots }}</td>
-
-                        <td class="p-3 flex gap-3">
+                    <tr>
+                        <td>{{ t.training_name }}</td>
+                        <td>{{ t.date_scheduled|date:"M d, Y" }}</td>
+                        <td>{{ t.slots }}</td>
+                        <td>
                             {% if user_role == 'Official' %}
-                                <a href="{% url 'edit_training' t.id %}" class="text-blue-600 hover:text-blue-800 font-semibold">
-                                    Edit
-                                </a>
-
-                                <form action="{% url 'delete_training' t.id %}" method="POST"
-                                      onsubmit="return confirm('Delete this training? This cannot be undone.')">
+                                <a href="{% url 'edit_training' t.id %}">Edit</a>
+                                <form action="{% url 'delete_training' t.id %}" method="POST" onsubmit="return confirm('Delete this training?');">
                                     {% csrf_token %}
-                                    <button type="submit"
-                                            class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">
-                                        Delete
-                                    </button>
+                                    <button type="submit">Delete</button>
                                 </form>
                             {% else %}
-                                <a href="#" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
-                                    Register
-                                </a>
+                                <a href="#">Register</a>
                             {% endif %}
                         </td>
                     </tr>
@@ -101,12 +81,68 @@
                 </tbody>
             </table>
         </div>
-
         {% else %}
-            <p class="text-gray-500 italic text-center mt-8">No training events available.</p>
+            <p>No training events available.</p>
         {% endif %}
 
     </main>
-</div>
 
-{% endblock %}
+
+<script>
+    
+const menuLinks = document.querySelectorAll('.nav-right a');
+const underline = document.querySelector('.nav-right .underline');
+
+function moveUnderline(el) {
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.closest('.nav-right').getBoundingClientRect();
+    underline.style.width = rect.width + 'px';
+    underline.style.left = (rect.left - parentRect.left) + 'px';
+}
+
+// Initialize on active link
+const activeLink = document.querySelector('.nav-right a.active');
+if (activeLink) moveUnderline(activeLink);
+
+// Hover effect
+menuLinks.forEach(link => {
+    link.addEventListener('mouseenter', e => moveUnderline(e.target));
+});
+
+// Reset to active link on mouse leave
+document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+    if (activeLink) moveUnderline(activeLink);
+});
+
+
+//logout 
+const logoutLink = document.getElementById('logoutLink');
+
+logoutLink.addEventListener('click', function(e) {
+    e.preventDefault(); // prevent default navigation
+
+    // Create pop-up container
+    const popup = document.createElement('div');
+    popup.className = 'logout-popup';
+    popup.innerHTML = `
+        <p>End Session?</p>
+        <div class="popup-buttons">
+            <button id="confirmLogout">Yes</button>
+            <button id="cancelLogout">No</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Button actions
+    document.getElementById('confirmLogout').addEventListener('click', () => {
+        window.location.href = logoutLink.href; // proceed to logout
+    });
+
+    document.getElementById('cancelLogout').addEventListener('click', () => {
+        popup.remove(); // close popup
+    });
+});
+
+</script>
+</body>
+</html>

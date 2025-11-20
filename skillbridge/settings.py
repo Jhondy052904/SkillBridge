@@ -11,18 +11,11 @@ from dotenv import load_dotenv
 from supabase import create_client
 
 # -------------------------------------------------
-# Base Directory & Environment Variables
+# Base directory and .env loading
 # -------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
-env_path = BASE_DIR / ".env"
+env_path = BASE_DIR / '.env'
 load_dotenv(dotenv_path=env_path)
-
-# -------------------------------------------------
-# Security
-# -------------------------------------------------
-SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-development-key")
-DEBUG = os.getenv("DEBUG", "False") == "True"
-ALLOWED_HOSTS = ["*"]
 
 # -------------------------------------------------
 # Supabase Configuration
@@ -37,7 +30,7 @@ print("DEBUG: SUPABASE_KEY =", "FOUND" if SUPABASE_KEY else "MISSING")
 print("DEBUG: DATABASE_URL =", "FOUND" if DATABASE_URL else "MISSING")
 print("DEBUG: ANON_KEY =", "FOUND" if SUPABASE_ANON_KEY else "MISSING")
 
-# Safe Supabase Initialization
+# Safe Supabase client initialization
 supabase = None
 if SUPABASE_URL and SUPABASE_KEY:
     try:
@@ -46,10 +39,10 @@ if SUPABASE_URL and SUPABASE_KEY:
     except Exception as e:
         print(f"Failed to initialize Supabase client: {e}")
 else:
-    print("Supabase configuration missing. Continuing without Supabase client.")
+    print("⚠️ Supabase configuration missing! Please check .env file.")
 
 # -------------------------------------------------
-# Email Config (Optional)
+# Email Configuration
 # -------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -60,7 +53,14 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # -------------------------------------------------
-# Installed Apps
+# Basic Django Settings
+# -------------------------------------------------
+SECRET_KEY = 'django-insecure-xkfm4+@+b-od03y3m1acss#dyn(3a(2=1tocjkt4)lk6q-*$dx'
+DEBUG = True
+ALLOWED_HOSTS = []
+
+# -------------------------------------------------
+# Application Definition
 # -------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -76,10 +76,9 @@ INSTALLED_APPS = [
     'job_applications',
     'registration.apps.RegistrationConfig',
     'notifications',
+    'django_extensions',
     'training',
 
-    # Optional Dev Tools
-    'django_extensions',
 ]
 
 # -------------------------------------------------
@@ -117,16 +116,16 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "skillbridge.wsgi.application"
+WSGI_APPLICATION = 'skillbridge.wsgi.application'
 
 # -------------------------------------------------
-# Database (Supabase PostgreSQL OR fallback)
+# Database Configuration (Supabase PostgreSQL)
 # -------------------------------------------------
 DATABASES = {
     "default": dj_database_url.config(
-        default=DATABASE_URL or "sqlite:///" + str(BASE_DIR / "db.sqlite3"),
-        conn_max_age=600,
-        ssl_require=False,
+        default=DATABASE_URL or "postgresql://postgres:SkillBridge9@db.sfgnccdbgmewovbogibo.supabase.co:6543/postgres",
+        conn_max_age=0,
+        ssl_require=True,
     )
 }
 
@@ -143,32 +142,23 @@ AUTH_PASSWORD_VALIDATORS = [
 # -------------------------------------------------
 # Internationalization
 # -------------------------------------------------
-LANGUAGE_CODE = "en-us"
-TIME_ZONE = "Asia/Manila"
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'Asia/Manila'
 USE_I18N = True
 USE_TZ = True
 
 # -------------------------------------------------
-# Static Files (Render + Whitenoise)
+# Static Files
 # -------------------------------------------------
-STATIC_URL = "/static/"
-
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-print("DEBUG STATIC_ROOT =", STATIC_ROOT)
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-print("DEBUG STATICFILES_DIRS =", STATICFILES_DIRS)
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # -------------------------------------------------
-# Authentication
+# Authentication Settings
 # -------------------------------------------------
-LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "index"
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'index'
 
 AUTHENTICATION_BACKENDS = [
     'registration.authentication.SupabaseAuthBackend',
@@ -176,11 +166,11 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # -------------------------------------------------
-# Default Field Type
+# Default Primary Key Field Type
 # -------------------------------------------------
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # -------------------------------------------------
-# Expose Supabase
+# Expose Supabase globally (safe method)
 # -------------------------------------------------
 sys.modules[__name__].SUPABASE = supabase

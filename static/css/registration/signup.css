@@ -1,0 +1,226 @@
+/* Reset & Body */
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Page Centering */
+.signup-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  background: url("/static/images/b1.jpg") no-repeat center center;
+  background-size: cover;
+}
+
+/* Signup Card */
+.signup-container {
+  background: rgba(235, 244, 246, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7);
+  padding: 30px 35px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+}
+
+/* Titles */
+.signup-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #021526;
+  margin-top: 20px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #021526;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+/* Animation */
+@keyframes fadeSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Form Fields */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* vertical gap between rows */
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeSlideIn 0.8s ease forwards;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px; /* horizontal spacing for side-by-side inputs */
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: -10px; /* spacing between rows */
+}
+
+.form-group {
+  position: relative;
+  flex: 1 1 200px;
+  min-width: 180px;
+  max-width: 240px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+
+/* Input with icon */
+.input-with-icon {
+  position: relative;
+  width: 100%;
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  top: 70%;
+  transform: translateY(-50%);
+  color: #021526;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px 8px 30px; /* left padding for icon */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  font-size: 0.9rem;
+  background: #fff;
+  box-sizing: border-box;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Floating labels */
+.form-group label {
+    position: static;     
+    transform: none;   
+    margin-bottom: 6px;  
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #021526;
+    display: block; 
+    text-align: left;
+}
+
+/* Completely disable floating behavior */
+.form-group input:focus + label,
+.form-group input:not(:placeholder-shown) + label,
+.form-group select:focus + label,
+.form-group select:not([value=""]) + label {
+    all: unset;
+}
+
+/* Highlight on focus */
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #088395;
+  box-shadow: 0 0 5px rgba(8, 131, 149, 0.3);
+}
+
+/* Buttons */
+button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+button[type="submit"] {
+  background: linear-gradient(135deg, #1B3C53, #456882);
+  color: #fff;
+  margin-top: 12px;
+}
+
+button[type="submit"]:hover {
+  opacity: 0.9;
+}
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #6a0d0d;
+  font-weight: 600;
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid #071952;
+  margin: 0 8px;
+  opacity: 0.6;
+}
+
+/* Sign In Button */
+.create-account-btn {
+    background: transparent;
+    border: 2px solid #3b0a0a;
+    width: 100px;
+    color: #021526;
+    justify-content: center;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;      /* allow centering */
+    margin: 0 auto;     /* center horizontally */
+}
+
+.create-account-btn:hover {
+  cursor: pointer;
+}
+
+
+/* Back Button */
+.back-btn {
+  position: absolute;
+  top: 25px;
+  left: 30px;
+  background: transparent;
+  border: none;
+  color: #EBF4F6;
+  font-weight: 600;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.back-btn:hover {
+  cursor: pointer;
+}
+
+.back-icon {
+  font-size: 1.1rem;
+}
