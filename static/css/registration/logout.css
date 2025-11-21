@@ -1,73 +1,89 @@
 /* =====================
-   Logout Confirmation Pop-up (Redesigned)
+   Redesigned Logout Confirmation Pop-up
 ===================== */
 .logout-popup {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #EBF4F6;           /* ivory */
-    color: #021526;                 /* black */
+    background: #EBF4F6;           /* ivory background */
+    color: #021526;                 /* main text color */
     border: 3px solid #088395;      /* mint green border */
     border-radius: 16px;
-    padding: 35px 50px;
-    z-index: 999999;
+    padding: 30px 40px;
+    z-index: 9999;
     box-shadow: 0 15px 40px rgba(0,0,0,0.35);
     text-align: center;
-    animation: popupFadeIn 0.4s ease forwards;
     min-width: 350px;
-    max-width: 500px;
+    max-width: 450px;
+    animation: popupFadeIn 0.4s ease forwards;
+    opacity: 1;                     /* for fade out */
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* Message text */
 .logout-popup p {
-    font-size: 1.4rem;              /* bigger text */
-    font-weight: 700;
-    margin-bottom: 25px;
-    color: #071952;                 /* navy blue for emphasis */
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #021526;
+}
+
+/* Separator line */
+.logout-popup .separator {
+    height: 1px;
+    background: #088395;
+    margin: 20px 0;
+    opacity: 0.4;
 }
 
 /* Buttons container */
 .logout-popup .popup-buttons {
     display: flex;
     justify-content: center;
-    gap: 25px;
+    gap: 20px;
 }
 
-/* Buttons base style */
+/* Base button style */
 .logout-popup .popup-buttons button {
-    padding: 12px 28px;
-    border-radius: 12px;
-    border: none;
+    padding: 10px 28px;
+    border-radius: 10px;
+    border: 2px solid transparent;
     font-weight: 700;
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-/* Confirm button (Logout) */
-.logout-popup #confirmLogout {
-    background: #37B7C3;            /* light mint green */
-    color: #EBF4F6;                 /* ivory text */
-    border: 2px solid #088395;
-}
-
 /* Cancel button */
 .logout-popup #cancelLogout {
-    background: #071952;            /* navy blue */
+    background: #EBF4F6;            /* ivory */
+    color: #021526;                 /* dark text */
+    border: 2px solid #088395;      /* mint border */
+}
+
+/* Confirm/Yes button */
+.logout-popup #confirmLogout {
+    background: #021526;            /* dark blue */
     color: #EBF4F6;                 /* ivory text */
-    border: 2px solid #021526;
+    border: 2px solid #088395;      /* mint border */
 }
 
 /* Hover effects */
 .logout-popup .popup-buttons button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
 
 /* Fade-in animation */
 @keyframes popupFadeIn {
-    0% { opacity: 0; transform: translate(-50%, -60%) scale(0.9); }
+    0% { opacity: 0; transform: translate(-50%, -60%) scale(0.95); }
     60% { opacity: 1; transform: translate(-50%, -52%) scale(1.05); }
     100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Fade-out animation for smooth disappearance */
+.logout-popup.fade-out {
+    opacity: 0;
+    transform: translate(-50%, -45%) scale(0.95);
 }

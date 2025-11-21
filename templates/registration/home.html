@@ -1,4 +1,3 @@
-{% extends 'registration/base.html' %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -66,16 +65,17 @@
         </div>
     </header>
 
-    <!-- MESSAGES -->
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-            <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
-                {{ message }}
-            </div>
-        {% endfor %}
+<!-- MESSAGES -->
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
+        <span class="message-text">{{ message }}</span>
     </div>
-    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
 
     <!-- ================= PROFILE CARD ================= -->
     {% if user_profile %} 
@@ -214,55 +214,59 @@ document.querySelector('.nav-right').addEventListener('mouseleave', () => {
     if (activeLink) moveUnderline(activeLink);
 });
 
-//logout 
+// Logout confirmation popup
 const logoutLink = document.getElementById('logoutLink');
 
 logoutLink.addEventListener('click', function(e) {
     e.preventDefault(); // prevent default navigation
 
-    // Create pop-up container
+    // Create popup container
     const popup = document.createElement('div');
     popup.className = 'logout-popup';
     popup.innerHTML = `
-        <p>End Session?</p>
+        <p>Are you sure you want to end your session?</p>
+        <div class="separator"></div>
         <div class="popup-buttons">
+            <button id="cancelLogout">Cancel</button>
             <button id="confirmLogout">Yes</button>
-            <button id="cancelLogout">No</button>
         </div>
     `;
     document.body.appendChild(popup);
 
-    // Button actions
+    // Confirm button: logs out
     document.getElementById('confirmLogout').addEventListener('click', () => {
         window.location.href = logoutLink.href; // proceed to logout
     });
 
+    // Cancel button: fade out popup
     document.getElementById('cancelLogout').addEventListener('click', () => {
-        popup.remove(); // close popup
+        popup.classList.add('fade-out'); // trigger fade-out CSS
+        setTimeout(() => popup.remove(), 500); // remove after animation
     });
 });
 
 //Welcome message
-
 document.addEventListener('DOMContentLoaded', () => {
-    const messages = document.querySelectorAll('.editprofile-message');
+    const messages = document.querySelectorAll('.messages .message');
 
     messages.forEach(msg => {
+        // Add close button
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'close-msg';
+        closeBtn.innerHTML = '&times;';
+        msg.appendChild(closeBtn);
+
+        closeBtn.addEventListener('click', () => msg.remove());
+
+        // Auto-fade after 5 seconds
         setTimeout(() => {
-            // Fade out + slide right
             msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             msg.style.opacity = '0';
             msg.style.transform = 'translateX(50px)';
-
-            // Remove from DOM after transition
-            setTimeout(() => {
-                msg.remove();
-            }, 500);
-        }, 5000); // 5 seconds
+            msg.addEventListener('transitionend', () => msg.remove(), { once: true });
+        }, 5000);
     });
 });
-
-
 
 
 </script>

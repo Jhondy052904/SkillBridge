@@ -127,33 +127,37 @@ document.querySelectorAll('.editprofile-message').forEach(msg => {
     }, 3000);
 });
 
-//logout 
+// Logout confirmation popup
 const logoutLink = document.getElementById('logoutLink');
 
 logoutLink.addEventListener('click', function(e) {
     e.preventDefault(); // prevent default navigation
 
-    // Create pop-up container
+    // Create popup container
     const popup = document.createElement('div');
     popup.className = 'logout-popup';
     popup.innerHTML = `
-        <p>End Session?</p>
+        <p>Are you sure you want to end your session?</p>
+        <div class="separator"></div>
         <div class="popup-buttons">
+            <button id="cancelLogout">Cancel</button>
             <button id="confirmLogout">Yes</button>
-            <button id="cancelLogout">No</button>
         </div>
     `;
     document.body.appendChild(popup);
 
-    // Button actions
+    // Confirm button: logs out
     document.getElementById('confirmLogout').addEventListener('click', () => {
         window.location.href = logoutLink.href; // proceed to logout
     });
 
+    // Cancel button: fade out popup
     document.getElementById('cancelLogout').addEventListener('click', () => {
-        popup.remove(); // close popup
+        popup.classList.add('fade-out'); // trigger fade-out CSS
+        setTimeout(() => popup.remove(), 300); // remove after animation
     });
 });
+
 
 </script>
 

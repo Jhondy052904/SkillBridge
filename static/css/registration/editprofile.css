@@ -1,2 +1,281 @@
 /* =====================
    Navigation Bar
+===================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 25px;
+    background: #EBF4F6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    z-index: 100;
+}
+
+.navbar .logo {
+    height: 70px;
+    width: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.navbar .logo:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.navbar .nav-right {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-right: 80px;
+    position: relative;
+}
+
+.navbar .nav-right a {
+    color: #021526;
+    text-decoration: none;
+    font-size: 20px;
+    transition: color 0.3s ease;
+}
+
+.navbar .nav-right a:hover {
+    color: #088395;
+}
+
+/* Navbar underline animation */
+.navbar .nav-right .underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background-color: #088395;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+}
+
+/* =====================
+   General Body Styling
+===================== */
+body {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #1B3C53;
+    overflow-x: hidden;
+
+    background: url("/static/images/wall.jpg") no-repeat center 70% / cover;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/static/images/plant.jpg") no-repeat center 80% / cover;
+    filter: blur(3px);
+    z-index: -1;
+}
+
+/* =====================
+   Edit Profile Page Container
+===================== */
+.editprofile-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    width: 100%;
+    padding-top: 120px; /* space for navbar */
+    box-sizing: border-box;
+}
+
+.editprofile-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 35px 40px;  /* smaller padding */
+    max-width: 550px;    /* slightly thinner */
+    width: 90%;          /* responsive */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;           /* smaller gaps */
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.editprofile-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* =====================
+   Form Fields Redesign
+===================== */
+.editprofile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;  /* smaller spacing */
+}
+
+.editprofile-form label {
+    font-size: 0.9rem;  /* smaller text */
+    font-weight: 600;
+    color: #1B3C53;
+    margin-bottom: 3px;
+}
+
+.editprofile-form input,
+.editprofile-form select {
+    padding: 10px 12px;      /* smaller inputs */
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    font-size: 0.95rem;      /* smaller font */
+    outline: none;
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.editprofile-form input:focus,
+.editprofile-form select:focus {
+    border-color: #088395;
+    box-shadow: 0 3px 12px rgba(8, 131, 149, 0.25);
+}
+
+.editprofile-form select {
+    appearance: none;
+    background: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><path fill='%23088595' d='M0 4l6 6 6-6z'/></svg>") no-repeat right 12px center;
+    background-size: 10px;
+}
+
+/* =====================
+   Submit Button
+===================== */
+.editprofile-submit {
+    background: linear-gradient(135deg, #088395, #1B3C53);
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.editprofile-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(8, 131, 149, 0.3);
+}
+
+/* =====================
+   Animation
+===================== */
+.editprofile-container {
+    opacity: 0;
+    transform: translateY(40px);
+    animation: fadeInUp 0.5s forwards;
+    animation-delay: 0.2s;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =====================
+   Responsive Adjustments
+===================== */
+@media (max-width: 900px) {
+    .editprofile-container {
+        max-width: 500px;
+        padding: 30px 30px;
+    }
+}
+
+@media (max-width: 600px) {
+    .editprofile-container {
+        max-width: 95%;
+        padding: 20px 15px;
+    }
+}
+
+/* =====================
+   Messages Styling with Pop-up Animation (Right Side)
+===================== */
+.editprofile-message {
+    position: fixed; /* overlay above everything */
+    top: 130px;      /* distance from top */
+    right: 20px;     /* distance from right */
+    z-index: 999; /* highest priority */
+    border-radius: 8px;
+    padding: 10px 20px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+    /* Pop-up animation */
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+    animation: messagePopRight 0.5s forwards;
+}
+
+/* Animation keyframes for right-side pop */
+@keyframes messagePopRight {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(5px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Success message */
+.editprofile-message.success {
+    background: #37B7C3; /* light mint green */
+    color: #EBF4F6;      /* ivory text */
+    border: 1px solid #088395; /* mint green border */
+}
+
+/* Error message */
+.editprofile-message.error {
+    background: #EBF4F6;  /* ivory background */
+    color: #071952;       /* navy blue text */
+    border: 1px solid #071952;
+}
+
+/* Info message */
+.editprofile-message.info {
+    background: #088395; /* mint green */
+    color: #EBF4F6;      /* ivory text */
+    border: 1px solid #021526; /* dark border */
+}
+
