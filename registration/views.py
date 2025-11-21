@@ -15,6 +15,22 @@ from django.contrib.auth.models import User
 from .models import Resident, Official, Job, Training, Event, JobApplication, TrainingParticipation
 from jobs.services.supabase_crud import get_jobs
 
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.contrib.auth import logout
+import time
+
+def logout_view(request):
+    logout(request)
+    request.session.flush()
+    messages.success(request, 'You have been logged out successfully.')
+    response = redirect('login')
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    response['Location'] += '?t=' + str(int(time.time()))
+    return response
+
 # ------------------------------------------------------------
 # Supabase Setup
 # ------------------------------------------------------------
@@ -206,6 +222,8 @@ def aboutus(request):
 def jobhunt(request):
     return render(request, 'registration/jobhunt.html')
 
+def supabase_reset_page(request):
+    return render(request, "registration/reset_password.html")
 
 # ------------------------------------------------------------
 # SIGNUP — create new account in Supabase

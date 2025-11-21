@@ -13,8 +13,19 @@
     {% endblock %}
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <link rel="stylesheet" href="{% static 'css/registration/login.css' %}?v=2">
+
+    <!-- Messages -->
+{% if messages %}
+  <div class="floating-messages">
+    {% for message in messages %}
+      <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 </head>
 <body>
 
@@ -63,6 +74,20 @@
         </form>
     </div>
 </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const messages = document.querySelectorAll('.editprofile-message');
+    messages.forEach(msg => {
+        setTimeout(() => {
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateX(50px)';
+            setTimeout(() => msg.remove(), 500);
+        }, 5000); // 5 seconds
+    });
+});
+</script>
 
 </body>
 </html>

@@ -18,8 +18,7 @@ body {
     color: #1B3C53;
     overflow-x: hidden;
 
-    background: url("/static/images/wall.jpg") no-repeat center 70% / cover;.
-  
+    background: url("/static/images/wall.jpg") no-repeat center 70% / cover;
 }
 
 body::before {
@@ -34,21 +33,23 @@ body::before {
     z-index: -1;             /* behind all content */
 }
 
+
 /* =====================
    Navigation Bar
 ===================== */
 .navbar {
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 0px;
+    left: 2.2px;
     width: 100%;
     padding: 12px 25px;
     background: #EBF4F6;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 800px;
-    z-index: 100;
+
+    gap: 80px;
+    z-index: 990;
 }
 
 .navbar .logo {
@@ -117,11 +118,6 @@ body::before {
     border-radius: 2px;
     transition: all 0.4s ease; /* gentle slide */
 }
-
-
-/* =====================
-  MAIN CONTENT
-===================== */
 
 /* =====================
    MAIN CONTENT
@@ -245,28 +241,71 @@ body::before {
     padding: 20px 0;
     color: #888;
 }
-
 /* =====================
-   Messages
+   Floating Messages
 ===================== */
 .messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    z-index: 9999; /* float above all elements */
 }
 
 .message {
-    padding: 12px 20px;
+    min-width: 280px;
+    max-width: 400px;
+    padding: 15px 20px;
     border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
     color: #fff;
-    font-weight: 500;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    animation: fadeIn 0.3s ease forwards;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    opacity: 0.95;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.message.success { background-color: #4CAF50; }
-.message.error { background-color: #F44336; }
-.message.info { background-color: #673AB7; }
+/* =================
+Success message
+================== */
+.message.success {
+    background-color: #37B7C3; /* mint green */
+    border: 2px solid #088395;
+}
+
+/* Error message */
+.message.error {
+    background-color: #D9534F; /* red */
+    border: 2px solid #A93226;
+}
+
+/* Info message */
+.message.info {
+    background-color: #071952; /* dark blue */
+    border: 2px solid #021526;
+}
+
+/* Hover effect */
+.message:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.35);
+}
+
+/* Optional close button */
+.message .close-msg {
+    font-weight: 700;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #fff;
+}
+
 
 /* =====================
    Profile Card

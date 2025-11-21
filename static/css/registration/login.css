@@ -185,3 +185,56 @@ body {
 }
 
 
+/* LOGIN ERROR MESSAGE */
+/* Floating messages container */
+.floating-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 9999; /* above everything */
+}
+
+/* Base style for messages */
+.editprofile-message {
+    padding: 12px 20px;
+    border-radius: 10px;
+    min-width: 250px;
+    max-width: 400px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Success message */
+.editprofile-message.success {
+    background-color: #37B7C3; /* mint green */
+    color: #EBF4F6; /* ivory */
+    border-left: 4px solid #088395;
+}
+
+
+/* Error message */
+.editprofile-message.error {
+    background-color: #F8D7DA;
+    color: #842029;
+    border: 1px solid #F5C2C7;
+}
+
+/* Warning message */
+.editprofile-message.warning {
+    background-color: #FFF3CD;
+    color: #856404;
+    border: 1px solid #FFEEBA;
+}
+
+/* Info message */
+.editprofile-message.info {
+    background-color: #CCE5FF;
+    color: #084298;
+    border: 1px solid #B6D4FE;
+}
