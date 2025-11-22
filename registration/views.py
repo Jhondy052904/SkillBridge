@@ -162,10 +162,8 @@ def home(request):
     except Exception as e:
         print("Supabase user profile fetch error:", e)
 
-    # Applied jobs
-    applied_jobs = JobApplication.objects.filter(
-        resident__email=username
-    ).select_related("job")
+    # Applied jobs: removed backend fetch to speed up dashboard (UI removed)
+    applied_jobs = []
 
     # Registered trainings
     registered_trainings = Training.objects.filter(
@@ -204,6 +202,37 @@ def home(request):
         "all_trainings": all_trainings,
         "notifications": notifications,
     })
+
+
+def api_registered_trainings(request):
+    """Returns JSON list of trainings the logged-in resident registered for, including attendance_status."""
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication required"}, status=401)
+
+    email = request.session.get('user_email') or request.user.email
+    try:
+        resp = supabase.table("training_attendees").select("*").eq("email", email).execute()
+        attendees = resp.data or []
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+    results = []
+    for a in attendees:
+        training = None
+        try:
+            tresp = supabase.table("training").select("*").eq("id", a.get("training_id")).single().execute()
+            training = tresp.data
+        except Exception:
+            training = None
+
+        results.append({
+            "training_id": a.get("training_id"),
+            "training_name": training.get("training_name") if training else None,
+            "date_scheduled": training.get("date_scheduled") if training else None,
+            "attendance_status": a.get("attendance_status"),
+        })
+
+    return JsonResponse(results, safe=False)
 
 def get_all_notifications():
     """Returns ALL visible notifications ordered from newest to oldest."""

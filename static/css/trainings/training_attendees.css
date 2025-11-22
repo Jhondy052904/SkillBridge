@@ -172,4 +172,34 @@
         display: flex;
         justify-content: flex-start;
     }
+
+    /* EDIT / DELETE Training Buttons */
+.training-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
 }
+
+.btn.edit-btn {
+    background: #1976d2;
+}
+.btn.edit-btn:hover {
+    background: #1565c0;
+}
+
+.btn.delete-btn {
+    background: #d32f2f;
+}
+.btn.delete-btn:hover {
+    background: #c62828;
+}
+
+/* Header layout */
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+}
+

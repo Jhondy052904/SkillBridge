@@ -26,6 +26,9 @@ urlpatterns = [
     # -------- PROFILE --------
     path('profile/', views.edit_profile_view, name='edit_profile'),
 
+    # -------- API --------
+    path('api/registered_trainings/', views.api_registered_trainings, name='api_registered_trainings'),
+
     # -------- VERIFICATION PANEL (UI) --------
     path('verify/pending/', views.pending_residents, name='pending_residents'),
     path('verify/resident/<int:resident_id>/', views.resident_details, name='resident_details'),

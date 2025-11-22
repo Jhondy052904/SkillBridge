@@ -19,11 +19,24 @@
     <div class="header-card">
         <span class="header-chip">Training</span>
 
-        <h1 class="header-title">Attendees for: {{ training.training_name }}</h1>
+        <div class="header-flex">
+            <h1 class="header-title">Attendees for: {{ training.training_name }}</h1>
 
-        <p class="header-subtitle">
-            View all residents registered for this training.
-        </p>
+            <!-- TRAINING ACTIONS -->
+            <div class="training-actions">
+                <a href="{% url 'edit_training' training.id %}" class="btn edit-btn">
+                    Edit
+                </a>
+
+                <form action="{% url 'delete_training' training.id %}" method="POST"
+                    onsubmit="return confirm('Are you sure you want to delete this training event?')">
+                    {% csrf_token %}
+                    <button class="btn delete-btn">Delete</button>
+                </form>
+            </div>
+        </div>
+
+        <p class="header-subtitle">View all residents registered for this training.</p>
     </div>
 
     <!-- ATTENDEES CARD -->
@@ -38,12 +51,9 @@
                         <p class="attendee-email">{{ attendee.email }}</p>
 
                         <span class="status-chip 
-                            {% if attendee.attendance_status == 'Attended' %}
-                                attended
-                            {% elif attendee.attendance_status == 'Not Attended' %}
-                                not-attended
-                            {% else %}
-                                pending
+                            {% if attendee.attendance_status == 'Attended' %} attended
+                            {% elif attendee.attendance_status == 'Not Attended' %} not-attended
+                            {% else %} pending
                             {% endif %}
                         ">
                             {{ attendee.attendance_status|default:"Pending" }}
