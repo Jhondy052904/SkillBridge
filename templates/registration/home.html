@@ -106,43 +106,13 @@
     </div>
     {% endif %}
 
-    <!-- ================= APPLIED JOBS ================= -->
-    <section class="applied-jobs">
-        <h2 class="section-title">My Applied Jobs</h2>
-
-        <div class="table-container">
-            <table class="jobs-table">
-                <thead>
-                    <tr>
-                        <th>Job Title</th>
-                        <th>Status</th>
-                        <th>Date Applied</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if applied_jobs %}
-                        {% for app in applied_jobs %}
-                        <tr>
-                            <td>{{ app.job.title }}</td>
-                            <td><span class="status {{ app.application_status|lower }}">{{ app.application_status }}</span></td>
-                            <td>{{ app.date_applied|date:"M d, Y" }}</td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td colspan="3" class="empty-table">No jobs applied yet.</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-    </section>
+    
 
     <!-- ================= REGISTERED TRAININGS ================= -->
     <section class="registered-trainings">
         <h2 class="section-title">My Registered Trainings</h2>
 
-        <div class="trainings-list">
+        <div id="trainingsList" class="trainings-list">
             {% if registered_trainings %}
                 <ul>
                     {% for training in registered_trainings %}
@@ -244,6 +214,37 @@ logoutLink.addEventListener('click', function(e) {
         setTimeout(() => popup.remove(), 500); // remove after animation
     });
 });
+
+// Polling to update registered trainings attendance status
+async function fetchRegisteredTrainings() {
+    try {
+        const resp = await fetch('/api/registered_trainings/');
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const container = document.getElementById('trainingsList');
+        if (!container) return;
+
+        if (!data || data.length === 0) {
+            container.innerHTML = `<p class="empty-trainings">No trainings registered yet. <a href="{% url 'list_trainings' %}" class="link-primary">Find trainings</a></p>`;
+            return;
+        }
+
+        let html = '<ul>';
+        data.forEach(t => {
+            const status = t.attendance_status || 'Pending';
+            const date = t.date_scheduled ? new Date(t.date_scheduled).toLocaleDateString() : '';
+            html += `<li class="training-item"><strong>${t.training_name || 'Training'}</strong> <span class="training-status">${status}</span><br><span class="training-date">${date}</span></li>`;
+        });
+        html += '</ul>';
+        container.innerHTML = html;
+    } catch (e) {
+        // silent fail
+    }
+}
+
+// Initial fetch and interval polling
+fetchRegisteredTrainings();
+setInterval(fetchRegisteredTrainings, 5000);
 
 //Welcome message
 document.addEventListener('DOMContentLoaded', () => {
