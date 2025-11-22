@@ -1,6 +1,17 @@
-/* =====================
-   Navigation Bar
-===================== */
+/* ====================== GLOBAL STYLES ====================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+    min-height: 100vh;
+}
+
+/* ====================== NAVBAR ====================== */
 .navbar {
     position: fixed;
     top: 0px;
@@ -11,6 +22,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+
     gap: 80px;
     z-index: 990;
 }
@@ -82,198 +94,319 @@
     transition: all 0.4s ease; /* gentle slide */
 }
 
-/* =====================
-   General Page Styling
-===================== */
-body {
-    position: relative;
-    min-height: 100vh;
-    width: 100%;
-    margin: 0;
-    padding: 0;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Poppins', Arial, sans-serif;
-    font-size: 0.9rem;
-    color: #1B3C53;
-    overflow-x: hidden;
-
-    background: url("/static/images/wall.jpg") no-repeat center 70% / cover;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url("/static/images/plant.jpg") no-repeat center 80% / cover;
-    filter: blur(3px);
-    z-index: -1;
-}
-
-/* =====================
-   Main Content
-===================== */
+/* ====================== MAIN CONTENT ====================== */
 main {
-    max-width: 1600px; /* increased max-width for bigger table */
-    margin: 120px auto 60px auto;
-    padding: 0 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* ====================== HEADER SECTION ====================== */
+.header-section {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #1a202c;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.section-subtitle {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 400;
+}
+
+/* ====================== MESSAGES ====================== */
+.messages-container {
+    margin-bottom: 30px;
     display: flex;
     flex-direction: column;
-    gap: 50px;
-    align-items: flex-start; /* align main content to left */
+    gap: 12px;
 }
 
-.section-subtitle{
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.2rem;
-  letter-spacing: 1.5px;
-  color: #EBF4F6;
-  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.9);
-} 
-
-/* =====================
-   Header
-===================== */
-header h1 {
-    font-size: 3rem; /* slightly bigger */
-    font-weight: 700;
-    color: #021526;
-    margin-bottom: 20px;
-    text-align: left; /* ensure left alignment */
-}
-
-/* =====================
-   Messages
-===================== */
-div.success {
-    background-color: #088395;
-    color: #EBF4F6;
-    padding: 12px 20px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-
-div.error {
-    background-color: #071952;
-    color: #EBF4F6;
-    padding: 12px 20px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-
-div.info {
-    background-color: #37B7C3;
-    color: #021526;
-    padding: 12px 20px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-
-/* =====================
-   Trainings Table
-===================== */
-table {
-    width: 100%;
-    max-width: 1500px; /* larger table */
-    border-collapse: collapse;
-    background-color: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(2,21,38,0.12); /* slightly bigger shadow */
-    font-size: 1.2rem; /* bigger font */
-}
-
-thead {
-    background-color: #088395;
-    color: #EBF4F6;
-}
-
-th, td {
-    padding: 22px 28px; /* bigger cells */
-    text-align: left;
-}
-
-tr:nth-child(even) {
-    background-color: #EBF4F6;
-}
-
-tr:hover {
-    background-color: inherit; /* no hover effect */
-}
-
-/* =====================
-   Actions (Buttons & Links)
-===================== */
-a {
-    text-decoration: none;
-    color: #021526;
-}
-
-a:hover {
-    color: #088395;
-}
-
-button {
-    padding: 14px 24px; /* bigger buttons */
+.alert {
+    padding: 14px 18px;
     border-radius: 8px;
+    font-weight: 500;
+    animation: slideIn 0.3s ease;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ====================== TRAINING CARDS CONTAINER ====================== */
+.training-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 28px;
+    margin-top: 30px;
+}
+
+/* ====================== TRAINING CARD ====================== */
+.training-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.training-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Header with Gradient Background */
+.card-header {
+    height: 140px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+}
+
+.training-card:nth-child(3n+2) .card-header {
+    background: linear-gradient(135deg, #56b4d3 0%, #4fa3c1 100%);
+}
+
+.training-card:nth-child(3n) .card-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* Badge */
+.badge {
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ====================== CARD CONTENT ====================== */
+.training-card-content {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ====================== TITLES & TEXT ====================== */
+.training-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: #1a202c;
+    line-height: 1.3;
+}
+
+.training-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 16px;
+    line-height: 1.5;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ====================== META INFO ====================== */
+.training-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0f0f0;
+    margin: 16px 0;
+}
+
+.meta-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-label {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-bottom: 4px;
+}
+
+.meta-value {
+    font-size: 0.95rem;
+    color: #1a202c;
+    font-weight: 600;
+}
+
+/* ====================== STATUS ====================== */
+.training-status {
+    margin-bottom: 16px;
+}
+
+.status-badge {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* ====================== BUTTONS ====================== */
+.training-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.btn {
+    flex: 1;
+    padding: 11px 16px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-align: center;
     border: none;
-    font-size: 1.1rem;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
 }
 
-button:hover {
+.btn-register {
+    background: linear-gradient(135deg, #56b4d3 0%, #4fa3c1 100%);
+    box-shadow: 0 4px 12px rgba(86, 180, 211, 0.3);
+}
+
+.btn-register:hover {
     transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(86, 180, 211, 0.4);
 }
 
-/* Delete Button */
-button.delete {
-    background-color: #071952;
-    color: #EBF4F6;
+.btn-edit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-button.delete:hover {
-    background-color: #088395;
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
 }
 
-/* Register Button */
-button.register {
-    background-color: #37B7C3;
-    color: #021526;
+.btn-delete {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
 }
 
-button.register:hover {
-    background-color: #088395;
+.btn-delete:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(245, 87, 108, 0.4);
 }
 
-/* =====================
-   Responsive
-===================== */
-@media (max-width: 1024px) {
-    main {
-        max-width: 95%;
-        margin: 100px 15px 40px 15px;
-    }
-
-    table, th, td {
-        font-size: 1rem;
-        padding: 16px 20px;
-    }
+.delete-form {
+    flex: 1;
 }
 
+.delete-form button {
+    width: 100%;
+}
+
+/* ====================== EMPTY STATE ====================== */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.empty-state-secondary {
+    font-size: 0.95rem;
+    color: #999;
+}
+
+/* ====================== RESPONSIVE ====================== */
 @media (max-width: 768px) {
-    main {
-        margin: 80px 15px 40px 15px;
+    .navbar {
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 16px;
     }
 
-    table, th, td {
-        font-size: 0.95rem;
-        padding: 12px 16px;
+    .nav-right {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .training-cards-container {
+        grid-template-columns: 1fr;
+    }
+
+    .training-meta {
+        grid-template-columns: 1fr;
+    }
+
+    .training-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
     }
 }

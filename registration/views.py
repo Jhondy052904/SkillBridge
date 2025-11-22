@@ -14,6 +14,7 @@ from django.contrib.auth import login
 from django.contrib.auth.models import User
 from .models import Resident, Official, Job, Training, Event, JobApplication, TrainingParticipation
 from jobs.services.supabase_crud import get_jobs
+from datetime import datetime
 
 from django.contrib import messages
 from django.shortcuts import redirect
@@ -30,6 +31,19 @@ def logout_view(request):
     response['Expires'] = '0'
     response['Location'] += '?t=' + str(int(time.time()))
     return response
+
+# ============ LOGGING FOR AUDIT TRAIL ============
+def log_action(action, entity, entity_id, request):
+    try:
+        supabase.table("audit_logs").insert({
+            "entity": entity,
+            "entity_id": entity_id,
+            "action": action,
+            "performed_by": request.session.get("user_email"),
+            "timestamp": datetime.utcnow().isoformat()
+        }).execute()
+    except Exception as e:
+        print("Audit log error:", e)
 
 # ------------------------------------------------------------
 # Supabase Setup
@@ -484,30 +498,48 @@ def post_job(request):
         messages.error(request, "Access denied: Officials only.")
         return redirect('home')
 
-    official_username = request.session.get("username")
-    official = Official.objects.filter(user__username=official_username).first()
+    try:
+        email = request.user.email.strip().lower()
+        official = supabase.table("registration_official").select("*").ilike("email", email).execute()
 
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        requirements = request.POST.get('requirements')
-        status = request.POST.get('status', 'Open')
+        if not official.data:
+            official = supabase.table("registration_official").select("*").eq("user_id", request.user.id).execute()
 
-        if not official:
+        if not official.data:
             messages.error(request, "Official profile not found.")
-            return redirect('official_dashboard')
+            return redirect("official_dashboard")
 
-        Job.objects.create(
-            title=title,
-            description=description,
-            requirements=requirements,
-            posted_by=official,
-            status=status
-        )
-        messages.success(request, "Job posted successfully!")
+        official_data = official.data[0]
+
+        if request.method == 'POST':
+            data = request.POST
+            title = data['title']
+            description = data['description']
+            status = data.get('status', 'Open')
+
+            result = supabase.table("jobs").insert({
+                "Title": title,
+                "Description": description,
+                "PostedBy": str(official_data["id"]),
+                "Status": status,
+                "dateposted": datetime.utcnow().isoformat()  # FINAL + CORRECT
+            }).execute()
+
+            print("DEBUG INSERT RESULT:", result.data)
+
+            job = result.data[0]
+            job_id = job.get("JobID")
+
+            log_action("create", "job", job_id, request)
+            messages.success(request, "Job posted successfully!")
+            return redirect("official_dashboard")
+
+        return render(request, 'jobs/post_job.html')
+
+    except Exception as e:
+        print("EXCEPTION:", e)
+        messages.error(request, f"Error posting job: {str(e)}")
         return redirect('official_dashboard')
-
-    return render(request, 'jobs/post_job.html')
 
 
 
@@ -532,16 +564,27 @@ def post_training(request):
             messages.error(request, "Official profile not found.")
             return redirect('official_dashboard')
 
-        Training.objects.create(
-            training_name=training_name,
-            description=description,
-            organizer=official,
-            date_scheduled=date_scheduled,
-            location=location,
-            status=status
-        )
-        messages.success(request, "Training posted successfully!")
-        return redirect('official_dashboard')
+        try:
+            # Insert into Supabase to keep training IDs consistent (bigint)
+            result = supabase.table("training").insert({
+                "training_name": training_name,
+                "description": description,
+                "date_scheduled": date_scheduled,
+                "location": location,
+                "status": status,
+                "created_by": request.session.get("user_email")
+            }).execute()
+
+            new_training = result.data[0] if result.data else None
+            new_id = new_training.get("id") if new_training else None
+            log_action("create", "training", new_id, request)
+
+            messages.success(request, "Training posted successfully!")
+            return redirect('official_dashboard')
+
+        except Exception as e:
+            messages.error(request, f"Error posting training: {e}")
+            return redirect('official_dashboard')
 
     return render(request, 'official/post_training.html')
 

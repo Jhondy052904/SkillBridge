@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.http import Http404
 from datetime import datetime
 from skillbridge.supabase_client import supabase
 from .services.supabase_crud import (
@@ -196,3 +197,12 @@ def apply_job(request, job_id):
     except Exception as e:
         messages.error(request, f"Error applying for job: {str(e)}")
         return redirect('list_jobs')
+
+def job_detail(request, job_id):
+    try:
+        job = get_job_by_id(job_id)
+    except Exception as e:
+        raise Http404("Job not found")
+    context = {'job': job}
+    return render(request, 'jobs/job_detail.html', context)
+

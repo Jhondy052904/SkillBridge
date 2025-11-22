@@ -12,6 +12,10 @@
     <link rel="stylesheet" href="{% static 'css/registration/style.css' %}?v=2">
     <link rel="stylesheet" href="{% static 'css/registration/userhome.css' %}?v=2">
 
+    <!-- Page-specific CSS -->
+    {% block extra_css %}{% endblock %}
+
+    <!-- Additional head scripts/tags -->
     {% block extra_head %}{% endblock %}
 </head>
 
@@ -21,6 +25,8 @@
       {% block content %}{% endblock %}
     </div>
   {% endblock %}
+
+  {% block extra_js %}{% endblock %}
 </body>
 
 </html>

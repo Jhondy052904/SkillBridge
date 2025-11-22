@@ -4,8 +4,9 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings | SkillBridge</title>
-    <link rel="stylesheet" href="{% static 'css/jobs/list_jobs.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'css/jobs/list_jobs.css' %}?v=4">
     <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
 
@@ -13,109 +14,121 @@
 
 <!-- ====================== NAVBAR ====================== -->
 <nav class="navbar">
-  <div class="nav-left">
-    <a href="#" class="logo-link">
-      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
-    </a>
-  </div>
-  <div class="nav-right">
-    <a href="{% url 'home' %}">Dashboard</a>
-    <a href="{% url 'list_jobs' %}" class="active">Jobs</a>
-    <a href="{% url 'list_trainings' %}">Trainings</a>
-    <div class="underline"></div>
-    <a>|</a>
-    <a href="{% url 'edit_profile' %}">Profile</a>
-    <a href="{% url 'login' %}" id="logoutLink">Logout</a>
+    <div class="nav-left">
+        <a href="{% url 'home' %}" class="logo-link">
+            <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+        </a>
+    </div>
 
-  </div>
+    <div class="nav-right">
+        <a href="{% url 'home' %}">Dashboard</a>
+        <a href="{% url 'list_jobs' %}" class="active">Jobs</a>
+        <a href="{% url 'list_trainings' %}">Trainings</a>
+        <div class="underline"></div>
+        <span class="separator">|</span>
+        <a href="{% url 'edit_profile' %}">Profile</a>
+        <a href="{% url 'login' %}" id="logoutLink">Logout</a>
+    </div>
 </nav>
 
 <!-- ====================== MAIN ====================== -->
 <main>
 
-    <!-- ================= ALERTS ================= -->
+    <!-- Messages -->
     {% if messages %}
-    <div>
+    <div class="messages-container">
         {% for message in messages %}
-            <div>
+            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-error{% else %}alert-info{% endif %}">
                 {{ message }}
             </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <!-- ================= WELCOME ================= -->
-    <div>
-        <h2 class="section-title">Hello {{ user.first_name }}! Ready to land a new job?</h2>
+    <!-- Header Section -->
+    <div class="header-section">
+        <h1 class="section-title">Hello {{ user.first_name }}! Ready to land a new job?</h1>
         <p class="section-subtitle">Explore open positions and apply now.</p>
     </div>
 
-    <!-- ================= SEARCH ================= -->
-    <div>
-        <input type="text" id="searchInput" placeholder="Search jobs...">
+    <!-- Search & Filter Section -->
+    <div class="search-filter-section">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search jobs by title, company...">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+            </svg>
+        </div>
 
-        <select id="filterSelect">
-            <option value="">All Types</option>
-            <option value="Healthcare">Healthcare</option>
-            <option value="Services">Services</option>
-            <option value="Full-Time">Full-Time</option>
-            <option value="Part-Time">Part-Time</option>
-            <option value="Internship">Internship</option>
-            <option value="Freelance">Freelance</option>
-        </select>
+        <div class="filter-container">
+            <select id="filterSelect">
+                <option value="other" selected>Other</option>
+                <option value="Haircut">Haircut</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Carpentry">Carpentry</option>
+                <option value="Cleaning">Cleaning</option>
+                <option value="Cooking">Cooking</option>
+                <option value="Driving">Driving</option>
+                <option value="Babysitting">Babysitting</option>
+                <option value="Elderly Care">Elderly Care</option>
+                <option value="Tutoring">Tutoring</option>
+                <option value="Pedicure">Pedicure</option>
+            </select>
+        </div>
 
-        <button onclick="filterJobs()">Search</button>
+        <button class="btn-search" onclick="filterJobs()">Search</button>
     </div>
 
-    <!-- ================= JOB LIST ================= -->
-<section>
-    <h2 class="section-title">Available Jobs</h2>
+    <!-- Job Listings Section -->
+    <section class="jobs-section">
+        <h2 class="section-title">Available Jobs</h2>
 
-    <div id="jobList">
-        {% for job in jobs %}
-            {% if job.Status == "Open" %}
-            <div class="job-card" data-type="{% if job.Title == 'Senior Python Developer' %}Full-Time,All Types{% else %}All Types{% endif %}">
-                <h3>{{ job.Title }}</h3>
-                
-                <p class="job-meta">
-                    <strong>Company:</strong> {{ job.Company }} |
-                    <strong>Type:</strong> {{ job.JobType }} |
-                    <strong>Location:</strong> {{ job.Location }}
-                </p>
+        <div id="jobList" class="job-cards-container">
+            {% for job in jobs %}
+                {% if job.Status == "Open" %}
+                <a href="{% url 'job_detail' job.JobID %}" class="job-card-link">
+                    <div class="job-card">
+                        <div class="card-header">
+                            <div class="job-type-badge">{{ job.JobType }}</div>
+                        </div>
 
-                <p>{{ job.Description|truncatechars:120 }}</p>
-                <p class="job-date">Posted: {{ job.dateposted|date:"M d, Y" }}</p>
+                        <div class="job-card-content">
+                            <h3 class="job-title">{{ job.Title }}</h3>
 
-                <form method="POST" action="{% url 'apply_job' job.JobID %}">
-                    {% csrf_token %}
-                    <button>Apply</button>
-                </form>
-            </div>
-            {% endif %}
-        {% empty %}
-            <p>No job postings available.</p>
-        {% endfor %}
-    </div>
-</section>
+                            <div class="job-meta-info">
+                                <p class="meta-item">
+                                    <span class="meta-icon">🏢</span>
+                                    <span class="meta-text">{{ job.Company }}</span>
+                                </p>
+                                <p class="meta-item">
+                                    <span class="meta-icon">📍</span>
+                                    <span class="meta-text">{{ job.Location }}</span>
+                                </p>
+                            </div>
 
+                            <p class="job-description">
+                                {{ job.Description|truncatechars:120 }}
+                            </p>
 
-    <!-- ================= SIDEBAR WIDGETS ================= -->
-    <section>
-        <h2 class="section-title">Overview</h2>
+                            <div class="job-footer">
+                                <p class="job-date">Posted: {{ job.dateposted|date:"M d, Y" }}</p>
+                            </div>
 
-        <div>
-            <div>
-                <p id="current-date"></p>
-                <p id="current-time"></p>
-            </div>
-
-            <div>
-                <canvas id="analyticsChart"></canvas>
-            </div>
-
-            <div>
-                <div id="jobCalendar"></div>
-            </div>
+                            <div class="job-actions" onclick="event.stopPropagation();">
+                                <button class="btn btn-apply" onclick="applyForJob({{ job.JobID }})">Apply Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endif %}
+            {% empty %}
+                <div class="empty-state">
+                    <p>No job postings available at the moment.</p>
+                    <p class="empty-state-secondary">Check back soon for new opportunities!</p>
+                </div>
+            {% endfor %}
         </div>
     </section>
 
@@ -125,7 +138,9 @@
 <script>
 const jobData = [
     {% for job in jobs %}
-        { title: "{{ job.Title|escapejs }}", start: "{{ job.dateposted|date:'Y-m-d' }}" },
+        {% if job.Status == "Open" %}
+        { title: "{{ job.Title|escapejs }}", start: "{{ job.dateposted|date:'Y-m-d' }}" }{% if not forloop.last %},{% endif %}
+        {% endif %}
     {% endfor %}
 ];
 
@@ -134,71 +149,111 @@ const counts = {
     jobs: {{ job_count|default:0 }},
     applications: {{ application_count|default:0 }}
 };
-</script>
 
-<!-- JS FILES -->
-<script src="{% static 'js/joblist/joblist.js' %}"></script>
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    
+// Filter Jobs Function
+function filterJobs() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const selectedSkill = document.getElementById('filterSelect').value.toLowerCase();
+    const jobCards = document.querySelectorAll('.job-card-link');
+
+    jobCards.forEach(card => {
+        const title = card.querySelector('.job-title').textContent.toLowerCase();
+        const company = card.querySelector('.meta-text').textContent.toLowerCase();
+        
+        const matchesSearch = title.includes(searchTerm) || company.includes(searchTerm);
+        const matchesSkill = !selectedSkill || card.textContent.toLowerCase().includes(selectedSkill);
+
+        if (matchesSearch && matchesSkill) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// Allow filtering on Enter key
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') filterJobs();
+        });
+    }
+});
+
+// Apply for Job Function
+function applyForJob(jobId) {
+    if (confirm('Are you sure you want to apply for this job?')) {
+        // Submit the application
+        fetch(`/jobs/${jobId}/apply/`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Application submitted successfully!');
+                } else {
+                    alert('Failed to submit application');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+}
+
+// Navbar underline animation
 const menuLinks = document.querySelectorAll('.nav-right a');
 const underline = document.querySelector('.nav-right .underline');
 
 function moveUnderline(el) {
+    if (!underline) return;
     const rect = el.getBoundingClientRect();
     const parentRect = el.closest('.nav-right').getBoundingClientRect();
     underline.style.width = rect.width + 'px';
     underline.style.left = (rect.left - parentRect.left) + 'px';
 }
 
-// Initialize on active link
 const activeLink = document.querySelector('.nav-right a.active');
-if (activeLink) moveUnderline(activeLink);
+if (activeLink) {
+    setTimeout(() => moveUnderline(activeLink), 0);
+}
 
-// Hover effect
 menuLinks.forEach(link => {
-    link.addEventListener('mouseenter', e => moveUnderline(e.target));
+    link.addEventListener('mouseenter', e => {
+        if (e.target.tagName === 'A') moveUnderline(e.target);
+    });
 });
 
-// Reset to active link on mouse leave
 document.querySelector('.nav-right').addEventListener('mouseleave', () => {
     if (activeLink) moveUnderline(activeLink);
-
-    
 });
 
-// Logout confirmation popup
+// Logout popup
 const logoutLink = document.getElementById('logoutLink');
+if (logoutLink) {
+    logoutLink.addEventListener('click', function(e) {
+        e.preventDefault();
 
-logoutLink.addEventListener('click', function(e) {
-    e.preventDefault(); // prevent default navigation
+        const popup = document.createElement('div');
+        popup.className = 'logout-popup';
+        popup.innerHTML = `
+            <p>Are you sure you want to end your session?</p>
+            <div class="separator"></div>
+            <div class="popup-buttons">
+                <button id="cancelLogout">Cancel</button>
+                <button id="confirmLogout">Yes</button>
+            </div>
+        `;
+        document.body.appendChild(popup);
 
-    // Create popup container
-    const popup = document.createElement('div');
-    popup.className = 'logout-popup';
-    popup.innerHTML = `
-        <p>Are you sure you want to end your session?</p>
-        <div class="separator"></div>
-        <div class="popup-buttons">
-            <button id="cancelLogout">Cancel</button>
-            <button id="confirmLogout">Yes</button>
-        </div>
-    `;
-    document.body.appendChild(popup);
+        document.getElementById('confirmLogout').addEventListener('click', () => {
+            window.location.href = logoutLink.href;
+        });
 
-    // Confirm button: logs out
-    document.getElementById('confirmLogout').addEventListener('click', () => {
-        window.location.href = logoutLink.href; // proceed to logout
+        document.getElementById('cancelLogout').addEventListener('click', () => {
+            popup.classList.add('fade-out');
+            setTimeout(() => popup.remove(), 300);
+        });
     });
-
-    // Cancel button: fade out popup
-    document.getElementById('cancelLogout').addEventListener('click', () => {
-        popup.classList.add('fade-out'); // trigger fade-out CSS
-        setTimeout(() => popup.remove(), 300); // remove after animation
-    });
-});
-
+}
 </script>
+
 </body>
 </html>
