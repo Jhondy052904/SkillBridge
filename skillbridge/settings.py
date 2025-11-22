@@ -57,7 +57,12 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 # -------------------------------------------------
 SECRET_KEY = 'django-insecure-xkfm4+@+b-od03y3m1acss#dyn(3a(2=1tocjkt4)lk6q-*$dx'
 DEBUG = True
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    ".onrender.com",      # Render deployment
+]
 
 # -------------------------------------------------
 # Application Definition
@@ -78,7 +83,6 @@ INSTALLED_APPS = [
     'notifications',
     'django_extensions',
     'training',
-
 ]
 
 # -------------------------------------------------
@@ -148,10 +152,19 @@ USE_I18N = True
 USE_TZ = True
 
 # -------------------------------------------------
-# Static Files
+# Static Files (FINAL FIXED VERSION)
 # -------------------------------------------------
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
+
+# This is now correct because your static folder is in the project root
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Whitenoise for production
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # -------------------------------------------------
 # Authentication Settings

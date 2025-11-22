@@ -1,0 +1,305 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ training.training_name }} | SkillBridge</title>
+
+    <link rel="stylesheet" href="{% static 'css/trainings/training_detail.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
+</head>
+
+<body>
+
+<!-- ====================== NAVBAR ====================== -->
+<nav class="navbar">
+    <div class="nav-left">
+        <a href="{% url 'home' %}" class="logo-link">
+            <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+        </a>
+    </div>
+
+    <div class="nav-right">
+        <a href="{% url 'home' %}">Dashboard</a>
+        <a href="{% url 'list_jobs' %}">Jobs</a>
+        <a href="{% url 'list_trainings' %}" class="active">Trainings</a>
+        <div class="underline"></div>
+        <span class="separator">|</span>
+        <a href="{% url 'edit_profile' %}">Profile</a>
+        <a href="{% url 'login' %}" id="logoutLink">Logout</a>
+    </div>
+</nav>
+
+<!-- ====================== MAIN CONTENT ====================== -->
+<main>
+
+    <!-- Back Button -->
+    <div class="back-button-container">
+        {% if user_role == "Official" %}
+            <a href="{% url 'official_dashboard' %}" class="back-button">← Back to Dashboard</a>
+        {% else %}
+            <a href="{% url 'list_trainings' %}" class="back-button">← Back to Trainings</a>
+        {% endif %}
+    </div>
+
+    <!-- Training Header -->
+    <div class="training-header">
+        <div class="header-content">
+            <div class="header-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <span class="badge">{{ training.level|default:"Beginner" }}</span>
+            </div>
+            
+            <h1 class="training-title">{{ training.training_name }}</h1>
+            <p class="training-meta-header">
+                <span>{{ training.date_scheduled|date:"F d, Y"|default:"TBD" }}</span>
+                <span>{{ training.slots|default:"0" }} Slots Available</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-error{% else %}alert-info{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Content Container -->
+    <div class="detail-container">
+
+        <!-- Main Content -->
+        <div class="detail-content">
+
+            <!-- Description Section -->
+            <section class="detail-section">
+                <h2 class="section-heading">About This Training</h2>
+                <p class="description-text">
+                    {{ training.description|default:"No description provided." }}
+                </p>
+            </section>
+
+            <!-- Details Grid -->
+            <section class="detail-section">
+                <h2 class="section-heading">Training Details</h2>
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Scheduled Date</span>
+                        <span class="detail-value">{{ training.date_scheduled|date:"F d, Y"|default:"TBD" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Available Slots</span>
+                        <span class="detail-value">{{ training.slots|default:"0" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Level</span>
+                        <span class="detail-value">{{ training.level|default:"Beginner" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">⏱Duration</span>
+                        <span class="detail-value">{{ training.duration|default:"Not specified" }}</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Additional Info -->
+            {% if training.instructor or training.location %}
+            <section class="detail-section">
+                <h2 class="section-heading">Additional Information</h2>
+                <div class="info-box">
+                    {% if training.instructor %}
+                    <p><strong>Instructor:</strong> {{ training.instructor }}</p>
+                    {% endif %}
+                    {% if training.location %}
+                    <p><strong>Location:</strong> {{ training.location }}</p>
+                    {% endif %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Attendees (Officials Only) -->
+            {% if user_role == "Official" %}
+            <section class="detail-section">
+                <h2 class="section-heading">Registered Attendees ({{ attendees|length }})</h2>
+                {% if attendees %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registration Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% for attendee in attendees %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-4 py-3 text-sm text-gray-900">{{ attendee.full_name }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">{{ attendee.email }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-600">
+                                    {% if attendee.created_at %}
+                                        {{ attendee.created_at|date:"M d, Y H:i" }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-gray-500 italic">No attendees registered yet.</p>
+                {% endif %}
+            </section>
+            {% endif %}
+
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="detail-sidebar">
+            
+            <!-- Status Card -->
+            <div class="sidebar-card">
+                <h3 class="card-title">Status</h3>
+                <div class="status-display">
+                    <span class="status-badge-large">Not Urgent</span>
+                </div>
+            </div>
+
+            <!-- Action Card -->
+            <div class="sidebar-card action-card">
+                <h3 class="card-title">What's Next?</h3>
+                
+                {% if user_role == "Official" %}
+                    <div class="action-buttons">
+                        <a href="{% url 'edit_training' training.id %}" class="btn btn-primary">Edit Training</a>
+                        <form action="{% url 'delete_training' training.id %}" method="POST"
+                              onsubmit="return confirm('Are you sure you want to delete this training?');"
+                              class="delete-form">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete Training</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <button class="btn btn-register-large" onclick="registerTraining('{{ training.id }}')">
+                        Register Now
+                    </button>
+                    <p class="info-text">Secure your spot in this training session</p>
+                {% endif %}
+            </div>
+
+            <!-- Info Card -->
+            <div class="sidebar-card">
+                <h3 class="card-title">Quick Info</h3>
+                <ul class="info-list">
+                    <li>✓ Professional Development</li>
+                    <li>✓ Industry Standard Training</li>
+                    <li>✓ Certificate Upon Completion</li>
+                </ul>
+            </div>
+
+        </aside>
+
+    </div>
+
+</main>
+
+<!-- ====================== SCRIPTS ====================== -->
+<script>
+// Register Training Function (sends POST to register endpoint)
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+async function registerTraining(trainingId) {
+    if (!confirm('Are you sure you want to register for this training?')) return;
+
+    const csrftoken = getCookie('csrftoken');
+    try {
+        const resp = await fetch(`/training/register/${trainingId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            credentials: 'same-origin',
+            body: JSON.stringify({})
+        });
+
+        if (resp.ok) {
+            window.location.reload();
+        } else {
+            const text = await resp.text();
+            alert('Registration failed: ' + text);
+        }
+    } catch (err) {
+        alert('Registration error: ' + err);
+    }
+}
+
+// Navbar underline animation
+const menuLinks = document.querySelectorAll('.nav-right a');
+const underline = document.querySelector('.nav-right .underline');
+
+function moveUnderline(el) {
+    if (!underline) return;
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.closest('.nav-right').getBoundingClientRect();
+    underline.style.width = rect.width + 'px';
+    underline.style.left = (rect.left - parentRect.left) + 'px';
+}
+
+const activeLink = document.querySelector('.nav-right a.active');
+if (activeLink) {
+    setTimeout(() => moveUnderline(activeLink), 0);
+}
+
+menuLinks.forEach(link => {
+    link.addEventListener('mouseenter', e => {
+        if (e.target.tagName === 'A') moveUnderline(e.target);
+    });
+});
+
+document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+    if (activeLink) moveUnderline(activeLink);
+});
+
+// Logout popup
+const logoutLink = document.getElementById('logoutLink');
+if (logoutLink) {
+    logoutLink.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const popup = document.createElement('div');
+        popup.className = 'logout-popup';
+        popup.innerHTML = `
+            <p>Are you sure you want to end your session?</p>
+            <div class="separator"></div>
+            <div class="popup-buttons">
+                <button id="cancelLogout">Cancel</button>
+                <button id="confirmLogout">Yes</button>
+            </div>
+        `;
+        document.body.appendChild(popup);
+
+        document.getElementById('confirmLogout').addEventListener('click', () => {
+            window.location.href = logoutLink.href;
+        });
+
+        document.getElementById('cancelLogout').addEventListener('click', () => {
+            popup.classList.add('fade-out');
+            setTimeout(() => popup.remove(), 300);
+        });
+    });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,175 @@
+/* ====== GLOBAL PAGE WRAPPER ====== */
+.page-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+/* ====== BACK BUTTON ====== */
+.back-container {
+    margin-bottom: 20px;
+}
+
+.back-link {
+    color: #6c5dd3;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: 0.2s ease;
+}
+
+.back-link:hover {
+    color: #4b42b7;
+}
+
+/* ====== HEADER CARD ====== */
+.header-card {
+    background: #fff;
+    padding: 35px;
+    border-radius: 20px;
+    box-shadow: 0px 8px 30px rgba(0,0,0,0.07);
+    margin-bottom: 35px;
+}
+
+.header-chip {
+    background: #e7f0ff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #1e4fd4;
+}
+
+.header-title {
+    margin-top: 15px;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a1f36;
+}
+
+.header-subtitle {
+    margin-top: 8px;
+    font-size: 1rem;
+    color: #6b7280;
+}
+
+/* ====== ATTENDEES CARD ====== */
+.attendees-card {
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0px 8px 30px rgba(0,0,0,0.07);
+}
+
+/* ====== ATTENDEE ROW ====== */
+.attendee-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.attendee-row:last-child {
+    border-bottom: none;
+}
+
+.attendee-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.attendee-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1f36;
+}
+
+.attendee-email {
+    font-size: 0.95rem;
+    color: #6b6b6b;
+}
+
+/* ====== STATUS CHIP ====== */
+.status-chip {
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+.status-chip.attended {
+    background: #e5f8ed;
+    color: #137333;
+}
+
+.status-chip.not-attended {
+    background: #fdebea;
+    color: #b91c1c;
+}
+
+.status-chip.pending {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+/* ====== BUTTON STYLES ====== */
+.attendee-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn.success {
+    background: #4ade80;
+    color: #064e3b;
+}
+
+.btn.success:hover {
+    background: #22c55e;
+}
+
+.btn.danger {
+    background: #f87171;
+    color: #7f1d1d;
+}
+
+.btn.danger:hover {
+    background: #ef4444;
+}
+
+/* ====== EMPTY MESSAGE ====== */
+.empty-message {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 1rem;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* ====== MOBILE ====== */
+@media (max-width: 768px) {
+    .attendee-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .attendee-actions {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+    }
+}

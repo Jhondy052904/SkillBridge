@@ -1,0 +1,75 @@
+{% extends "registration/base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/trainings/training_attendees.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- MAIN CONTAINER -->
+<div class="page-wrapper">
+
+    <!-- BACK -->
+    <div class="back-container">
+        <a href="{% url 'official_dashboard' %}" class="back-link">← Back</a>
+    </div>
+
+    <!-- HEADER CARD -->
+    <div class="header-card">
+        <span class="header-chip">Training</span>
+
+        <h1 class="header-title">Attendees for: {{ training.training_name }}</h1>
+
+        <p class="header-subtitle">
+            View all residents registered for this training.
+        </p>
+    </div>
+
+    <!-- ATTENDEES CARD -->
+    <div class="attendees-card">
+
+        {% if attendees %}
+            {% for attendee in attendees %}
+                <div class="attendee-row">
+
+                    <div class="attendee-info">
+                        <p class="attendee-name">{{ attendee.full_name }}</p>
+                        <p class="attendee-email">{{ attendee.email }}</p>
+
+                        <span class="status-chip 
+                            {% if attendee.attendance_status == 'Attended' %}
+                                attended
+                            {% elif attendee.attendance_status == 'Not Attended' %}
+                                not-attended
+                            {% else %}
+                                pending
+                            {% endif %}
+                        ">
+                            {{ attendee.attendance_status|default:"Pending" }}
+                        </span>
+                    </div>
+
+                    <div class="attendee-actions">
+                        <form action="{% url 'mark_attended' attendee.id %}" method="POST">
+                            {% csrf_token %}
+                            <button class="btn success">Attended</button>
+                        </form>
+
+                        <form action="{% url 'mark_not_attended' attendee.id %}" method="POST">
+                            {% csrf_token %}
+                            <button class="btn danger">Not Attended</button>
+                        </form>
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-message">No attendees yet.</p>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
