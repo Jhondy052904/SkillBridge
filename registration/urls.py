@@ -29,6 +29,9 @@ urlpatterns = [
 
     # -------- API --------
     path('api/registered_trainings/', views.api_registered_trainings, name='api_registered_trainings'),
+    path('api/upload_certificate/', views.api_upload_certificate, name='api_upload_certificate'),
+    path('api/delete_certificate/', views.api_delete_certificate, name='api_delete_certificate'),
+    path('upload_certificate/', views.upload_certificate, name='upload_certificate'),
 
     # -------- VERIFICATION PANEL (UI) --------
     path('verify/pending/', views.pending_residents, name='pending_residents'),
