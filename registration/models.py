@@ -35,8 +35,14 @@ class Resident(models.Model):
         ('Verified', 'Verified'),
         ('Rejected', 'Rejected'),
     ]
+    CURRENT_STATUS_CHOICES = [
+        ('Hired', 'Hired'),
+        ('Not Hired', 'Not Hired'),
+        ('Training', 'Training'),
+    ]
 
     verification_status = models.CharField(max_length=10, choices=VERIFICATION_STATUS, default="Pending")
+    current_status = models.CharField(max_length=20, choices=CURRENT_STATUS_CHOICES, default='Not Hired')
 
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE, null=True, blank=True)
     first_name = models.CharField(max_length=100)

@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Residents List | SkillBridge</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        .soft-bg {
+            background: linear-gradient(135deg, #f7f5ff, #eff3ff);
+        }
+    </style>
+</head>
+
+<body class="soft-bg min-h-screen flex text-gray-900">
+
+    <!-- ====================== SIDEBAR ====================== -->
+    <aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
+        <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
+
+        <nav class="space-y-2 font-medium">
+            <a href="{% url 'official_dashboard' %}" class="block p-3 rounded-lg hover:bg-purple-50">Dashboard</a>
+            <a href="{% url 'verification_panel' %}" class="block p-3 rounded-lg hover:bg-purple-50">Verify Accounts</a>
+        </nav>
+
+        {% if official.role == "admin" or official.role == "moderator" %}
+        <div class="mt-10">
+            <a href="#audit" class="block p-3 rounded-lg hover:bg-purple-50">Audit Logs</a>
+        </div>
+        {% endif %}
+
+        <div class="mt-auto pt-8">
+            <a href="{% url 'logout' %}" class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- ================== MAIN ================== -->
+    <main class="flex-1 p-6 md:p-10">
+
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-bold">Residents List</h1>
+
+            <a href="{% url 'logout' %}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 md:hidden">
+                Logout
+            </a>
+        </header>
+
+        <!-- ================== Search ================== -->
+        <form method="get" class="mb-6 flex gap-4">
+            <input type="text" name="search" placeholder="Search by name..." value="{{ request.GET.search }}" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+            <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">Search</button>
+        </form>
+
+        <!-- ================== Status & Messages ================== -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="p-3 rounded text-white mb-2
+                    {% if message.tags == 'success' %} bg-green-600
+                    {% elif message.tags == 'error' %} bg-red-600
+                    {% else %} bg-purple-600 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- ================= RESIDENTS LIST ================= -->
+        <section class="bg-white rounded-2xl p-6 shadow">
+            {% if residents %}
+            <div class="space-y-4">
+                {% for resident in residents %}
+                <div class="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
+                    <div>
+                        <h3 class="text-lg font-semibold">{{ resident.first_name }} {{ resident.last_name }}</h3>
+                        <p class="text-gray-600">Status: <span class="font-medium
+                        {% if resident.current_status == 'Hired' %} text-green-600
+                        {% elif resident.current_status == 'Training' %} text-blue-600
+                        {% else %} text-gray-500 {% endif %}">{{ resident.current_status }}</span></p>
+                    </div>
+                    <form method="post" class="inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="resident_id" value="{{ resident.id }}">
+                        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+                                onclick="return confirm('Are you sure you want to deactivate this resident?')">
+                            Deactivate
+                        </button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+                <p class="text-gray-400 italic">No residents found.</p>
+            {% endif %}
+        </section>
+
+    </main>
+</body>
+</html>

@@ -28,10 +28,10 @@ from .models import Resident
 class ResidentForm(forms.ModelForm):
     class Meta:
         model = Resident
-        fields = ['first_name', 'middle_name', 'last_name', 'address', 'contact_number', 'employment_status', 'skills']
+        fields = ['first_name', 'middle_name', 'last_name', 'address', 'contact_number', 'employment_status', 'skills', 'current_status']
         labels = {
             'first_name': '', 'middle_name': '', 'last_name': '',
-            'address': '', 'contact_number': '', 'employment_status': '', 'skills': '',
+            'address': '', 'contact_number': '', 'employment_status': '', 'skills': '', 'current_status': '',
         }
         widgets = {
             'first_name': forms.TextInput(attrs={'class':'form-control', 'placeholder':' '}),
@@ -41,6 +41,7 @@ class ResidentForm(forms.ModelForm):
             'contact_number': forms.TextInput(attrs={'class':'form-control', 'placeholder':' '}),
             'employment_status': forms.Select(attrs={'class':'form-control'}),
             'skills': forms.Textarea(attrs={'class':'form-control', 'rows':2, 'placeholder':' '}),
+            'current_status': forms.Select(attrs={'class':'form-control'}),
         }
 
 class CustomUserCreationForm(UserCreationForm):

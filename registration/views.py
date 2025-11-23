@@ -154,6 +154,9 @@ def home(request):
     resident = Resident.objects.filter(email=username).first()
     if resident:
         verification_status = resident.verification_status
+        current_status = resident.current_status
+    else:
+        current_status = 'Not Hired'
 
     # Fetch Supabase resident data
     try:
@@ -201,6 +204,7 @@ def home(request):
         "all_jobs": all_jobs,
         "all_trainings": all_trainings,
         "notifications": notifications,
+        "current_status": current_status,
     })
 
 
@@ -520,6 +524,55 @@ def official_dashboard(request):
     })
 
 
+def residents_list(request):
+    """Official Residents List Page."""
+    if request.session.get('user_role') != 'Official':
+        messages.error(request, "Access denied.")
+        return redirect('login')
+
+    if request.method == 'POST':
+        resident_id = request.POST.get('resident_id')
+        if resident_id:
+            try:
+                supabase.table("resident").update({"verification_status": "deactivated"}).eq("id", resident_id).execute()
+                messages.success(request, "Resident account deactivated.")
+                log_action("deactivate", "resident", resident_id, request)
+            except Exception as e:
+                messages.error(request, f"Error deactivating resident: {e}")
+        return redirect('residents_list')
+
+    search_query = request.GET.get('search', '').strip()
+
+    try:
+        query = supabase.table("resident").select("*").neq("verification_status", "deactivated")
+        if search_query:
+            query = query.or_(f"first_name.ilike.%{search_query}%,last_name.ilike.%{search_query}%")
+        response = query.execute()
+        residents = response.data or []
+    except Exception as e:
+        residents = []
+        messages.error(request, f"Unable to load residents: {e}")
+
+    # Fetch current_status from Django Resident
+    for resident in residents:
+        email = resident.get('email')
+        django_resident = Resident.objects.filter(email=email).first()
+        if django_resident:
+            resident['current_status'] = django_resident.current_status
+        else:
+            resident['current_status'] = 'Not Hired'
+
+    # Fetch official profile for sidebar
+    email = request.session.get("user_email")
+    official_res = supabase.table("registration_official") \
+        .select("*") \
+        .ilike("email", email) \
+        .single() \
+        .execute()
+    official = official_res.data
+
+    return render(request, "official/residents_list.html", {"residents": residents, "official": official, "request": request})
+
 
 def post_job(request):
     """Official posts a job."""
@@ -672,6 +725,11 @@ def edit_profile_view(request):
         print("Supabase fetch error:", e)
         user_profile = {}
 
+    # Fetch current_status from Django Resident
+    resident = Resident.objects.filter(email=email).first()
+    if resident:
+        user_profile['current_status'] = resident.current_status
+
     if request.method == 'POST':
         # Get form data
         first_name = request.POST.get('first_name')
@@ -681,6 +739,7 @@ def edit_profile_view(request):
         contact_number = request.POST.get('contact_number')
         employment_status = request.POST.get('employment_status')
         skills = request.POST.get('skills')
+        current_status = request.POST.get('current_status')
 
         # Update Supabase
         try:
@@ -692,7 +751,27 @@ def edit_profile_view(request):
                 'contact_number': contact_number,
                 'employment_status': employment_status,
                 'skills': skills,
+                'status': current_status,
             }).eq('email', email).execute()
+
+            # Update Django Resident
+            resident, created = Resident.objects.get_or_create(
+                email=email,
+                defaults={
+                    'first_name': first_name,
+                    'last_name': last_name,
+                    'middle_name': middle_name,
+                    'address': address,
+                    'contact_number': contact_number,
+                    'employment_status': employment_status,
+                    'skills': skills,
+                    'current_status': current_status,
+                }
+            )
+            if not created:
+                resident.current_status = current_status
+                resident.save()
+
             messages.success(request, 'Profile updated successfully!')
             return redirect('edit_profile')
         except Exception as e:
