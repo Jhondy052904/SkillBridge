@@ -5,41 +5,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard | SkillBridge</title>
-    <link rel="stylesheet" href="{% static 'css/registration/home.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'css/registration/home.css' %}?v=6">
     <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
 <body>
 
 <!-- ====================== NAVBAR ====================== -->
 <nav class="navbar">
-  <div class="nav-left">
-    <a href="#" class="logo-link">
-      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
-    </a>
-  </div>
-  <div class="nav-right">
-    <a href="{% url 'home' %}" class="active">Dashboard</a>
-    <a href="{% url 'list_jobs' %}">Jobs</a>
-    <a href="{% url 'list_trainings' %}">Trainings</a>
-    <div class="underline"></div>
-    <a>|</a>
-    <a href="{% url 'edit_profile' %}">Profile</a>
-    <a href="{% url 'login' %}" id="logoutLink">Logout</a>
-
-  </div>
-</nav>
-
-<!-- ====================== MAIN ====================== -->
-<main class="main-content">
-
-    <!-- HEADER -->
-    <header class="header">
-        <h1 class="header-title">Welcome, {{ user.username }}!</h1>
-
-        <!-- Notification Bell -->
+    <div class="nav-left">
+        <a href="#" class="logo-link">
+            <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+        </a>
+    </div>
+    <div class="nav-right">
+        <a href="{% url 'home' %}" class="active">Dashboard</a>
+        <a href="{% url 'list_jobs' %}">Jobs</a>
+        <a href="{% url 'list_trainings' %}">Trainings</a>
+        <div class="underline"></div>
+        <a>|</a>
+        <a href="{% url 'edit_profile' %}">Profile</a>
+        
+        <!-- Notifications as Text Button -->
         <div class="notifications">
             <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
-                🔔
+                Notifications
                 {% if notifications %}
                     <span class="notif-indicator"></span>
                 {% endif %}
@@ -63,19 +52,24 @@
                 {% endif %}
             </div>
         </div>
-    </header>
-
-<!-- MESSAGES -->
-{% if messages %}
-<div class="messages">
-    {% for message in messages %}
-    <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
-        <span class="message-text">{{ message }}</span>
+        
+        <a href="{% url 'login' %}" id="logoutLink">Logout</a>
     </div>
-    {% endfor %}
-</div>
-{% endif %}
+</nav>
 
+<!-- ====================== MAIN ====================== -->
+<main class="main-content">
+
+    <!-- MESSAGES -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
+            <span class="message-text">{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <!-- ================= PROFILE CARD ================= -->
     {% if user_profile %} 
@@ -107,8 +101,6 @@
     </div>
     {% endif %}
 
-    
-
     <!-- ================= REGISTERED TRAININGS ================= -->
     <section class="registered-trainings">
         <h2 class="section-title">My Registered Trainings</h2>
@@ -118,14 +110,44 @@
                 <ul>
                     {% for training in registered_trainings %}
                         <li class="training-item">
-                            <strong>{{ training.training_name }}</strong>
+                            <div class="training-info">
+                                <strong>{{ training.training_name }}</strong>
+                            </div>
+                            <span class="training-date">{{ training.date_scheduled|date:"n/j/Y" }}</span>
                             <span class="training-status">{{ training.status }}</span>
-                            <br><span class="training-date">{{ training.date_scheduled|date:"M d, Y" }}</span>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
                 <p class="empty-trainings">No trainings registered yet. <a href="{% url 'list_trainings' %}" class="link-primary">Find trainings</a></p>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- ================= MY CERTIFICATES ================= -->
+    <section class="my-certificates">
+        <h2 class="section-title">My Certificates</h2>
+
+        <button id="uploadCertBtn" class="btn-upload-cert">+ Upload Certificate</button>
+
+        <div id="certificatesList" class="certificates-list">
+            {% if certificates %}
+                <div class="certificates-grid">
+                    {% for cert in certificates %}
+                        <div class="certificate-card">
+                            <div class="certificate-info">
+                                <strong>{{ cert.training_name }}</strong>
+                            </div>
+                            <span class="training-date">{{ cert.uploaded_at|date:"n/j/Y" }}</span>
+                            <div class="certificate-actions">
+                                <a href="{{ cert.certificate_url }}" target="_blank" class="btn-view">View</a>
+                                <button class="btn-delete" data-id="{{ cert.id }}">Delete</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-certificates">No certificates uploaded yet.</p>
             {% endif %}
         </div>
     </section>
@@ -140,6 +162,26 @@
     </section>
 
 </main>
+
+<!-- Upload Certificate Modal -->
+<div id="uploadCertModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h3>Upload Certificate</h3>
+        <form id="uploadCertForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="modalTrainingSelect">Select Training</label>
+            <select id="modalTrainingSelect" name="training_id" required>
+                <option value="">-- Choose a training --</option>
+            </select>
+
+            <label for="certFile">Certificate File</label>
+            <input type="file" id="certFile" name="certificates" accept=".pdf,.jpg,.jpeg" required>
+            
+            <button type="submit" class="btn-submit">Upload Certificate</button>
+        </form>
+    </div>
+</div>
 
 <script>
 const notifBtn = document.getElementById('notifBtn');
@@ -161,37 +203,12 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') notifDropdown.classList.add('hidden');
 });
 
-const menuLinks = document.querySelectorAll('.nav-right a');
-const underline = document.querySelector('.nav-right .underline');
-
-function moveUnderline(el) {
-    const rect = el.getBoundingClientRect();
-    const parentRect = el.closest('.nav-right').getBoundingClientRect();
-    underline.style.width = rect.width + 'px';
-    underline.style.left = (rect.left - parentRect.left) + 'px';
-}
-
-// Initialize on active link
-const activeLink = document.querySelector('.nav-right a.active');
-if (activeLink) moveUnderline(activeLink);
-
-// Hover effect
-menuLinks.forEach(link => {
-    link.addEventListener('mouseenter', e => moveUnderline(e.target));
-});
-
-// Reset to active link on mouse leave
-document.querySelector('.nav-right').addEventListener('mouseleave', () => {
-    if (activeLink) moveUnderline(activeLink);
-});
-
 // Logout confirmation popup
 const logoutLink = document.getElementById('logoutLink');
 
 logoutLink.addEventListener('click', function(e) {
-    e.preventDefault(); // prevent default navigation
+    e.preventDefault();
 
-    // Create popup container
     const popup = document.createElement('div');
     popup.className = 'logout-popup';
     popup.innerHTML = `
@@ -204,19 +221,17 @@ logoutLink.addEventListener('click', function(e) {
     `;
     document.body.appendChild(popup);
 
-    // Confirm button: logs out
     document.getElementById('confirmLogout').addEventListener('click', () => {
-        window.location.href = logoutLink.href; // proceed to logout
+        window.location.href = logoutLink.href;
     });
 
-    // Cancel button: fade out popup
     document.getElementById('cancelLogout').addEventListener('click', () => {
-        popup.classList.add('fade-out'); // trigger fade-out CSS
-        setTimeout(() => popup.remove(), 500); // remove after animation
+        popup.classList.add('fade-out');
+        setTimeout(() => popup.remove(), 500);
     });
 });
 
-// Polling to update registered trainings attendance status
+// Polling to update registered trainings
 async function fetchRegisteredTrainings() {
     try {
         const resp = await fetch('/api/registered_trainings/');
@@ -231,13 +246,32 @@ async function fetchRegisteredTrainings() {
         }
 
         let html = '<ul>';
+        const modalSelect = document.getElementById('modalTrainingSelect');
+        const selectedValue = modalSelect ? modalSelect.value : '';
+        if (modalSelect) modalSelect.innerHTML = '<option value="">-- Choose a training --</option>';
+        
         data.forEach(t => {
             const status = t.attendance_status || 'Pending';
-            const date = t.date_scheduled ? new Date(t.date_scheduled).toLocaleDateString() : '';
-            html += `<li class="training-item"><strong>${t.training_name || 'Training'}</strong> <span class="training-status">${status}</span><br><span class="training-date">${date}</span></li>`;
+            const date = t.date_scheduled ? new Date(t.date_scheduled).toLocaleDateString('en-US', {month: 'numeric', day: 'numeric', year: 'numeric'}) : '';
+            html += `<li class="training-item">
+                        <div class="training-info">
+                            <strong>${t.training_name || 'Training'}</strong>
+                        </div>
+                        <span class="training-date">${date}</span>
+                        <span class="training-status">${status}</span>
+                    </li>`;
+            if (modalSelect) {
+                const opt = document.createElement('option');
+                opt.value = t.training_id;
+                opt.text = `${t.training_name || 'Training'} ${date ? ' - ' + date : ''}`;
+                modalSelect.appendChild(opt);
+            }
         });
         html += '</ul>';
         container.innerHTML = html;
+        if (modalSelect && selectedValue) {
+            modalSelect.value = selectedValue;
+        }
     } catch (e) {
         // silent fail
     }
@@ -247,12 +281,11 @@ async function fetchRegisteredTrainings() {
 fetchRegisteredTrainings();
 setInterval(fetchRegisteredTrainings, 5000);
 
-//Welcome message
+// Welcome message
 document.addEventListener('DOMContentLoaded', () => {
     const messages = document.querySelectorAll('.messages .message');
 
     messages.forEach(msg => {
-        // Add close button
         const closeBtn = document.createElement('span');
         closeBtn.className = 'close-msg';
         closeBtn.innerHTML = '&times;';
@@ -260,7 +293,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         closeBtn.addEventListener('click', () => msg.remove());
 
-        // Auto-fade after 5 seconds
         setTimeout(() => {
             msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
             msg.style.opacity = '0';
@@ -270,7 +302,88 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+// Certificate upload modal
+const uploadCertBtn = document.getElementById('uploadCertBtn');
+const uploadCertModal = document.getElementById('uploadCertModal');
+const closeModal = document.querySelector('.close-modal');
+const uploadCertForm = document.getElementById('uploadCertForm');
 
+uploadCertBtn.addEventListener('click', () => {
+    uploadCertModal.classList.remove('hidden');
+});
+
+closeModal.addEventListener('click', () => {
+    uploadCertModal.classList.add('hidden');
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === uploadCertModal) {
+        uploadCertModal.classList.add('hidden');
+    }
+});
+
+uploadCertForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(uploadCertForm);
+
+    try {
+        const response = await fetch('/api/upload_certificate/', {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        });
+
+        if (response.ok) {
+            uploadCertModal.classList.add('hidden');
+            location.reload();
+        } else {
+            const err = await response.json().catch(()=>null);
+            alert('Upload failed. ' + (err && err.error ? err.error : 'Please try again.'));
+        }
+    } catch (error) {
+        alert('An error occurred. Please try again.');
+    }
+});
+
+// Delete certificate
+document.addEventListener('click', async (e) => {
+    if (e.target.classList.contains('btn-delete')) {
+        e.preventDefault();
+        const certId = e.target.getAttribute('data-id');
+        if (!confirm('Are you sure you want to delete this certificate?')) return;
+
+        try {
+            const response = await fetch('/api/delete_certificate/', {
+                method: 'POST',
+                body: new URLSearchParams({ cert_id: certId }),
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            });
+
+            if (response.ok) {
+                const certCard = e.target.closest('.certificate-card');
+                if (certCard) certCard.remove();
+                
+                const grid = document.querySelector('.certificates-grid');
+                if (grid && grid.children.length === 0) {
+                    grid.remove();
+                    document.querySelector('#certificatesList').innerHTML = '<p class="empty-certificates">No certificates uploaded yet.</p>';
+                }
+            } else {
+                const err = await response.json().catch(()=>null);
+                alert('Delete failed. ' + (err && err.error ? err.error : 'Please try again.'));
+            }
+        } catch (error) {
+            alert('An error occurred. Please try again.');
+        }
+    }
+});
 </script>
 
 </body>

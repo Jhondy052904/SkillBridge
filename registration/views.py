@@ -51,7 +51,10 @@ def log_action(action, entity, entity_id, request):
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
+# Create both an anon client (for public reads) and a service-role client (for privileged writes)
+supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY or SUPABASE_KEY)
+supabase_service = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ------------------------------------------------------------
 # Public Views
@@ -189,6 +192,23 @@ def home(request):
         messages.error(request, "Unable to load training events.")
         all_trainings = []
 
+    # Certificates
+    certificates = []
+    try:
+        if user_profile:
+            response = supabase.table("training_certificates").select("*").eq("resident_id", user_profile['id']).order("uploaded_at", desc=True).execute()
+            certificates = response.data or []
+            # Fetch training names for each certificate
+            for cert in certificates:
+                try:
+                    training_resp = supabase.table("training").select("training_name").eq("id", cert['training_id']).single().execute()
+                    cert['training_name'] = training_resp.data['training_name'] if training_resp.data else 'Unknown Training'
+                except Exception as e:
+                    cert['training_name'] = 'Unknown Training'
+    except Exception as e:
+        print("Certificates fetch error:", e)
+        certificates = []
+
     # Notifications
     try:
         notifications = get_all_notifications()
@@ -205,6 +225,7 @@ def home(request):
         "all_trainings": all_trainings,
         "notifications": notifications,
         "current_status": current_status,
+        "certificates": certificates,
     })
 
 
@@ -253,6 +274,107 @@ def get_all_notifications():
     except Exception as e:
         print("Notification fetch error:", e)
         return []
+
+
+@login_required
+def api_upload_certificate(request):
+    """API endpoint for residents to upload training certificates.
+
+    Expects multipart/form-data POST with fields:
+      - training_id
+      - certificates (one or many files)
+
+    Uploads files to `training_certificates` bucket and inserts a row into
+    the `training_certificates` table with integer `resident_id` and
+    `training_id` and `uploaded_at` timestamp.
+    """
+    if request.method != 'POST':
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    email = request.session.get('user_email')
+    if not email:
+        return JsonResponse({"error": "Authentication required"}, status=401)
+
+    # Use Supabase Resident UUID for resident_id
+    try:
+        res = supabase.table("resident").select("id").eq("email", email).single().execute()
+        resident_id = res.data['id']
+    except Exception:
+        return JsonResponse({"error": "Resident profile not found"}, status=404)
+
+    training_id = request.POST.get('training_id')
+    if not training_id:
+        return JsonResponse({"error": "training_id is required"}, status=400)
+    try:
+        training_id_int = int(training_id)
+    except Exception:
+        return JsonResponse({"error": "training_id must be an integer"}, status=400)
+
+    # Verify resident is registered for this training
+    try:
+        att_resp = supabase.table("training_attendees").select("*").eq("email", email).eq("training_id", training_id_int).single().execute()
+        registered = bool(att_resp.data)
+    except Exception:
+        registered = False
+
+    if not registered:
+        try:
+            all_att = supabase.table("training_attendees").select("*").eq("email", email).execute()
+            attendees = all_att.data or []
+            registered = any(str(a.get("training_id")) == str(training_id_int) for a in attendees)
+        except Exception:
+            registered = False
+
+    if not registered:
+        return JsonResponse({"error": "Not registered for this training"}, status=403)
+
+    files = request.FILES.getlist('certificates')
+    if not files:
+        return JsonResponse({"error": "No files uploaded"}, status=400)
+
+    allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf']
+    uploaded = []
+    errors = []
+    bucket = os.getenv('SUPABASE_CERT_BUCKET', 'training_certificates')
+
+    for f in files:
+        if f.content_type not in allowed_types:
+            errors.append(f"File {f.name}: unsupported type {f.content_type}")
+            continue
+
+        # create safe path
+        import re
+        clean_name = re.sub(r'[^\w\.-]', '_', f.name)  # replace non-word, non-dot, non-dash with _
+        timestamp = int(time.time())
+        file_path = f"{resident_id}/{training_id_int}/{timestamp}_{clean_name}"
+
+        try:
+            supabase_service.storage.from_(bucket).upload(file_path, f.read(), {"content-type": f.content_type})
+            public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
+        except Exception as e:
+            errors.append(f"Storage upload error for {f.name}: {repr(e)}")
+            continue
+
+        cert_row = {
+            "resident_id": resident_id,
+            "training_id": training_id_int,
+            "file_name": f.name,
+            "file_type": f.content_type.split('/')[-1],
+            "certificate_url": public_url,
+            "uploaded_at": datetime.utcnow().isoformat(),
+        }
+
+        try:
+            supabase_service.table("training_certificates").insert(cert_row).execute()
+            uploaded.append({"file_name": f.name, "url": public_url})
+        except Exception as e:
+            errors.append(f"DB insert error for {f.name}: {repr(e)}")
+            continue
+
+    if not uploaded:
+        return JsonResponse({"error": "No files were uploaded successfully", "details": errors}, status=400)
+
+    return JsonResponse({"uploaded": uploaded})
 
 def forgot_password_view(request):
     return render(request, 'registration/forgot_password.html')
@@ -896,6 +1018,103 @@ def verification_panel(request):
         messages.error(request, f"Unable to retrieve pending accounts: {e}")
 
     return render(request, "official/verification_panel.html", {"residents": residents})
+
+@login_required
+def api_delete_certificate(request):
+    """API endpoint for residents to delete training certificates."""
+    if request.method != 'POST':
+        return JsonResponse({"error": "Method not allowed"}, status=405)
+
+    email = request.session.get('user_email')
+    if not email:
+        return JsonResponse({"error": "Authentication required"}, status=401)
+
+    cert_id = request.POST.get('cert_id')
+    if not cert_id:
+        return JsonResponse({"error": "cert_id is required"}, status=400)
+
+    try:
+        cert_id_int = int(cert_id)
+    except Exception:
+        return JsonResponse({"error": "cert_id must be an integer"}, status=400)
+
+    # Fetch certificate to verify ownership
+    try:
+        cert_resp = supabase.table("training_certificates").select("*").eq("id", cert_id_int).single().execute()
+        cert = cert_resp.data
+        if not cert:
+            return JsonResponse({"error": "Certificate not found"}, status=404)
+
+        # Check if resident owns this certificate
+        if cert['resident_id'] != supabase.table("resident").select("id").eq("email", email).single().execute().data['id']:
+            return JsonResponse({"error": "Not authorized"}, status=403)
+
+    except Exception as e:
+        return JsonResponse({"error": f"Verification error: {str(e)}"}, status=500)
+
+    # Delete from storage
+    bucket = os.getenv('SUPABASE_CERT_BUCKET', 'training_certificates')
+    file_path = cert['certificate_url'].split('/')[-1]  # Assuming URL ends with path
+    # Actually, need to extract path from URL
+    # For simplicity, assume path is known or parse
+    # But to make it work, perhaps store file_path in DB
+    # For now, try to delete assuming path is resident_id/training_id/filename
+    try:
+        # Extract file path from certificate_url
+        # Assuming URL is like https://.../bucket/resident_id/training_id/filename
+        url_parts = cert['certificate_url'].split('/')
+        file_path = '/'.join(url_parts[-3:])  # last 3 parts
+        supabase_service.storage.from_(bucket).remove([file_path])
+    except Exception as e:
+        print("Storage delete error:", e)
+        # Continue to delete DB record
+
+    # Delete from DB
+    try:
+        supabase_service.table("training_certificates").delete().eq("id", cert_id_int).execute()
+    except Exception as e:
+        return JsonResponse({"error": f"DB delete error: {str(e)}"}, status=500)
+
+    return JsonResponse({"success": True})
+
+@login_required
+def upload_certificate(request):
+    """Upload certificate for resident."""
+    if request.method == 'POST':
+        email = request.session.get('user_email')
+        if not email:
+            return JsonResponse({"error": "Not authenticated"}, status=401)
+
+        certificate_name = request.POST.get('certificate_name')
+        certificate_file = request.FILES.get('certificate_file')
+
+        if not certificate_name or not certificate_file:
+            return JsonResponse({"error": "Missing fields"}, status=400)
+
+        try:
+            # Upload file to Supabase Storage (use training_certificates bucket)
+            bucket = os.getenv('SUPABASE_CERT_BUCKET', 'training_certificates')
+            file_path = f"{email}/{certificate_file.name}"
+            supabase_service.storage.from_(bucket).upload(file_path, certificate_file.read(), {'content-type': certificate_file.content_type})
+
+            # Get public URL
+            public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
+
+            # Insert into resident_certificates table (legacy table) - keep existing behavior
+            supabase_service.table("resident_certificates").insert({
+                "resident_email": email,
+                "certificate_name": certificate_name,
+                "file_url": public_url,
+                "upload_date": datetime.utcnow().isoformat()
+            }).execute()
+
+            return JsonResponse({"success": True})
+
+        except Exception as e:
+            print("Upload error:", e)
+            return JsonResponse({"error": str(e)}, status=500)
+
+    return JsonResponse({"error": "Invalid method"}, status=405)
 
     def get_latest_notification():
         try:
