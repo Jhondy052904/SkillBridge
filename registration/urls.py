@@ -17,6 +17,7 @@ urlpatterns = [
 
     # -------- OFFICIAL DASHBOARD --------
     path('official/dashboard/', views.official_dashboard, name='official_dashboard'),
+    path('official/residents/', views.residents_list, name='residents_list'),
     path('official/post-job/', views.post_job, name='post_job'),
     path('official/post-training/', views.post_training, name='post_training'),
     path('official/post-event/', views.post_event, name='post_event'),

@@ -87,6 +87,15 @@
         <option value="Pedicure" {% if form.skills.value == 'Pedicure' %}selected{% endif %}>Pedicure</option>
       </select>
 
+      <label>Current Status</label>
+      <select name="current_status">
+        {% for value, label in form.fields.current_status.choices %}
+          <option value="{{ value }}" {% if form.current_status.value == value %}selected{% endif %}>
+            {{ label }}
+          </option>
+        {% endfor %}
+      </select>
+
       <button type="submit" class="editprofile-submit">Save Changes</button>
     </form>
 

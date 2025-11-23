@@ -66,10 +66,10 @@
 
         <!-- ================= DASHBOARD CARDS ================= -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-white rounded-2xl p-6 shadow border-l-4 border-purple-500">
+            <a href="{% url 'residents_list' %}" class="block bg-white rounded-2xl p-6 shadow border-l-4 border-purple-500 hover:shadow-lg transition">
                 <h3 class="text-sm text-gray-500">Total Residents</h3>
                 <p class="text-3xl font-bold">{{ total_residents }}</p>
-            </div>
+            </a>
 
             <div class="bg-white rounded-2xl p-6 shadow border-l-4 border-green-500">
                 <h3 class="text-sm text-gray-500">Applicants</h3>
