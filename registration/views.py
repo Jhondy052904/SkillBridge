@@ -988,6 +988,62 @@ def resident_details(request, resident_id):
     })
 
 
+def dashboard_resident_details(request, resident_id):
+    """Dashboard Resident Details Page."""
+    if request.session.get('user_role') != 'Official':
+        messages.error(request, "Access denied.")
+        return redirect('login')
+
+    # Fetch resident from Supabase
+    try:
+        resp = supabase.table("resident").select("*").eq("id", resident_id).single().execute()
+        resident = resp.data
+    except Exception as e:
+        messages.error(request, f"Resident not found: {e}")
+        return redirect('residents_list')
+
+    # Fetch current_status from Django Resident
+    django_resident = Resident.objects.filter(email=resident['email']).first()
+    current_status = django_resident.current_status if django_resident else 'Not Hired'
+
+    # Fetch attended trainings
+    attended_trainings = []
+    try:
+        attendees_resp = supabase.table("training_attendees").select("*").eq("email", resident['email']).in_("attendance_status", ["Attended", "Completed"]).execute()
+        attendees = attendees_resp.data or []
+        for att in attendees:
+            try:
+                training_resp = supabase.table("training").select("training_name, date_scheduled").eq("id", att['training_id']).single().execute()
+                training = training_resp.data
+                if training:
+                    attended_trainings.append({
+                        'name': training['training_name'],
+                        'date': training['date_scheduled']
+                    })
+            except Exception as e:
+                print(f"Training fetch error for {att['training_id']}: {e}")
+    except Exception as e:
+        print(f"Attended trainings fetch error: {e}")
+
+    # Fetch skills
+    skills = []
+    try:
+        skills_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident_id).execute()
+        skill_ids = [s['skill_id'] for s in skills_resp.data or []]
+        if skill_ids:
+            skills_resp = supabase.table("skill_list").select("SkillName").in_("SkillID", skill_ids).execute()
+            skills = [s['SkillName'] for s in skills_resp.data or []]
+    except Exception as e:
+        print(f"Skills fetch error: {e}")
+
+    return render(request, "official/dashboard_resident_details.html", {
+        "resident": resident,
+        "current_status": current_status,
+        "attended_trainings": attended_trainings,
+        "skills": skills
+    })
+
+
 
 from django.core.mail import send_mail
 from django.conf import settings
