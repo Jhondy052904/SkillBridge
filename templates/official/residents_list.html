@@ -77,7 +77,9 @@
                 {% for resident in residents %}
                 <div class="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
                     <div>
-                        <h3 class="text-lg font-semibold">{{ resident.first_name }} {{ resident.last_name }}</h3>
+                        <a href="{% url 'dashboard_resident_details' resident.id %}" class="block">
+                            <h3 class="text-lg font-semibold text-purple-700 hover:text-purple-900">{{ resident.first_name }} {{ resident.last_name }}</h3>
+                        </a>
                         <p class="text-gray-600">Status: <span class="font-medium
                         {% if resident.current_status == 'Hired' %} text-green-600
                         {% elif resident.current_status == 'Training' %} text-blue-600
