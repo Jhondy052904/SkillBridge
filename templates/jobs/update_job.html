@@ -88,6 +88,23 @@
                     </select>
                 </div>
 
+                <div>
+                    <label class="block font-semibold mb-1">Required Skills</label>
+                    <div id="skills-container" class="flex flex-wrap gap-2">
+                        {% for skill in skills %}
+                        <button type="button" class="skill-tile px-3 py-2 rounded-lg {% if skill.SkillID in job_skill_ids %}selected bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700{% endif %} hover:bg-gray-200 transition-colors" data-skill-id="{{ skill.SkillID }}">
+                            {{ skill.SkillName }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                    <div id="hidden-skills">
+                        {% for skill_id in job_skill_ids %}
+                        <input type="hidden" name="skills" value="{{ skill_id }}">
+                        {% endfor %}
+                    </div>
+                    <p class="text-sm text-gray-500 mt-1">Click to select/deselect skills.</p>
+                </div>
+
                 <button class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg shadow">
                     Save Job
                 </button>
@@ -99,6 +116,40 @@
         </div>
 
     </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const skillsContainer = document.getElementById('skills-container');
+            const hiddenSkills = document.getElementById('hidden-skills');
+
+            skillsContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('skill-tile')) {
+                    const tile = e.target;
+                    const skillId = tile.dataset.skillId;
+                    const isSelected = tile.classList.contains('selected');
+
+                    if (isSelected) {
+                        // Deselect
+                        tile.classList.remove('selected', 'bg-purple-600', 'text-white');
+                        tile.classList.add('bg-gray-100', 'text-gray-700');
+                        // Remove hidden input
+                        const hiddenInput = hiddenSkills.querySelector(`input[value="${skillId}"]`);
+                        if (hiddenInput) hiddenInput.remove();
+                    } else {
+                        // Select
+                        tile.classList.add('selected', 'bg-purple-600', 'text-white');
+                        tile.classList.remove('bg-gray-100', 'text-gray-700');
+                        // Add hidden input
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'skills';
+                        input.value = skillId;
+                        hiddenSkills.appendChild(input);
+                    }
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>

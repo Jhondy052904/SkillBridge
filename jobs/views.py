@@ -68,6 +68,7 @@ def post_job(request):
             title = data['title']
             description = data['description']
             status = data.get('status', 'Open')
+            selected_skills = [skill for skill in data.get('skills_list', '').split(',') if skill]
 
             result = supabase.table("jobs").insert({
                 "Title": title,
@@ -82,11 +83,29 @@ def post_job(request):
             job = result.data[0]
             job_id = job.get("JobID")
 
+            # Insert skill requirements
+            import uuid
+            for skill_id in selected_skills:
+                supabase.table("job_skill_list").insert({
+                    "id": str(uuid.uuid4()),
+                    "job_id": job_id,
+                    "skill_id": skill_id,
+                    "created_at": datetime.utcnow().isoformat()
+                }).execute()
+
             log_action("create", "job", job_id, request)
             messages.success(request, "Job posted successfully!")
             return redirect("official_dashboard")
 
-        return render(request, 'jobs/post_job.html')
+        # Fetch skills for the form
+        try:
+            skills_resp = supabase.table("skill_list").select("SkillID,SkillName").execute()
+            skills = skills_resp.data if skills_resp.data else []
+        except Exception as e:
+            print("Error fetching skills:", e)
+            skills = []
+
+        return render(request, 'jobs/post_job.html', {'skills': skills})
 
     except Exception as e:
         print("EXCEPTION:", e)
@@ -101,6 +120,18 @@ def post_job(request):
 def list_jobs(request):
     try:
         jobs = get_jobs()
+        # Fetch skills for all jobs
+        skills_resp = supabase.table("job_skill_list").select("job_id, skill_list!inner(SkillName)").execute()
+        job_skills = {}
+        for item in skills_resp.data:
+            job_id = item['job_id']
+            skill_name = item['skill_list']['SkillName']
+            if job_id not in job_skills:
+                job_skills[job_id] = []
+            job_skills[job_id].append(skill_name)
+        # Add skills to each job
+        for job in jobs:
+            job['skills'] = job_skills.get(job['JobID'], [])
     except Exception as e:
         messages.error(request, f"Error loading jobs: {str(e)}")
         jobs = []
@@ -127,6 +158,21 @@ def update_job_view(request, job_id):
             updates = {k: v for k, v in updates.items() if v}
 
             update_job(job_id, updates)
+
+            # Update skills
+            selected_skills = request.POST.getlist('skills')
+            # Delete existing skills
+            supabase.table("job_skill_list").delete().eq("job_id", job_id).execute()
+            # Insert new skills
+            import uuid
+            for skill_id in selected_skills:
+                supabase.table("job_skill_list").insert({
+                    "id": str(uuid.uuid4()),
+                    "job_id": job_id,
+                    "skill_id": skill_id,
+                    "created_at": datetime.utcnow().isoformat()
+                }).execute()
+
             log_action("edit", "job", job_id, request)
             messages.success(request, "Job updated successfully!")
             return redirect('official_dashboard')
@@ -136,11 +182,19 @@ def update_job_view(request, job_id):
 
     try:
         job = get_job_by_id(job_id)
+        # Fetch current skills for the job
+        job_skills_resp = supabase.table("job_skill_list").select("skill_id").eq("job_id", job_id).execute()
+        job_skill_ids = [s['skill_id'] for s in job_skills_resp.data] if job_skills_resp.data else []
     except Exception as e:
         messages.error(request, f"Error loading job: {str(e)}")
         job = None
+        job_skill_ids = []
 
-    return render(request, 'jobs/update_job.html', {'job': job, 'official': official_data})
+    # Fetch all skills
+    skills_resp = supabase.table("skill_list").select("SkillID,SkillName").execute()
+    skills = skills_resp.data if skills_resp.data else []
+
+    return render(request, 'jobs/update_job.html', {'job': job, 'official': official_data, 'skills': skills, 'job_skill_ids': job_skill_ids})
 
 
 # ==========================================================
@@ -201,8 +255,11 @@ def apply_job(request, job_id):
 def job_detail(request, job_id):
     try:
         job = get_job_by_id(job_id)
+        # Fetch required skills
+        skills_resp = supabase.table("job_skill_list").select("skill_id, skill_list!inner(SkillName)").eq("job_id", job_id).execute()
+        skills = [s['skill_list']['SkillName'] for s in skills_resp.data] if skills_resp.data else []
     except Exception as e:
         raise Http404("Job not found")
-    context = {'job': job}
+    context = {'job': job, 'required_skills': skills}
     return render(request, 'jobs/job_detail.html', context)
 

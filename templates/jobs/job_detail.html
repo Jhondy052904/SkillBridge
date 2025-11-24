@@ -34,27 +34,13 @@
 <!-- ====================== MAIN CONTENT ====================== -->
     <!-- Back Button -->
     <div class="back-button-container">
-        <a href="{% url 'list_trainings' %}" class="back-button">← Back to Trainings</a>
-    </div>
-<main>
-
-    <!-- Back Button -->
-    <div class="back-button-container">
         <a href="{% url 'list_jobs' %}" class="back-button">← Back to Jobs</a>
     </div>
 
     <!-- Job Header -->
     <div class="job-header">
         <div class="header-content">
-            <div class="header-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <span class="badge">{{ job.JobType }}</span>
-            </div>
-            
             <h1 class="job-title">{{ job.Title }}</h1>
-            <p class="job-meta-header">
-                <span>Posted by {{ job.PostedBy }}</span>
-                <span>{{ job.dateposted|date:"F d, Y" }}</span>
-            </p>
         </div>
     </div>
 
@@ -83,89 +69,27 @@
                 </p>
             </section>
 
-            <!-- Job Details Grid -->
+            <!-- Job Status Section -->
             <section class="detail-section">
-                <h2 class="section-heading">Job Details</h2>
-                <div class="details-grid">
-                    <div class="detail-item">
-                        <span class="detail-label">Posted Date</span>
-                        <span class="detail-value">{{ job.dateposted|date:"F d, Y"|default:"Not specified" }}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Posted By</span>
-                        <span class="detail-value">{{ job.PostedBy|default:"Not specified" }}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Status</span>
-                        <span class="detail-value">{{ job.Status|default:"Not specified" }}</span>
-                    </div>
+                <h2 class="section-heading">Job Status</h2>
+                <div class="status-display">
+                    <span class="status-badge-large">{{ job.Status|default:"Not specified" }}</span>
                 </div>
             </section>
 
-            <!-- Requirements Section -->
-            {% if job.Requirements %}
+            <!-- Required Skills Section -->
+            {% if required_skills %}
             <section class="detail-section">
-                <h2 class="section-heading">Requirements</h2>
-                <div class="info-box">
-                    <p>{{ job.Requirements }}</p>
-                </div>
-            </section>
-            {% endif %}
-
-            <!-- Additional Info -->
-            {% if job.BenefitsOrNotes %}
-            <section class="detail-section">
-                <h2 class="section-heading">Benefits & Additional Info</h2>
-                <div class="info-box">
-                    <p>{{ job.BenefitsOrNotes }}</p>
+                <h2 class="section-heading">Required Skills</h2>
+                <div class="skills-container">
+                    {% for skill in required_skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                    {% endfor %}
                 </div>
             </section>
             {% endif %}
 
         </div>
-
-        <!-- Sidebar -->
-        <aside class="detail-sidebar">
-            
-            <!-- Status Card -->
-            <div class="sidebar-card">
-                <h3 class="card-title">Position Status</h3>
-                <div class="status-display">
-                    <span class="status-badge-large">Open</span>
-                </div>
-            </div>
-
-            <!-- Action Card -->
-            <div class="sidebar-card action-card">
-                <h3 class="card-title">Take Action</h3>
-                
-                <button class="btn btn-apply-large" onclick="applyForJob('{{ job.JobID }}')">
-                    Apply Now
-                </button>
-                <p class="info-text">Submit your application for this position</p>
-            </div>
-
-            <!-- Company Info Card -->
-            <div class="sidebar-card">
-                <h3 class="card-title">Job Info</h3>
-                <div class="company-info">
-                    <p><strong>{{ job.Title }}</strong></p>
-                    <p class="location">Posted by: {{ job.PostedBy }}</p>
-                </div>
-            </div>
-
-            <!-- Quick Tips Card -->
-            <div class="sidebar-card">
-                <h3 class="card-title">Application Tips</h3>
-                <ul class="tips-list">
-                    <li>✓ Review job requirements carefully</li>
-                    <li>✓ Customize your resume</li>
-                    <li>✓ Write a compelling cover letter</li>
-                    <li>✓ Proofread before submitting</li>
-                </ul>
-            </div>
-
-        </aside>
 
     </div>
 
@@ -173,24 +97,6 @@
 
 <!-- ====================== SCRIPTS ====================== -->
 <script>
-// Apply for Job Function
-function applyForJob(jobId) {
-    if (confirm('Are you sure you want to apply for this job?')) {
-        // You can implement actual application logic here
-        // Option 1: Form submission
-        // window.location.href = `/jobs/${jobId}/apply/`;
-        
-        // Option 2: API call
-        // fetch(`/jobs/${jobId}/apply/`, { method: 'POST' })
-        //     .then(response => response.json())
-        //     .then(data => alert(data.message))
-        //     .catch(error => console.error('Error:', error));
-        
-        // Option 3: Show message
-        alert('Application submitted successfully! We will review your application soon.');
-    }
-}
-
 // Navbar underline animation
 const menuLinks = document.querySelectorAll('.nav-right a');
 const underline = document.querySelector('.nav-right .underline');

@@ -364,16 +364,24 @@ main {
     transform: translateY(-3px);
 }
 
-/* Job type badge */
-.job-type-badge {
+/* Job status badge */
+.job-status-badge {
     display: inline-block;
-    background: rgba(60, 140, 255, 0.12);
-    color: #3478FF;
     padding: 6px 14px;
     border-radius: 14px;
     font-weight: 600;
     font-size: 0.85rem;
     margin-bottom: 12px;
+}
+
+.job-status-badge.status-open {
+    background: rgba(34, 197, 94, 0.12);
+    color: #16A34A;
+}
+
+.job-status-badge.status-closed {
+    background: rgba(239, 68, 68, 0.12);
+    color: #DC2626;
 }
 
 /* Job title */
@@ -404,6 +412,30 @@ main {
     color: #5A6B80;
     font-size: 0.95rem;
     line-height: 1.6;
+}
+
+/* Skills Tags */
+.job-skills {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    background: rgba(60, 140, 255, 0.12);
+    color: #3478FF;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.skill-tag.no-skills {
+    background: rgba(156, 163, 175, 0.12);
+    color: #6B7280;
+    font-style: italic;
 }
 
 /* Footer */

@@ -231,9 +231,7 @@ main {
 
 /* ====================== DETAIL CONTAINER ====================== */
 .detail-container {
-    display: grid;
-    grid-template-columns: 1fr 320px;
-    gap: 32px;
+    display: block;
 }
 
 /* ====================== DETAIL CONTENT ====================== */
@@ -354,6 +352,23 @@ main {
     border-radius: 10px;
     font-weight: 600;
     font-size: 0.95rem;
+}
+
+/* ====================== SKILLS CONTAINER ====================== */
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill-tag {
+    background: rgba(60, 140, 255, 0.12);
+    color: #3478FF;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 /* ====================== ACTION CARD ====================== */
@@ -478,9 +493,7 @@ main {
         gap: 12px;
     }
 
-    .detail-container {
-        grid-template-columns: 1fr;
-    }
+    /* .detail-container is now block, no grid */
 
     .detail-section {
         padding: 20px;
