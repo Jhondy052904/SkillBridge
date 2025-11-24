@@ -5,168 +5,286 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Edit Profile | SkillBridge</title>
-  <link rel="stylesheet" href="{% static 'css/registration/editprofile.css' %}">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{% static 'css/registration/editprofile.css' %}?v=6">
   <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
 
 <body>
+
 <!-- ====================== NAVBAR ====================== -->
 <nav class="navbar">
-  <div class="nav-left">
     <a href="#" class="logo-link">
-      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+        <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
     </a>
-  </div>
-  <div class="nav-right">
-    <a href="{% url 'home' %}">Dashboard</a>
-    <a href="{% url 'list_jobs' %}">Jobs</a>
-    <a href="{% url 'list_trainings' %}">Trainings</a>
-    <div class="underline"></div>
-    <a>|</a>
-    <a href="{% url 'edit_profile' %}" class="active">Profile</a>
-    <a href="{% url 'login' %}" id="logoutLink">Logout</a>
 
-  </div>
+    <div class="nav-right">
+        <a href="{% url 'home' %}" class="active">Dashboard</a>
+        <a href="{% url 'list_jobs' %}">Jobs</a>
+        <a href="{% url 'list_trainings' %}">Trainings</a>
+
+        <div class="underline"></div>
+
+        <a style="pointer-events: none; padding: 12px 8px;">|</a>
+
+        <a href="{% url 'edit_profile' %}">Profile</a>
+
+        <!-- Notifications -->
+        <div class="notifications">
+            <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
+                Notifications
+                {% if notifications %}
+                    <span class="notif-indicator"></span>
+                {% endif %}
+            </button>
+
+            <div id="notifDropdown" class="notif-dropdown hidden">
+                {% if notifications %}
+                    {% for notif in notifications %}
+                    <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
+                        <p class="notif-message">{{ notif.message }}</p>
+                        <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
+                    </div>
+                    {% endfor %}
+                    <form method="POST" action="{% url 'clear_notifications' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="notif-clear-btn">Clear All</button>
+                    </form>
+                {% else %}
+                    <p class="notif-empty">No notifications.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="{% url 'login' %}" id="logoutLink">Logout</a>
+    </div>
 </nav>
-  <!-- Messages -->
-    {% if messages %}
-      {% for message in messages %}
-        <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
-          {{ message }}
+
+
+<!-- ====================== TOAST MESSAGES ====================== -->
+{% if messages %}
+  {% for message in messages %}
+    <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<!-- ===================== MAIN CONTENT ===================== -->
+<main class="main-content">
+  <section class="editprofile-page">
+
+    <div class="profile-card editprofile-card">
+      <h1 class="editprofile-title">Edit Profile</h1>
+
+      <form method="POST" class="editprofile-form">
+        {% csrf_token %}
+
+        <!-- BASIC FIELDS -->
+        <div class="field-group">
+          <label>First Name</label>
+          <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" required>
         </div>
-      {% endfor %}
-    {% endif %}
-<!-- ===================== EDIT PROFILE PAGE ===================== -->
-<div class="editprofile-page">
-  <div class="editprofile-container">
 
-    <!-- Page Title -->
-    <h1 class="editprofile-title">Edit Profile</h1>
+        <div class="field-group">
+          <label>Middle Name</label>
+          <input type="text" name="middle_name" value="{{ form.middle_name.value|default:'' }}">
+        </div>
 
-    <!-- Edit Profile Form -->
-    <form method="POST" class="editprofile-form">
-      {% csrf_token %}
+        <div class="field-group">
+          <label>Last Name</label>
+          <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" required>
+        </div>
 
-      <label>First Name</label>
-      <input type="text" name="first_name" value="{{ form.first_name.value|default:'' }}" required>
+        <div class="field-group">
+          <label>Address</label>
+          <input type="text" name="address" value="{{ form.address.value|default:'' }}">
+        </div>
 
-      <label>Middle Name</label>
-      <input type="text" name="middle_name" value="{{ form.middle_name.value|default:'' }}">
+        <div class="field-group">
+          <label>Contact Number</label>
+          <input type="text" name="contact_number" value="{{ form.contact_number.value|default:'' }}">
+        </div>
 
-      <label>Last Name</label>
-      <input type="text" name="last_name" value="{{ form.last_name.value|default:'' }}" required>
+        <div class="field-group">
+          <label>Employment Status</label>
+          <select name="employment_status">
+            {% for value, label in form.fields.employment_status.choices %}
+              <option value="{{ value }}" {% if form.employment_status.value == value %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
 
-      <label>Address</label>
-      <input type="text" name="address" value="{{ form.address.value|default:'' }}">
+        <!-- ===================== SKILLS TAG MULTISELECT ===================== -->
+        <div class="field-group">
+          <label>Skills</label>
 
-      <label>Contact Number</label>
-      <input type="text" name="contact_number" value="{{ form.contact_number.value|default:'' }}">
+          <div class="tag-multiselect" id="tagSelect">
 
-      <label>Employment Status</label>
-      <select name="employment_status">
-        {% for value, label in form.fields.employment_status.choices %}
-          <option value="{{ value }}" {% if form.employment_status.value == value %}selected{% endif %}>
-            {{ label }}
-          </option>
-        {% endfor %}
-      </select>
+              <!-- Selected tags -->
+              <div id="selectedTags" class="tags-container">
+                  {% for skill in all_skills %}
+                      {% if skill.id|stringformat:"s" in selected_skill_ids %}
+                        <div class="tag" data-id="{{ skill.id }}">
+                          {{ skill.skill_name }}
+                          <span class="remove-tag" onclick="removeTag('{{ skill.id }}', this)">×</span>
+                        </div>
+                      {% endif %}
+                  {% endfor %}
+              </div>
 
-      <label>Skills</label>
-      <select name="skills">
-        <option value="Other" {% if form.skills.value == 'Other' or not form.skills.value %}selected{% endif %}>Other</option>
-        <option value="Haircut" {% if form.skills.value == 'Haircut' %}selected{% endif %}>Haircut</option>
-        <option value="Plumbing" {% if form.skills.value == 'Plumbing' %}selected{% endif %}>Plumbing</option>
-        <option value="Electrical" {% if form.skills.value == 'Electrical' %}selected{% endif %}>Electrical</option>
-        <option value="Carpentry" {% if form.skills.value == 'Carpentry' %}selected{% endif %}>Carpentry</option>
-        <option value="Cleaning" {% if form.skills.value == 'Cleaning' %}selected{% endif %}>Cleaning</option>
-        <option value="Cooking" {% if form.skills.value == 'Cooking' %}selected{% endif %}>Cooking</option>
-        <option value="Driving" {% if form.skills.value == 'Driving' %}selected{% endif %}>Driving</option>
-        <option value="Babysitting" {% if form.skills.value == 'Babysitting' %}selected{% endif %}>Babysitting</option>
-        <option value="Elderly Care" {% if form.skills.value == 'Elderly Care' %}selected{% endif %}>Elderly Care</option>
-        <option value="Tutoring" {% if form.skills.value == 'Tutoring' %}selected{% endif %}>Tutoring</option>
-        <option value="Pedicure" {% if form.skills.value == 'Pedicure' %}selected{% endif %}>Pedicure</option>
-      </select>
+              <!-- Dropdown options -->
+              <div id="skillOptions" class="options-list">
+                  {% for skill in all_skills %}
+                    <div 
+                      class="option-item {% if skill.id|stringformat:'s' in selected_skill_ids %}hidden{% endif %}"
+                      data-id="{{ skill.id }}"
+                      data-name="{{ skill.skill_name }}"
+                      onclick="addTag('{{ skill.id }}', '{{ skill.skill_name }}')"
+                    >
+                      {{ skill.skill_name }}
+                    </div>
+                  {% endfor %}
+              </div>
+          </div>
 
-      <label>Current Status</label>
-      <select name="current_status">
-        {% for value, label in form.fields.current_status.choices %}
-          <option value="{{ value }}" {% if form.current_status.value == value %}selected{% endif %}>
-            {{ label }}
-          </option>
-        {% endfor %}
-      </select>
+          <!-- Hidden Django inputs -->
+          <div id="hiddenInputs">
+              {% for skill_id in selected_skill_ids %}
+                <input type="hidden" name="skills" value="{{ skill_id }}">
+              {% endfor %}
+          </div>
+        </div>
 
-      <button type="submit" class="editprofile-submit">Save Changes</button>
-    </form>
+        <div class="field-group">
+          <label>Current Status</label>
+          <select name="current_status">
+            {% for value, label in form.fields.current_status.choices %}
+              <option value="{{ value }}" {% if form.current_status.value == value %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
 
-  </div>
-</div>
+        <button type="submit" class="editprofile-submit">Save Changes</button>
+      </form>
+    </div>
 
+  </section>
+</main>
+
+
+<!-- ===================== JS ===================== -->
 <script>
-const menuLinks = document.querySelectorAll('.nav-right a');
-const underline = document.querySelector('.nav-right .underline');
+  /* ---------------- NAVBAR ---------------- */
+  function toggleNotifDropdown() {
+      const dropdown = document.getElementById('notifDropdown');
+      dropdown.classList.toggle('hidden');
+  }
 
-function moveUnderline(el) {
-    const rect = el.getBoundingClientRect();
-    const parentRect = el.closest('.nav-right').getBoundingClientRect();
-    underline.style.width = rect.width + 'px';
-    underline.style.left = (rect.left - parentRect.left) + 'px';
-}
+  window.addEventListener('click', function(e) {
+      const notifBtn = document.getElementById('notifBtn');
+      const dropdown = document.getElementById('notifDropdown');
+      if (!notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.classList.add('hidden');
+      }
+  });
 
-// Initialize on active link
-const activeLink = document.querySelector('.nav-right a.active');
-if (activeLink) moveUnderline(activeLink);
+  const menuLinks = document.querySelectorAll('.nav-right a');
+  const underline = document.querySelector('.nav-right .underline');
 
-// Hover effect
-menuLinks.forEach(link => {
-    link.addEventListener('mouseenter', e => moveUnderline(e.target));
-});
+  function moveUnderline(el) {
+      if (!underline || !el) return;
+      const rect = el.getBoundingClientRect();
+      const parent = el.closest('.nav-right').getBoundingClientRect();
+      underline.style.width = rect.width + 'px';
+      underline.style.left = (rect.left - parent.left) + 'px';
+  }
 
-// Reset to active link on mouse leave
-document.querySelector('.nav-right').addEventListener('mouseleave', () => {
-    if (activeLink) moveUnderline(activeLink);
-});
+  const active = document.querySelector('.nav-right a.active');
+  if (active) moveUnderline(active);
 
-// Edit Profile
-document.querySelectorAll('.editprofile-message').forEach(msg => {
-    setTimeout(() => {
-        msg.style.opacity = '0';
-        msg.style.transform = 'translateY(-20px) scale(0.95)';
-        setTimeout(() => msg.remove(), 500);
-    }, 3000);
-});
+  menuLinks.forEach(link => {
+      link.addEventListener('mouseenter', e => moveUnderline(e.target));
+  });
 
-// Logout confirmation popup
-const logoutLink = document.getElementById('logoutLink');
+  document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+      if (active) moveUnderline(active);
+  });
 
-logoutLink.addEventListener('click', function(e) {
-    e.preventDefault(); // prevent default navigation
 
-    // Create popup container
-    const popup = document.createElement('div');
-    popup.className = 'logout-popup';
-    popup.innerHTML = `
-        <p>Are you sure you want to end your session?</p>
-        <div class="separator"></div>
-        <div class="popup-buttons">
-            <button id="cancelLogout">Cancel</button>
-            <button id="confirmLogout">Yes</button>
-        </div>
-    `;
-    document.body.appendChild(popup);
+  /* ---------------- TAG MULTISELECT ---------------- */
+  function addTag(id, name) {
+      const tags = document.getElementById("selectedTags");
+      const hidden = document.getElementById("hiddenInputs");
 
-    // Confirm button: logs out
-    document.getElementById('confirmLogout').addEventListener('click', () => {
-        window.location.href = logoutLink.href; // proceed to logout
+      // Create tag element
+      const tagEl = document.createElement("div");
+      tagEl.className = "tag";
+      tagEl.setAttribute("data-id", id);
+      tagEl.innerHTML = `${name} <span class="remove-tag" onclick="removeTag('${id}', this)">×</span>`;
+      tags.appendChild(tagEl);
+
+      // Create hidden input
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "skills";
+      input.value = id;
+      hidden.appendChild(input);
+
+      // Hide option from dropdown
+      document.querySelector(`.option-item[data-id='${id}']`).classList.add("hidden");
+  }
+
+  function removeTag(id, el) {
+      // Remove tag UI
+      el.parentElement.remove();
+
+      // Show option back
+      const opt = document.querySelector(`.option-item[data-id='${id}']`);
+      if (opt) opt.classList.remove("hidden");
+
+      // Remove hidden input
+      const hidden = document.querySelector(`#hiddenInputs input[value='${id}']`);
+      if (hidden) hidden.remove();
+  }
+
+
+  /* ---------------- LOGOUT POPUP ---------------- */
+  const logoutLink = document.getElementById('logoutLink');
+
+  if (logoutLink) {
+    logoutLink.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        const popup = document.createElement('div');
+        popup.className = 'logout-popup';
+        popup.innerHTML = `
+            <p>Are you sure you want to end your session?</p>
+            <div class="separator"></div>
+            <div class="popup-buttons">
+                <button id="cancelLogout">Cancel</button>
+                <button id="confirmLogout">Yes</button>
+            </div>
+        `;
+        document.body.appendChild(popup);
+
+        document.getElementById('confirmLogout').addEventListener('click', () => {
+            window.location.href = logoutLink.href;
+        });
+
+        document.getElementById('cancelLogout').addEventListener('click', () => {
+            popup.classList.add('fade-out');
+            setTimeout(() => popup.remove(), 300);
+        });
     });
-
-    // Cancel button: fade out popup
-    document.getElementById('cancelLogout').addEventListener('click', () => {
-        popup.classList.add('fade-out'); // trigger fade-out CSS
-        setTimeout(() => popup.remove(), 300); // remove after animation
-    });
-});
-
+  }
 
 </script>
 

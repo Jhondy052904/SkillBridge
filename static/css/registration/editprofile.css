@@ -1,83 +1,28 @@
 /* =====================
-   Navigation Bar
+    Modern Resident Dashboard
+    Clean, Consistent, Responsive
 ===================== */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 12px 25px;
-    background: #EBF4F6;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 80px;
-    z-index: 100;
-}
-
-.navbar .logo {
-    height: 70px;
-    width: 300px;
-    border-radius: 8px;
-    object-fit: cover;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.navbar .logo:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
-
-.navbar .nav-right {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    margin-right: 80px;
-    position: relative;
-}
-
-.navbar .nav-right a {
-    color: #021526;
-    text-decoration: none;
-    font-size: 20px;
-    transition: color 0.3s ease;
-}
-
-.navbar .nav-right a:hover {
-    color: #088395;
-}
-
-/* Navbar underline animation */
-.navbar .nav-right .underline {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    width: 0;
-    background-color: #088395;
-    border-radius: 2px;
-    transition: all 0.4s ease;
-}
 
 /* =====================
-   General Body Styling
+    CSS Reset & Base Styles
 ===================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     position: relative;
     min-height: 100vh;
     width: 100%;
-    margin: 0;
-    padding: 0;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Poppins', Arial, sans-serif;
-    font-size: 0.9rem;
-    color: #1B3C53;
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #2D3748;
     overflow-x: hidden;
-
-    background: url("/static/images/wall.jpg") no-repeat center 70% / cover;
+    background: linear-gradient(135deg, #E8F4F8 0%, #F0F8FF 50%, #E3F2FD 100%);
+    line-height: 1.6;
 }
 
 body::before {
@@ -88,194 +33,773 @@ body::before {
     width: 100%;
     height: 100%;
     background: url("/static/images/plant.jpg") no-repeat center 80% / cover;
-    filter: blur(3px);
+    filter: blur(8px) opacity(0.12);
     z-index: -1;
 }
 
 /* =====================
-   Edit Profile Page Container
+   Navigation Bar
 ===================== */
+.navbar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: 1400px;
+    padding: 18px 36px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    z-index: 990;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(66, 153, 225, 0.12), 
+                0 2px 8px rgba(66, 153, 225, 0.08);
+    transition: all 0.3s ease;
+}
+
+.navbar:hover {
+    box-shadow: 0 12px 40px rgba(66, 153, 225, 0.18), 
+                0 4px 12px rgba(66, 153, 225, 0.12);
+}
+
+.navbar .logo {
+    height: 60px;
+    width: auto;
+    border-radius: 12px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.navbar .logo:hover {
+    transform: scale(1.05);
+}
+
+.navbar .nav-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.navbar .nav-right a,
+.navbar .nav-right .notif-link {
+    color: #4A5568;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.navbar .nav-right a:hover,
+.navbar .nav-right .notif-link:hover {
+    background: rgba(66, 153, 225, 0.08);
+    color: #4299E1;
+}
+
+.navbar .nav-right a.active,
+.navbar .nav-right .notif-link.active {
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    color: white;
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+}
+
+.navbar .nav-right .underline {
+    display: none;
+}
+
+/* Notification Button Styling */
+.notifications {
+    position: relative;
+    display: inline-block;
+}
+
+.notif-btn {
+    color: #4A5568;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notif-btn:hover {
+    background: rgba(66, 153, 225, 0.08);
+    color: #4299E1;
+}
+
+.notif-indicator {
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(135deg, #FC8181, #F56565);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+/* Notification Dropdown */
+.notif-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 340px;
+    max-height: 420px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(66, 153, 225, 0.2);
+    padding: 16px 0;
+    z-index: 1000;
+}
+
+.notif-item {
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.notif-item:last-child {
+    border-bottom: none;
+}
+
+.notif-item:hover {
+    background: rgba(66, 153, 225, 0.05);
+}
+
+.notif-message {
+    font-size: 0.95rem;
+    color: #2D3748;
+    margin-bottom: 6px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.notif-date {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+.notif-clear-btn {
+    width: 100%;
+    padding: 14px 0;
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    color: #fff;
+    border: none;
+    border-radius: 0 0 20px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.notif-clear-btn:hover {
+    background: linear-gradient(135deg, #3182CE, #4299E1);
+}
+
+.notif-empty {
+    text-align: center;
+    padding: 40px 24px;
+    color: #A0AEC0;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* =====================
+   MAIN CONTENT
+===================== */
+.main-content {
+    margin-top: 120px;
+    width: 92%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding-bottom: 80px;
+}
+
 .editprofile-page {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    min-height: 100vh;
     width: 100%;
-    padding-top: 120px; /* space for navbar */
-    box-sizing: border-box;
 }
 
-.editprofile-container {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    padding: 35px 40px;  /* smaller padding */
-    max-width: 550px;    /* slightly thinner */
-    width: 90%;          /* responsive */
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+.profile-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: 0 8px 32px rgba(66, 153, 225, 0.12),
+                0 2px 8px rgba(66, 153, 225, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 18px;           /* smaller gaps */
-    position: relative;
+    gap: 28px;
     transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    margin-top: 20px;
 }
 
-.editprofile-container:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+.profile-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(66, 153, 225, 0.18),
+                0 4px 12px rgba(66, 153, 225, 0.12);
 }
 
-/* =====================
-   Form Fields Redesign
-===================== */
+.editprofile-card {
+    margin-top: 35px;
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.editprofile-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: -0.3px;
+    color: #2D3748;
+}
+
 .editprofile-form {
     display: flex;
     flex-direction: column;
-    gap: 12px;  /* smaller spacing */
+    gap: 24px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .editprofile-form label {
-    font-size: 0.9rem;  /* smaller text */
+    font-size: 1.05rem;
     font-weight: 600;
-    color: #1B3C53;
-    margin-bottom: 3px;
+    color: #2D3748;
 }
 
 .editprofile-form input,
 .editprofile-form select {
-    padding: 10px 12px;      /* smaller inputs */
-    border: 1px solid #d0d7de;
-    border-radius: 8px;
-    font-size: 0.95rem;      /* smaller font */
+    padding: 14px 16px;
+    border: 2px solid #E2E8F0;
+    border-radius: 12px;
+    font-size: 1rem;
     outline: none;
     background: #fff;
     transition: all 0.3s ease;
+    color: #2D3748;
+}
+
+.editprofile-form input::placeholder {
+    color: #A0AEC0;
 }
 
 .editprofile-form input:focus,
 .editprofile-form select:focus {
-    border-color: #088395;
-    box-shadow: 0 3px 12px rgba(8, 131, 149, 0.25);
+    border-color: #4299E1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    background: #F7FAFC;
 }
 
-.editprofile-form select {
-    appearance: none;
-    background: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12'><path fill='%23088595' d='M0 4l6 6 6-6z'/></svg>") no-repeat right 12px center;
-    background-size: 10px;
+.editprofile-submit {
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(66, 153, 225, 0.3);
+    margin-top: 16px;
+    align-self: flex-start;
+}
+
+.editprofile-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(66, 153, 225, 0.4);
+}
+
+.editprofile-submit:active {
+    transform: translateY(0);
 }
 
 /* =====================
-   Submit Button
+   Toast Messages
 ===================== */
-.editprofile-submit {
-    background: linear-gradient(135deg, #088395, #1B3C53);
+.editprofile-message {
+    position: fixed;
+    top: 100px;
+    right: 24px;
+    z-index: 9999;
+    min-width: 320px;
+    max-width: 450px;
+    padding: 20px 28px;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 500;
     color: #fff;
-    font-weight: 600;
-    border: none;
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 0.95rem;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    animation: slideInRight 0.4s ease;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
-.editprofile-submit:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 15px rgba(8, 131, 149, 0.3);
-}
-
-/* =====================
-   Animation
-===================== */
-.editprofile-container {
-    opacity: 0;
-    transform: translateY(40px);
-    animation: fadeInUp 0.5s forwards;
-    animation-delay: 0.2s;
-}
-
-@keyframes fadeInUp {
-    0% {
-        opacity: 0;
-        transform: translateY(40px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* =====================
-   Responsive Adjustments
-===================== */
-@media (max-width: 900px) {
-    .editprofile-container {
-        max-width: 500px;
-        padding: 30px 30px;
-    }
-}
-
-@media (max-width: 600px) {
-    .editprofile-container {
-        max-width: 95%;
-        padding: 20px 15px;
-    }
-}
-
-/* =====================
-   Messages Styling with Pop-up Animation (Right Side)
-===================== */
-.editprofile-message {
-    position: fixed; /* overlay above everything */
-    top: 130px;      /* distance from top */
-    right: 20px;     /* distance from right */
-    z-index: 999; /* highest priority */
-    border-radius: 8px;
-    padding: 10px 20px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.95rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-
-    /* Pop-up animation */
-    opacity: 0;
-    transform: translateY(-20px) scale(0.95);
-    animation: messagePopRight 0.5s forwards;
-}
-
-/* Animation keyframes for right-side pop */
-@keyframes messagePopRight {
-    0% {
-        opacity: 0;
-        transform: translateY(-20px) scale(0.95);
-    }
-    60% {
-        opacity: 1;
-        transform: translateY(5px) scale(1.02);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* Success message */
 .editprofile-message.success {
-    background: #37B7C3; /* light mint green */
-    color: #EBF4F6;      /* ivory text */
-    border: 1px solid #088395; /* mint green border */
+    background: linear-gradient(135deg, #48BB78, #38A169);
 }
 
-/* Error message */
 .editprofile-message.error {
-    background: #EBF4F6;  /* ivory background */
-    color: #071952;       /* navy blue text */
-    border: 1px solid #071952;
+    background: linear-gradient(135deg, #FC8181, #F56565);
 }
 
-/* Info message */
 .editprofile-message.info {
-    background: #088395; /* mint green */
-    color: #EBF4F6;      /* ivory text */
-    border: 1px solid #021526; /* dark border */
+    background: linear-gradient(135deg, #4299E1, #3182CE);
 }
 
+.editprofile-message:hover {
+    transform: translateX(-8px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+}
+
+.editprofile-message .close-msg {
+    font-weight: 700;
+    font-size: 1.4rem;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.editprofile-message .close-msg:hover {
+    opacity: 1;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* =====================
+   Logout Popup
+===================== */
+.logout-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(66, 153, 225, 0.2);
+    z-index: 10000;
+    max-width: 380px;
+    width: 90%;
+    animation: popupSlideIn 0.3s ease;
+}
+
+@keyframes popupSlideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.logout-popup p {
+    font-size: 1rem;
+    color: #2D3748;
+    font-weight: 500;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.separator {
+    height: 1px;
+    background: #E2E8F0;
+    margin-bottom: 20px;
+}
+
+.popup-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.popup-buttons button {
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+#cancelLogout {
+    background: #E2E8F0;
+    color: #2D3748;
+}
+
+#cancelLogout:hover {
+    background: #CBD5E0;
+}
+
+#confirmLogout {
+    background: linear-gradient(135deg, #FC8181, #F56565);
+    color: white;
+}
+
+#confirmLogout:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+}
+
+.logout-popup.fade-out {
+    animation: popupFadeOut 0.3s ease;
+}
+
+@keyframes popupFadeOut {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+}
+
+    /* ============================================
+   Tag-Based Multi-Select – Matching Your UI
+============================================ */
+
+.tag-multiselect {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 2px solid #E2E8F0;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 16px rgba(66, 153, 225, 0.12);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+}
+
+.tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-height: 40px;
+}
+
+.tag {
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 14px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.25);
+    animation: fadeInTag 0.2s ease-out;
+}
+
+@keyframes fadeInTag {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.remove-tag {
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: 0.2s ease;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 2px 7px;
+    border-radius: 50%;
+}
+
+.remove-tag:hover {
+    background: rgba(255, 255, 255, 0.4);
+    opacity: 1;
+}
+
+#skillSearch {
+    width: 100%;
+    border: 2px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#skillSearch:focus {
+    outline: none;
+    border-color: #4299E1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.18);
+}
+
+/* Skill dropdown */
+.options-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #E2E8F0;
+    box-shadow: 0 4px 16px rgba(66, 153, 225, 0.12);
+    padding: 6px 0;
+}
+
+.option-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.option-item:hover {
+    background: rgba(66, 153, 225, 0.1);
+    color: #4299E1;
+}
+
+.option-item.hidden {
+    display: none;
+}
+
+/* Scoped / higher-specificity rules to ensure styles apply when other global CSS exists */
+.profile-card .tag-multiselect {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 2px solid #E2E8F0 !important;
+    padding: 14px !important;
+}
+
+.profile-card .tags-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    min-height: 36px !important;
+}
+
+.profile-card .tag {
+    background: linear-gradient(135deg, #4299E1, #63B3ED) !important;
+    color: #fff !important;
+    padding: 8px 12px !important;
+    border-radius: 14px !important;
+    font-weight: 600 !important;
+}
+
+.profile-card .remove-tag {
+    margin-left: 8px;
+    background: rgba(255,255,255,0.22) !important;
+    padding: 2px 6px !important;
+    border-radius: 50% !important;
+}
+
+.profile-card .options-list .option-item {
+    padding: 10px 14px !important;
+    cursor: pointer !important;
+    display: block !important;
+}
+
+.profile-card .option-item:hover {
+    background: rgba(66, 153, 225, 0.08) !important;
+    color: #3182CE !important;
+}
+
+/* Scrollbar Styling (matching your UI) */
+.options-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.options-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    border-radius: 10px;
+}
+
+.options-list::-webkit-scrollbar-track {
+    background: rgba(226, 232, 240, 0.4);
+}
+
+/* Field group spacing fix */
+.field-group label {
+    font-weight: 600;
+    color: #2D3748;
+    margin-bottom: 6px;
+}
+
+/* Make sure the multi-select matches mobile UI */
+@media (max-width: 768px) {
+    .tag-multiselect {
+        padding: 12px;
+    }
+
+    .tag {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    #skillSearch {
+        padding: 10px;
+    }
+
+    .option-item {
+        padding: 10px 12px;
+    }
+}
+
+
+/* =====================
+   Responsive Design
+===================== */
+@media (max-width: 1024px) {
+    .editprofile-card {
+        max-width: 640px;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        width: 90%;
+        padding: 16px 24px;
+        gap: 20px;
+    }
+
+    .navbar .nav-right {
+        gap: 4px;
+    }
+
+    .navbar .nav-right a {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+
+    .main-content {
+        width: 95%;
+        margin-top: 100px;
+        gap: 24px;
+    }
+
+    .profile-card {
+        padding: 32px;
+        border-radius: 16px;
+    }
+
+    .editprofile-title {
+        text-align: center;
+        font-size: 1.6rem;
+    }
+
+    .editprofile-submit {
+        width: 100%;
+        text-align: center;
+    }
+
+    .editprofile-message {
+        left: 16px;
+        right: 16px;
+        max-width: none;
+        top: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        width: 95%;
+        padding: 14px 20px;
+        gap: 16px;
+    }
+
+    .navbar .nav-right a {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    .main-content {
+        margin-top: 90px;
+        width: 100%;
+        padding: 0 16px;
+    }
+
+    .profile-card {
+        padding: 24px;
+        border-radius: 16px;
+    }
+
+    .editprofile-title {
+        font-size: 1.4rem;
+        margin-bottom: 24px;
+    }
+
+    .editprofile-form {
+        gap: 18px;
+    }
+
+    .editprofile-form input,
+    .editprofile-form select {
+        font-size: 0.95rem;
+        padding: 12px 14px;
+    }
+
+    .editprofile-submit {
+        padding: 14px 24px;
+        font-size: 1rem;
+    }
+
+    .editprofile-message {
+        font-size: 0.9rem;
+        padding: 14px 18px;
+        max-width: calc(100% - 32px);
+    }
+}

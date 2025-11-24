@@ -1,4 +1,6 @@
-/* ====================== GLOBAL STYLES ====================== */
+/* =========================================================
+   GLOBAL STYLE — Soft Modern Glass UI
+========================================================= */
 * {
     margin: 0;
     padding: 0;
@@ -6,407 +8,350 @@
 }
 
 body {
-    font-family: 'Poppins', Arial, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+    font-family: "Inter", "Poppins", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #F7FAFF 0%, #EFF5FF 100%);
     min-height: 100vh;
+    color: #1A2B47;
 }
 
-/* ====================== NAVBAR ====================== */
+/* =========================================================
+   NAVBAR — Floating Glass
+========================================================= */
 .navbar {
     position: fixed;
-    top: 0px;
-    left: 2.2px;
-    width: 100%;
-    padding: 12px 25px;
-    background: #EBF4F6;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    padding: 18px 40px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(18px);
+    border-radius: 22px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-
-    gap: 80px;
-    z-index: 990;
+    z-index: 999;
 }
 
 .navbar .logo {
-    height: 70px;
-    width: 300px;
-    border-radius: 8px;
-    object-fit: cover;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    height: 60px;
+    object-fit: contain;
+    transition: .25s;
 }
 
 .navbar .logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.04);
     opacity: 0.9;
 }
 
-.navbar .nav-right {
+.nav-right {
     display: flex;
-    gap: 20px;
+    gap: 16px;
     align-items: center;
-    margin-right: 80px; /* remove extra margin */
+    position: relative;
 }
 
-.navbar .nav-right a {
-    color: #021526;
+.nav-right a {
+    padding: 10px 18px;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #4A6078;
     text-decoration: none;
-    font-size: 20px;
-    transition: color 0.3s ease;
+    transition: .25s;
 }
 
-.navbar .nav-right a:hover {
-    color: #088395;
+.nav-right a:hover {
+    background: rgba(60,140,255,0.1);
+    color: #3C8CFF;
 }
 
-.navbar .btn.join {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid #021526;
-    background: transparent;
-    color: #021526;
-    transition: all 0.3s ease;
-    font-size: 20px;
+.nav-right a.active {
+    background: linear-gradient(135deg, #3C8CFF, #4DB7FF);
+    color: white;
+    box-shadow: 0 4px 14px rgba(60,140,255,0.35);
 }
 
-.navbar .btn:hover {
-    color: #088395;
-}
-
-.navbar .btn.join:hover {
-    background: #088395;
-    color: #021526;
-}
-/* =====================
-   Navbar Underline Animation
-===================== */
-.navbar .nav-right {
-    position: relative; /* needed for underline positioning */
-}
-
-.navbar .nav-right .underline {
+.nav-right .underline {
     position: absolute;
     bottom: 0;
-    left: 0;
     height: 3px;
     width: 0;
-    background-color: #088395;
-    border-radius: 2px;
-    transition: all 0.4s ease; /* gentle slide */
+    background: #3C8CFF;
+    border-radius: 10px;
+    transition: all 0.3s ease;
 }
 
+.separator {
+    color: #A0AEC0;
+}
 
-/* ====================== MAIN CONTENT ====================== */
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
 main {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 160px auto 60px;
+    padding: 0 22px;
 }
 
-/* ====================== HEADER SECTION ====================== */
+/* =========================================================
+   HEADER SECTION
+========================================================= */
 .header-section {
+    text-align: left;
     margin-bottom: 40px;
-    text-align: center;
 }
 
 .section-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 800;
-    color: #1a202c;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
+    color: #1A2B47;
 }
 
 .section-subtitle {
     font-size: 1rem;
-    color: #666;
-    font-weight: 400;
+    color: #7389A7;
+    margin-top: 6px;
 }
 
-/* ====================== MESSAGES ====================== */
+/* =========================================================
+   MESSAGES
+========================================================= */
 .messages-container {
-    margin-bottom: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    margin-bottom: 20px;
 }
 
 .alert {
     padding: 14px 18px;
-    border-radius: 8px;
+    border-radius: 14px;
     font-weight: 500;
     animation: slideIn 0.3s ease;
 }
 
-.alert-success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.alert-error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.alert-info {
-    background: #d1ecf1;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
-}
+.alert-success { background: #d1f2e2; color: #0f703a; }
+.alert-error { background: #fde2e2; color: #b42323; }
+.alert-info { background: #e2f2ff; color: #1d5c99; }
 
 @keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-/* ====================== TRAINING CARDS CONTAINER ====================== */
+/* =========================================================
+   TRAINING CARDS GRID
+========================================================= */
 .training-cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 28px;
-    margin-top: 30px;
 }
 
-/* ====================== TRAINING CARD ====================== */
+/* =========================================================
+   TRAINING CARD — Floating Glass
+========================================================= */
 .training-card {
-    background: white;
-    border-radius: 16px;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-radius: 22px;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.06);
+    transition: 0.25s ease;
     overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
 }
 
 .training-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 16px 34px rgba(0,0,0,0.12);
+    transform: translateY(-4px);
 }
 
-/* Card Header with Gradient Background */
+/* Header banner */
 .card-header {
     height: 140px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    position: relative;
+    padding: 16px;
+    background: linear-gradient(135deg, #3C8CFF 0%, #4DB7FF 100%);
     display: flex;
     align-items: flex-start;
-    padding: 16px;
 }
 
 .training-card:nth-child(3n+2) .card-header {
-    background: linear-gradient(135deg, #56b4d3 0%, #4fa3c1 100%);
+    background: linear-gradient(135deg, #56B4D3 0%, #4FA3C1 100%);
 }
 
 .training-card:nth-child(3n) .card-header {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #A569FF 0%, #6A3DF9 100%);
 }
 
 /* Badge */
 .badge {
-    background: rgba(255, 255, 255, 0.25);
-    color: white;
+    background: rgba(255,255,255,0.22);
     padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    text-transform: uppercase;
+    border-radius: 16px;
+    color: white;
+    font-weight: 600;
     letter-spacing: 0.5px;
+    border: 1px solid rgba(255,255,255,0.4);
+    backdrop-filter: blur(8px);
+    font-size: 0.75rem;
 }
 
-/* ====================== CARD CONTENT ====================== */
+/* =========================================================
+   CARD CONTENT
+========================================================= */
 .training-card-content {
-    padding: 24px;
-    flex: 1;
+    padding: 26px;
     display: flex;
     flex-direction: column;
 }
 
-/* ====================== TITLES & TEXT ====================== */
+/* Title */
 .training-title {
     font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 12px;
-    color: #1a202c;
-    line-height: 1.3;
+    color: #1A2B47;
 }
 
+/* Description */
 .training-description {
-    font-size: 0.9rem;
-    color: #666;
+    font-size: 0.95rem;
+    color: #5A6B80;
+    line-height: 1.6;
     margin-bottom: 16px;
-    line-height: 1.5;
-    flex: 1;
+
+    /* clamp */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-/* ====================== META INFO ====================== */
+/* =========================================================
+   META INFO
+========================================================= */
 .training-meta {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    padding: 16px 0;
-    border-top: 1px solid #f0f0f0;
-    border-bottom: 1px solid #f0f0f0;
-    margin: 16px 0;
-}
-
-.meta-item {
-    display: flex;
-    flex-direction: column;
+    gap: 18px;
+    padding: 14px 0;
+    border-top: 1px solid #EDF2F7;
+    border-bottom: 1px solid #EDF2F7;
+    margin-bottom: 18px;
 }
 
 .meta-label {
-    font-size: 0.8rem;
-    color: #888;
+    font-size: 0.75rem;
     font-weight: 600;
+    color: #8DA1B7;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    margin-bottom: 4px;
 }
 
 .meta-value {
-    font-size: 0.95rem;
-    color: #1a202c;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1A2B47;
 }
 
-/* ====================== STATUS ====================== */
-.training-status {
+/* =========================================================
+   STATUS BADGE
+========================================================= */
+.status-badge {
+    display: inline-block;
+    background: rgba(255,193,7,0.18);
+    color: #9A6A00;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
     margin-bottom: 16px;
 }
 
-.status-badge {
-    display: inline-block;
-    background: #fef3c7;
-    color: #92400e;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-}
-
-/* ====================== BUTTONS ====================== */
+/* =========================================================
+   BUTTONS
+========================================================= */
 .training-actions {
     display: flex;
-    gap: 10px;
+    gap: 12px;
     margin-top: auto;
 }
 
 .btn {
     flex: 1;
-    padding: 11px 16px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    text-align: center;
+    padding: 12px 18px;
+    border-radius: 16px;
+    font-size: 0.95rem;
     border: none;
+    font-weight: 600;
     cursor: pointer;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
     color: white;
+    box-shadow: 0 6px 16px rgba(60,140,255,0.35);
+    transition: 0.25s ease;
 }
 
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Register */
 .btn-register {
-    background: linear-gradient(135deg, #56b4d3 0%, #4fa3c1 100%);
-    box-shadow: 0 4px 12px rgba(86, 180, 211, 0.3);
+    background: linear-gradient(135deg, #3C8CFF, #4DB7FF);
 }
 
-.btn-register:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(86, 180, 211, 0.4);
-}
-
+/* Edit */
 .btn-edit {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    background: linear-gradient(135deg, #6C4CFF, #A682FF);
 }
 
-.btn-edit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-}
-
+/* Delete */
 .btn-delete {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
-}
-
-.btn-delete:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(245, 87, 108, 0.4);
-}
-
-.delete-form {
-    flex: 1;
+    background: linear-gradient(135deg, #FF6B6B, #FF4757);
 }
 
 .delete-form button {
     width: 100%;
 }
 
-/* ====================== EMPTY STATE ====================== */
+/* =========================================================
+   EMPTY STATE
+========================================================= */
 .empty-state {
-    text-align: center;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
     padding: 60px 20px;
+    border-radius: 22px;
+    text-align: center;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.06);
 }
 
 .empty-state p {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 8px;
+    color: #5A6B80;
+    font-size: 1rem;
 }
 
 .empty-state-secondary {
-    font-size: 0.95rem;
-    color: #999;
+    color: #8DA1B7;
 }
 
-/* ====================== RESPONSIVE ====================== */
-@media (max-width: 768px) {
-    .navbar {
-        padding: 16px 20px;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .nav-right {
-        width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .section-title {
-        font-size: 1.8rem;
-    }
-
-    .training-cards-container {
-        grid-template-columns: 1fr;
-    }
-
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 820px) {
     .training-meta {
         grid-template-columns: 1fr;
     }
-
     .training-actions {
         flex-direction: column;
     }
+}
 
-    .btn {
-        width: 100%;
+@media (max-width: 600px) {
+    .training-cards-container {
+        grid-template-columns: 1fr;
+    }
+    .training-card {
+        padding: 0;
     }
 }

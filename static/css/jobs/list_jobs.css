@@ -1,107 +1,23 @@
-/* =====================
-   Navigation Bar
-===================== */
-.navbar {
-    position: fixed;
-    top: 0px;
-    left: 2.2px;
-    width: 100%;
-    padding: 12px 25px;
-    background: #EBF4F6;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    gap: 80px;
-    z-index: 990;
+/* =========================================================
+   GLOBAL PAGE LAYOUT — Soft Modern Glass UI
+========================================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.navbar .logo {
-    height: 70px;
-    width: 300px;
-    border-radius: 8px;
-    object-fit: cover;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.navbar .logo:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
-
-.navbar .nav-right {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    margin-right: 80px; /* remove extra margin */
-}
-
-.navbar .nav-right a {
-    color: #021526;
-    text-decoration: none;
-    font-size: 20px;
-    transition: color 0.3s ease;
-}
-
-.navbar .nav-right a:hover {
-    color: #088395;
-}
-
-.navbar .btn.join {
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid #021526;
-    background: transparent;
-    color: #021526;
-    transition: all 0.3s ease;
-    font-size: 20px;
-}
-
-.navbar .btn:hover {
-    color: #088395;
-}
-
-.navbar .btn.join:hover {
-    background: #088395;
-    color: #021526;
-}
-/* =====================
-   Navbar Underline Animation
-===================== */
-.navbar .nav-right {
-    position: relative; /* needed for underline positioning */
-}
-
-.navbar .nav-right .underline {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 3px;
-    width: 0;
-    background-color: #088395;
-    border-radius: 2px;
-    transition: all 0.4s ease; /* gentle slide */
-}
-
-/* =====================
-   General Page Styling
-===================== */
 body {
     position: relative;
     min-height: 100vh;
     width: 100%;
-    margin: 0;
-    padding: 0;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-family: 'Poppins', Arial, sans-serif;
-    font-size: 0.9rem;
-    color: #1B3C53;
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #2D3748;
     overflow-x: hidden;
-
-    background: url("/static/images/wall.jpg") no-repeat center 70% / cover;
+    background: linear-gradient(135deg, #E8F4F8 0%, #F0F8FF 50%, #E3F2FD 100%);
+    line-height: 1.6;
 }
 
 body::before {
@@ -112,358 +28,649 @@ body::before {
     width: 100%;
     height: 100%;
     background: url("/static/images/plant.jpg") no-repeat center 80% / cover;
-    filter: blur(3px);
+    filter: blur(8px) opacity(0.12);
     z-index: -1;
 }
 
 /* =====================
-   Main Content Wrapper
+   Navigation Bar
 ===================== */
-main {
-    margin-top: 120px; /* leave space for navbar */
-    width: 90%;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    padding-bottom: 60px;
-}
-
-/* =====================
-   Header
-===================== */
-header {
+.navbar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 95%;
+    max-width: 1400px;
+    padding: 18px 36px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
+    gap: 40px;
+    z-index: 990;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(66, 153, 225, 0.12), 
+                0 2px 8px rgba(66, 153, 225, 0.08);
+    transition: all 0.3s ease;
 }
 
-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #021526;
+.navbar:hover {
+    box-shadow: 0 12px 40px rgba(66, 153, 225, 0.18), 
+                0 4px 12px rgba(66, 153, 225, 0.12);
 }
 
-header button {
-    background: #088395;
-    color: #fff;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease;
-}
-
-header button:hover {
-    transform: translateY(-2px);
-    background: #37B7C3;
-}
-
-/* =====================
-   Messages
-===================== */
-div.messages {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-div.messages > div {
-    padding: 12px 20px;
+.navbar .logo {
+    height: 60px;
+    width: auto;
     border-radius: 12px;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.navbar .logo:hover {
+    transform: scale(1.05);
+}
+
+.navbar .nav-right {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.navbar .nav-right a,
+.navbar .nav-right .notif-link {
+    color: #4A5568;
+    text-decoration: none;
+    font-size: 1rem;
     font-weight: 500;
-    color: #fff;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    animation: fadeIn 0.3s ease forwards;
-}
-
-div.messages > div.success { background-color: #4CAF50; }
-div.messages > div.error { background-color: #F44336; }
-div.messages > div.warning { background-color: #FFC107; }
-
-/* =====================
-   Welcome Section
-===================== */
-div.welcome {
-    background: #fff;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-div.welcome h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #021526;
-}
-
-div.welcome p {
-    font-size: 0.9rem;
-    color: #666;
-}
-
-/* =====================
-   Search Section
-===================== */
-#searchInput, #filterSelect {
-    padding: 10px 16px;
+    padding: 12px 22px;
     border-radius: 12px;
-    border: 1px solid #ccc;
-    font-size: 0.9rem;
-    outline: none;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.navbar .nav-right a:hover,
+.navbar .nav-right .notif-link:hover {
+    background: rgba(66, 153, 225, 0.08);
+    color: #4299E1;
+}
+
+.navbar .nav-right a.active,
+.navbar .nav-right .notif-link.active {
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    color: white;
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+}
+
+.navbar .nav-right .underline {
+    display: none;
+}
+
+/* Notification Button Styling */
+.notifications {
+    position: relative;
+    display: inline-block;
+}
+
+.notif-btn {
+    color: #4A5568;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notif-btn:hover {
+    background: rgba(66, 153, 225, 0.08);
+    color: #4299E1;
+}
+
+.notif-indicator {
+    width: 8px;
+    height: 8px;
+    background: linear-gradient(135deg, #FC8181, #F56565);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+/* Notification Dropdown */
+.notif-dropdown {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 340px;
+    max-height: 420px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(66, 153, 225, 0.2);
+    padding: 16px 0;
+    z-index: 1000;
+}
+
+.notif-item {
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-#searchInput:focus, #filterSelect:focus {
-    border-color: #088395;
-    box-shadow: 0 0 8px rgba(8,131,149,0.2);
+.notif-item:last-child {
+    border-bottom: none;
 }
 
-button[onclick="filterJobs()"] {
-    background: linear-gradient(135deg, #088395, #37B7C3);
-    color: #fff;
-    padding: 10px 16px;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.notif-item:hover {
+    background: rgba(66, 153, 225, 0.05);
 }
 
-button[onclick="filterJobs()"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-/* ===================== 
-    Job Cards 
-===================== */
-#jobList {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-}
-
-.job-card {
-    background: #EBF4F6; /* Ivory */
-    border-radius: 20px;
-    padding: 24px 20px;
-    box-shadow: 0 8px 20px rgba(2,21,38,0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-left 0.3s ease;
-    border-left: 5px solid #088395; /* Mint accent */
-}
-
-.job-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 40px rgba(2,21,38,0.15);
-    border-left-color: #37B7C3; /* Light mint on hover */
-}
-
-/* Job Title */
-.job-card h3 {
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: #021526; /* black */
-    margin-bottom: 6px;
-}
-
-/* Job Meta (Company, Type, Location) */
-.job-card .job-meta {
-    font-size: 0.85rem;
-    color: #071952; /* navy blue */
-    margin-bottom: 8px;
-    line-height: 1.4;
-}
-
-/* Job Description */
-.job-card p:not(.job-meta):not(.job-date) {
+.notif-message {
     font-size: 0.95rem;
-    color: #071952; /* navy blue */
+    color: #2D3748;
+    margin-bottom: 6px;
+    font-weight: 500;
     line-height: 1.5;
 }
 
-/* Date Posted */
-.job-card .job-date {
+.notif-date {
     font-size: 0.85rem;
-    color: #088395; /* mint green for subtle highlight */
+    color: #718096;
 }
 
-/* Apply Button */
-.job-card form button {
-    margin-top: 12px;
-    background: #088395; /* mint green */
-    color: #EBF4F6; /* ivory text */
+.notif-clear-btn {
+    width: 100%;
+    padding: 14px 0;
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    color: #fff;
     border: none;
-    border-radius: 12px;
-    padding: 12px 16px;
+    border-radius: 0 0 20px 20px;
+    cursor: pointer;
     font-weight: 600;
     font-size: 0.95rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.2s ease;
 }
 
-.job-card form button:hover {
-    transform: translateY(-3px);
-    background: #37B7C3; /* light mint green */
-    box-shadow: 0 10px 25px rgba(2,21,38,0.1);
+.notif-clear-btn:hover {
+    background: linear-gradient(135deg, #3182CE, #4299E1);
+}
+
+.notif-empty {
+    text-align: center;
+    padding: 40px 24px;
+    color: #A0AEC0;
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.hidden {
+    display: none !important;
 }
 
 
-/* =====================
-   Overview Section
-===================== */
-section#overview {
+/* =========================================================
+   MAIN WRAPPER
+========================================================= */
+main {
+    max-width: 1200px;
+    margin: 160px auto 60px;
+    padding: 0 20px;
+}
+
+/* =========================================================
+   HEADER SECTION
+========================================================= */
+.header-section {
+    text-align: left;
+    margin-bottom: 40px;
+}
+
+.section-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1A2B47;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: #7389A7;
+    margin-top: 6px;
+}
+
+/* =========================================================
+   SEARCH + FILTER BAR (Floating Glass Bar)
+========================================================= */
+.search-filter-section {
     display: flex;
-    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.search-container,
+.filter-container {
+    position: relative;
+}
+
+.search-container input {
+    width: 280px;
+    padding: 12px 42px 12px 16px;
+    border-radius: 16px;
+    border: none;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    font-size: 0.95rem;
+    color: #1A2B47;
+    outline: none;
+    backdrop-filter: blur(10px);
+    transition: 0.2s ease;
+}
+
+.search-container input:focus {
+    box-shadow: 0 6px 18px rgba(60,140,255,0.25);
+    background: rgba(255,255,255,0.95);
+}
+
+.search-container svg {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    stroke: #6C85A1;
+}
+
+.filter-container select {
+    padding: 12px 16px;
+    border-radius: 16px;
+    border: none;
+    background: rgba(255,255,255,0.85);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    font-size: 0.95rem;
+    color: #1A2B47;
+    outline: none;
+    backdrop-filter: blur(10px);
+    transition: 0.2s;
+}
+
+.btn-search {
+    padding: 12px 24px;
+    border-radius: 16px;
+    border: none;
+    background: linear-gradient(135deg, #3C8CFF, #4DB7FF);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(60,140,255,0.35);
+    transition: 0.25s ease;
+}
+
+.btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(60,140,255,0.45);
+}
+
+/* =========================================================
+   JOB CARDS SECTION — Floating Glass Cards
+========================================================= */
+.jobs-section {
+    margin-top: 20px;
+}
+
+.job-cards-container {
+    display: grid;
     gap: 24px;
 }
 
-section#overview > div {
-    background: #fff;
+.job-card-link {
+    text-decoration: none;
+}
+
+.job-card {
+    background: rgba(255,255,255,0.92);
+    border-radius: 22px;
+    padding: 26px 30px;
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.06);
+    backdrop-filter: blur(14px);
+    transition: 0.25s ease;
+    cursor: pointer;
+}
+
+.job-card:hover {
+    box-shadow: 0 16px 34px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+}
+
+/* Job type badge */
+.job-type-badge {
+    display: inline-block;
+    background: rgba(60, 140, 255, 0.12);
+    color: #3478FF;
+    padding: 6px 14px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 12px;
+}
+
+/* Job title */
+.job-card .job-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1A2B47;
+    margin-bottom: 14px;
+}
+
+/* Metadata (company & location) */
+.job-meta-info {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 14px;
+}
+
+.meta-item {
+    display: flex;
+    gap: 6px;
+    font-size: 0.95rem;
+    color: #5A6B80;
+}
+
+/* Description */
+.job-description {
+    margin-top: 10px;
+    color: #5A6B80;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* Footer */
+.job-footer {
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: #8DA1B7;
+}
+
+/* Apply button */
+.job-actions .btn-apply {
+    margin-top: 18px;
+    width: 180px;
+    padding: 12px;
     border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    background: linear-gradient(135deg, #3C8CFF, #4DB7FF);
+    color: white;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(60,140,255,0.35);
+    transition: 0.25s;
+}
+
+.job-actions .btn-apply:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(60,140,255,0.45);
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+.empty-state {
+    text-align: center;
+    padding: 50px 20px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.92);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.empty-state p {
+    color: #5A6B80;
+    font-size: 1rem;
+}
+
+.empty-state-secondary {
+    margin-top: 6px;
+    font-size: 0.9rem;
+    color: #8DA1B7;
 }
 
 /* =====================
-   Responsive Adjustments
+   Scrollbar Styling
 ===================== */
-@media (max-width: 768px) {
-    main {
-        width: 95%;
-        gap: 24px;
-    }
+::-webkit-scrollbar {
+    width: 10px;
+}
 
-    header h1 {
-        font-size: 1.6rem;
-    }
+::-webkit-scrollbar-track {
+    background: rgba(226, 232, 240, 0.3);
+    border-radius: 10px;
+}
 
-    #jobList {
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #3182CE, #4299E1);
+}
+
+/* =====================
+   Responsive Design
+===================== */
+
+/* Tablets */
+@media (max-width: 1024px) {
+    .navbar {
+        width: 94%;
+        padding: 16px 28px;
+    }
+    
+    .main-content {
+        width: 94%;
+    }
+    
+    .header-title {
+        font-size: 2.2rem;
+    }
+    
+    .training-item,
+    .certificate-card {
         grid-template-columns: 1fr;
         gap: 16px;
     }
+    
+    .training-date {
+        justify-self: start;
+        text-align: left;
+    }
+    
+    .training-status,
+    .certificate-actions {
+        justify-self: start;
+    }
 }
 
-/* =====================
-   Animations
-===================== */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px);}
-    to { opacity: 1; transform: translateY(0);}
-}
-
-.section-title{
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.2rem;
-  letter-spacing: 1.5px;
-  color: #EBF4F6;
-  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.9);
-}
-
-.section-subtitle{
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 0.2rem;
-  letter-spacing: 1.5px;
-  color: #EBF4F6;
-  text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.9);
-}
-
-/* =====================
-   Overview Section - Refined Aesthetic
-===================== */
-section#overview {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    margin-bottom: 60px;
-}
-
-/* Title styling */
-section#overview .section-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: #EBF4F6;
-    text-shadow: 0px 2px 12px rgba(0, 0, 0, 0.9);
-    letter-spacing: 1.5px;
-    margin-bottom: 20px;
-}
-
-/* Container for widgets */
-section#overview > div {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 25px;
-}
-
-/* Widget card styling with glass effect */
-section#overview > div > div {
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-radius: 24px;
-    padding: 28px 24px;
-    box-shadow: 0 12px 36px rgba(0,0,0,0.18);
-    border: 1px solid rgba(255,255,255,0.25);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-section#overview > div > div:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 18px 50px rgba(0,0,0,0.25);
-}
-
-/* Date & Time Widget */
-#current-date {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #EBF4F6;
-    margin-bottom: 6px;
-}
-
-#current-time {
-    font-size: 1.1rem;
-    color: #DDEEFF;
-    font-weight: 500;
-}
-
-/* Chart Widget */
-#analyticsChart {
-    width: 100%;
-    height: 260px;
-    border-radius: 16px;
-    background-color: #fff; 
-}
-
-/* Calendar Widget */
-#jobCalendar {
-    margin-top: 30px;
-    width: 100%;
-    min-height: 300px;
-    border-radius: 20px;
-    overflow: hidden;
-    color: #fff; 
-    background-color: #021526;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-/* Responsive adjustments */
+/* Mobile */
 @media (max-width: 768px) {
-    section#overview > div {
+    body {
+        font-size: 15px;
+    }
+    
+    .navbar {
+        width: 94%;
+        padding: 14px 20px;
+        top: 12px;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .navbar .nav-right {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .navbar .nav-right a,
+    .notif-btn {
+        font-size: 0.9rem;
+        padding: 10px 16px;
+    }
+    
+    .main-content {
+        margin-top: 160px;
+        width: 94%;
+        gap: 32px;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-title {
+        font-size: 1.8rem;
+    }
+    
+    .messages {
+        top: 180px;
+        right: 16px;
+        left: 16px;
+    }
+    
+    .message {
+        min-width: auto;
+    }
+    
+    .profile-card {
+        padding: 24px;
+    }
+    
+    .profile-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-img {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .profile-info h3 {
+        font-size: 1.4rem;
+    }
+    
+    .profile-details {
         grid-template-columns: 1fr;
     }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .training-item,
+    .certificate-card {
+        padding: 20px 24px;
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    
+    .training-info strong,
+    .certificate-info strong {
+        font-size: 1.05rem;
+    }
+    
+    .training-date {
+        font-size: 0.9rem;
+        justify-self: start;
+        text-align: left;
+    }
+    
+    .training-status {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        justify-self: start;
+    }
+    
+    .certificate-actions {
+        justify-self: start;
+        width: 100%;
+    }
+    
+    .btn-view,
+    .btn-delete {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .btn-upload-cert {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        padding: 28px;
+        max-width: 95%;
+    }
+    
+    .notif-dropdown {
+        width: 300px;
+    }
+}
 
-    section#overview .section-title {
-        font-size: 1.8rem;
+/* Extra Small Devices */
+@media (max-width: 480px) {
+    .navbar .nav-right a,
+    .notif-btn {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+    
+    .header-title {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+    }
+    
+    .training-item,
+    .certificate-card {
+        padding: 16px 20px;
+    }
+    
+    .profile-card {
+        padding: 20px;
+    }
+    
+    .btn-view,
+    .btn-delete {
+        font-size: 0.85rem;
+        padding: 10px 18px;
     }
 }

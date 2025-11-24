@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
 from django import forms
-from .models import Resident
+from .models import Resident, Skill
 
 # class ResidentForm(forms.ModelForm):
 #     class Meta:
@@ -26,6 +26,12 @@ from .models import Resident
 #         fields = ("username", "password1", "password2")
 
 class ResidentForm(forms.ModelForm):
+    skills = forms.ModelMultipleChoiceField(
+        queryset=Skill.objects.all(),
+        required=False,
+        widget=forms.SelectMultiple(attrs={'class': 'form-control', 'size': 6})
+    )
+
     class Meta:
         model = Resident
         fields = ['first_name', 'middle_name', 'last_name', 'address', 'contact_number', 'employment_status', 'skills', 'current_status']
@@ -40,7 +46,6 @@ class ResidentForm(forms.ModelForm):
             'address': forms.TextInput(attrs={'class':'form-control', 'placeholder':' '}),
             'contact_number': forms.TextInput(attrs={'class':'form-control', 'placeholder':' '}),
             'employment_status': forms.Select(attrs={'class':'form-control'}),
-            'skills': forms.Textarea(attrs={'class':'form-control', 'rows':2, 'placeholder':' '}),
             'current_status': forms.Select(attrs={'class':'form-control'}),
         }
 
