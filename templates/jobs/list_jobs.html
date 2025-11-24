@@ -119,31 +119,24 @@
                 {% if job.Status == "Open" %}
                 <a href="{% url 'job_detail' job.JobID %}" class="job-card-link">
                     <div class="job-card">
-                        <div class="card-header">
-                            <div class="job-type-badge">{{ job.JobType }}</div>
-                        </div>
+                        
 
                         <div class="job-card-content">
                             <h3 class="job-title">{{ job.Title }}</h3>
-
-                            <div class="job-meta-info">
-                                <p class="meta-item">
-                                    <span class="meta-icon">🏢</span>
-                                    <span class="meta-text">{{ job.Company }}</span>
-                                </p>
-                                <p class="meta-item">
-                                    <span class="meta-icon">📍</span>
-                                    <span class="meta-text">{{ job.Location }}</span>
-                                </p>
+                                <div class="card-header">
+                            <div class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">{{ job.Status }}</div>
+                        </div>
+                            {% if job.skills %}
+                            <div class="job-skills">
+                                {% for skill in job.skills %}
+                                    <span class="skill-tag">{{ skill }}</span>
+                                {% endfor %}
                             </div>
-
-                            <p class="job-description">
-                                {{ job.Description|truncatechars:120 }}
-                            </p>
-
-                            <div class="job-footer">
-                                <p class="job-date">Posted: {{ job.dateposted|date:"M d, Y" }}</p>
+                            {% else %}
+                            <div class="job-skills">
+                                <span class="skill-tag no-skills">No specific skills required</span>
                             </div>
+                            {% endif %}
                         </div>
                     </div>
                 </a>
@@ -183,10 +176,10 @@ function filterJobs() {
 
     jobCards.forEach(card => {
         const title = card.querySelector('.job-title').textContent.toLowerCase();
-        const company = card.querySelector('.meta-text').textContent.toLowerCase();
-        
-        const matchesSearch = title.includes(searchTerm) || company.includes(searchTerm);
-        const matchesSkill = !selectedSkill || card.textContent.toLowerCase().includes(selectedSkill);
+        const skills = Array.from(card.querySelectorAll('.skill-tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+
+        const matchesSearch = title.includes(searchTerm);
+        const matchesSkill = !selectedSkill || selectedSkill === 'other' || skills.includes(selectedSkill);
 
         if (matchesSearch && matchesSkill) {
             card.style.display = '';

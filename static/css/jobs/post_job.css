@@ -1,8 +1,11 @@
+/* ===============================
+   Overall Theme (Cream + Navy)
+================================ */
+
 body {
   font-family: "Inter", Arial, sans-serif;
   background: url("/static/images/BackgroundR.png") no-repeat center center fixed;
   background-size: cover;
-  /* background-color: #FFF; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,19 +15,33 @@ body {
 }
 
 .container {
-  background: #f8f6f3; /* light cream */
+  background: #f8f6f3;
   padding: 40px;
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(33, 53, 85, 0.15); /* subtle blue tone shadow */
-  width: 400px;
+  width: 420px;
+  box-shadow: 0 4px 12px rgba(33, 53, 85, 0.15);
 }
 
 .section-title {
   text-align: center;
   font-weight: 700;
-  color: #213555; /* dark blue */
+  font-size: 24px;
+  color: #213555;
   margin-bottom: 24px;
 }
+
+.alert {
+  background: #213555;
+  color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* ===========================
+    Form Inputs
+=========================== */
 
 .auth-form {
   display: flex;
@@ -38,48 +55,105 @@ body {
   flex-direction: column;
 }
 
+.form-group label {
+  font-size: 14px;
+  color: #3E5879;
+  margin-bottom: 6px;
+}
+
 .form-group input,
 .form-group textarea,
 .form-group select {
   padding: 12px 14px;
   font-size: 15px;
-  border: 1px solid #3E5879; /* muted blue border */
+  border: 1px solid #3E5879;
   border-radius: 10px;
   outline: none;
-  background-color: #ffffff; /* light beige input bg */
+  background-color: #ffffff;
   color: #213555;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
-  border-color: #213555; /* darker blue on focus */
+  border-color: #213555;
   box-shadow: 0 0 6px rgba(33, 53, 85, 0.2);
 }
 
-.form-group label {
-  position: absolute;
-  top: -8px;
-  left: 16px;
-  background: #f8f6f3;
-  padding: 0 5px;
-  font-size: 13px;
-  color: #3E5879; /* soft blue-gray label */
+/* ===========================
+    SKILL TILE UI
+=========================== */
+
+.skills-tile-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
 }
 
+.skill-tile {
+  background: #ffffff;
+  border: 1px solid #3E5879;
+  color: #213555;
+  padding: 10px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 6px rgba(33, 53, 85, 0.08);
+}
+
+.skill-tile:hover {
+  background: #eceae7;
+  box-shadow: 0 3px 8px rgba(33, 53, 85, 0.15);
+}
+
+.skill-tile.selected {
+  background: #213555;
+  color: #f5efe7;
+  border-color: #213555;
+  box-shadow: 0 4px 10px rgba(33, 53, 85, 0.25);
+}
+
+.hint {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* ===========================
+    Buttons
+=========================== */
+
 button {
-  background-color: #213555; /* dark blue button */
-  color: #F5EFE7; /* light text */
+  background-color: #213555;
+  color: #F5EFE7;
   border: none;
   padding: 12px;
   border-radius: 10px;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s ease;
+  transition: 0.3s ease;
+  margin-top: 10px;
 }
 
 button:hover {
-  background-color: #3E5879; /* lighter navy hover */
+  background-color: #3E5879;
   transform: translateY(-1px);
+}
+
+/* Back link */
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 12px;
+  text-decoration: none;
+  color: #213555;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  text-decoration: underline;
 }
