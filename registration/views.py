@@ -12,7 +12,7 @@ import time
 from supabase import create_client
 from django.contrib.auth import login
 from django.contrib.auth.models import User
-from .models import Resident, Official, Job, Training, Event, JobApplication, TrainingParticipation
+from .models import Resident, Official, Job, Training, Event, JobApplication, TrainingParticipation, Skill
 from jobs.services.supabase_crud import get_jobs
 from datetime import datetime
 
@@ -860,7 +860,20 @@ def edit_profile_view(request):
         address = request.POST.get('address')
         contact_number = request.POST.get('contact_number')
         employment_status = request.POST.get('employment_status')
-        skills = request.POST.get('skills')
+        # With multi-select, getlist returns list of selected skill ids (as strings)
+        skills_selected = request.POST.getlist('skills')
+        # We'll store a legacy CSV string in Supabase's `skills` text field for compatibility
+        skills_csv = ''
+        if skills_selected:
+            from .models import Skill
+            # Map selected skill ids to skill names where possible
+            try:
+                skill_qs = Skill.objects.filter(id__in=skills_selected)
+                skill_names = [s.skill_name for s in skill_qs]
+                skills_csv = ','.join(skill_names)
+            except Exception:
+                # Fallback: join raw posted values
+                skills_csv = ','.join(skills_selected)
         current_status = request.POST.get('current_status')
 
         # Update Supabase
@@ -872,7 +885,7 @@ def edit_profile_view(request):
                 'address': address,
                 'contact_number': contact_number,
                 'employment_status': employment_status,
-                'skills': skills,
+                'skills': skills_csv,
                 'status': current_status,
             }).eq('email', email).execute()
 
@@ -886,13 +899,30 @@ def edit_profile_view(request):
                     'address': address,
                     'contact_number': contact_number,
                     'employment_status': employment_status,
-                    'skills': skills,
                     'current_status': current_status,
                 }
             )
             if not created:
+                resident.first_name = first_name
+                resident.last_name = last_name
+                resident.middle_name = middle_name
+                resident.address = address
+                resident.contact_number = contact_number
+                resident.employment_status = employment_status
                 resident.current_status = current_status
                 resident.save()
+
+            # Sync skills selection via SupabaseResident-backed resident_skills
+            try:
+                if skills_selected:
+                    skill_objs = Skill.objects.filter(id__in=skills_selected)
+                    # Use Resident helper to set skills (writes to resident_skills)
+                    resident.set_skills(skill_objs)
+                else:
+                    resident.set_skills([])
+            except Exception as e:
+                # Log but don't block profile save
+                print('Error syncing resident skills:', e)
 
             messages.success(request, 'Profile updated successfully!')
             return redirect('edit_profile')
@@ -900,11 +930,30 @@ def edit_profile_view(request):
             messages.error(request, f'Error updating profile: {e}')
 
     # Create form with initial data for choices
-    form = ResidentForm(initial=user_profile)
+    initial = user_profile.copy() if isinstance(user_profile, dict) else {}
+    # If we have a Django Resident, use its skills M2M for initial selection
+    try:
+        from .models import Skill
+        if resident:
+            initial['skills'] = list(resident.get_skills().values_list('id', flat=True))
+        else:
+            # Try to parse comma-separated skills from Supabase profile
+            supa_skills = user_profile.get('skills') if isinstance(user_profile, dict) else None
+            if supa_skills:
+                # map names to ids where possible
+                names = [s.strip() for s in supa_skills.split(',') if s.strip()]
+                skill_qs = Skill.objects.filter(skill_name__in=names)
+                initial['skills'] = list(skill_qs.values_list('id', flat=True))
+    except Exception:
+        # If mapping fails, leave skills initial blank
+        pass
+
+    form = ResidentForm(initial=initial)
 
     return render(request, 'registration/edit_profile.html', {
         'user_profile': user_profile,
         'form': form,
+        'all_skills': Skill.objects.all() if 'Skill' in globals() or 'Skill' in locals() else [],
     })
 
 
