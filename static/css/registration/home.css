@@ -1,11 +1,6 @@
-/* =====================
-   Modern Resident Dashboard
-   Clean, Consistent, Responsive
-===================== */
-
-/* =====================
-   CSS Reset & Base Styles
-===================== */
+/* =========================================================
+   GLOBAL PAGE LAYOUT — Soft Modern Glass UI
+========================================================= */
 * {
     margin: 0;
     padding: 0;
@@ -42,7 +37,7 @@ body::before {
 ===================== */
 .navbar {
     position: fixed;
-    top: 20px;
+    top: 0px;
     left: 50%;
     transform: translateX(-50%);
     width: 95%;
@@ -55,7 +50,7 @@ body::before {
     align-items: center;
     gap: 40px;
     z-index: 990;
-    border-radius: 20px;
+    border-radius: 10px;
     box-shadow: 0 8px 32px rgba(66, 153, 225, 0.12), 
                 0 2px 8px rgba(66, 153, 225, 0.08);
     transition: all 0.3s ease;
@@ -78,22 +73,38 @@ body::before {
     transform: scale(1.05);
 }
 
+/* ensure container is positioned for absolute children */
 .navbar .nav-right {
+    position: relative;   /* REQUIRED for the underline */
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
+/* underline element styles (visible and animatable) */
+.navbar .nav-right .underline {
+    position: absolute;
+    bottom: 8px; 
+    top: 40px;                /* tweak to sit under links */
+    left: 0;
+    height: 3px;
+    width: 0;
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    border-radius: 10px;
+    transition: left 0.25s ease, width 0.25s ease;
+    pointer-events: none;
+    z-index: 5;
+    display: block;              /* make sure it is visible */
+}
+
 .navbar .nav-right a,
 .navbar .nav-right .notif-link {
-    color: #4A5568;
     text-decoration: none;
     font-size: 1rem;
     font-weight: 500;
-    padding: 12px 22px;
-    border-radius: 12px;
+    padding: 8px 20px;
+    border-radius: 5px;
     transition: all 0.3s ease;
-    background: transparent;
     border: none;
     cursor: pointer;
     position: relative;
@@ -102,18 +113,13 @@ body::before {
 .navbar .nav-right a:hover,
 .navbar .nav-right .notif-link:hover {
     background: rgba(66, 153, 225, 0.08);
-    color: #4299E1;
+    color: #032947;
 }
 
 .navbar .nav-right a.active,
 .navbar .nav-right .notif-link.active {
     background: linear-gradient(135deg, #4299E1, #63B3ED);
     color: white;
-    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
-}
-
-.navbar .nav-right .underline {
-    display: none;
 }
 
 /* Notification Button Styling */
@@ -123,26 +129,28 @@ body::before {
 }
 
 .notif-btn {
-    color: #4A5568;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
-    padding: 12px 22px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    display: inline-flex;
+    height: 40px;
+    width: 40px;
+    padding: 0;             
+    border: none;            
+    background: none;       
+    display: flex;           
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.notif-btn img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain; /* keeps image proportion */
+    pointer-events: none; /* so clicking still works normally */
 }
 
 .notif-btn:hover {
-    background: rgba(66, 153, 225, 0.08);
     color: #4299E1;
 }
+
 
 .notif-indicator {
     width: 8px;
@@ -164,12 +172,12 @@ body::before {
 /* Notification Dropdown */
 .notif-dropdown {
     position: absolute;
-    top: 60px;
+    top: 50px;
     right: 0;
     width: 340px;
     max-height: 420px;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.98);
+    background: #EBF4F6;
     backdrop-filter: blur(20px);
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(66, 153, 225, 0.2);
