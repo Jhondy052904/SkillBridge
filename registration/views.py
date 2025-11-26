@@ -1220,6 +1220,84 @@ def upload_certificate(request):
             return JsonResponse({"error": str(e)}, status=500)
 
     return JsonResponse({"error": "Invalid method"}, status=405)
+    # -- put near other views in registration/views.py --
+
+from django.http import JsonResponse
+from django.utils.dateparse import parse_datetime
+
+def calendar_view(request):
+    """
+    Renders calendar page for residents.
+    The page loads events from /calendar/events/ via AJAX.
+    """
+    # Protect: only residents should see dashboard calendar; but public view permitted.
+    username = request.session.get("user_email")
+    user_role = request.session.get("user_role")
+    # If you want to restrict strictly to logged-in residents:
+    # if not username or user_role != "Resident": return redirect('login')
+
+    # Pass small context (title etc.) and let frontend fetch events
+    return render(request, "registration/calendar.html", {
+        "page_title": "Calendar | SkillBridge",
+    })
+
+
+def calendar_events_api(request):
+    """
+    Returns JSON list of events (jobs + trainings) expected by FullCalendar.
+    Only returns ongoing events:
+      - training: exclude status == "Completed" or "Closed"
+      - jobs: include jobs with Status == "Open"
+    """
+    events = []
+    try:
+        # Trainings: use date_scheduled as event start
+        trainings_resp = supabase.table("training").select("*").execute()
+        trainings = trainings_resp.data or []
+        for t in trainings:
+            status = (t.get("status") or "").lower()
+            if status in ("completed", "closed"):
+                continue
+            title = t.get("training_name") or "Training"
+            date = t.get("date_scheduled") or t.get("created_at")
+            # ensure date format acceptable to FullCalendar (ISO or YYYY-MM-DD)
+            if date:
+                events.append({
+                    "id": f"training-{t.get('id')}",
+                    "title": f"[Training] {title}",
+                    "start": date,
+                    "allDay": True,
+                    "extendedProps": {
+                        "type": "training",
+                        "raw": t,
+                    }
+                })
+
+        # Jobs: use dateposted (or created_at) and require Status == "Open"
+        jobs_resp = supabase.table("jobs").select("*").execute()
+        jobs = jobs_resp.data or []
+        for j in jobs:
+            status = (j.get("Status") or "").lower()
+            if status != "open":
+                continue
+            title = j.get("Title") or "Job"
+            date = j.get("dateposted") or j.get("created_at")
+            if date:
+                events.append({
+                    "id": f"job-{j.get('JobID') or j.get('id')}",
+                    "title": f"[Job] {title}",
+                    "start": date,
+                    "allDay": True,
+                    "extendedProps": {
+                        "type": "job",
+                        "raw": j,
+                    }
+                })
+    except Exception as e:
+        # return an error object that frontend can detect
+        return JsonResponse({"error": f"Unable to load events: {e}"}, status=500)
+
+    return JsonResponse(events, safe=False)
 
     def get_latest_notification():
         try:

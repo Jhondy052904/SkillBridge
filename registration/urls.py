@@ -28,6 +28,10 @@ urlpatterns = [
     # -------- PROFILE --------
     path('profile/', views.edit_profile_view, name='edit_profile'),
 
+    # -------- CALENDAR --------
+    path('calendar/', views.calendar_view, name='calendar'),
+    path('calendar/events/', views.calendar_events_api, name='calendar_events'),
+    
     # -------- API --------
     path('api/registered_trainings/', views.api_registered_trainings, name='api_registered_trainings'),
     path('api/upload_certificate/', views.api_upload_certificate, name='api_upload_certificate'),
@@ -39,4 +43,5 @@ urlpatterns = [
     path('verify/resident/<int:resident_id>/', views.resident_details, name='resident_details'),
     path('verify/approve/<int:resident_id>/', views.approve_resident, name='approve_resident'),
     path('verify/deny/<int:resident_id>/', views.deny_resident, name='deny_resident'),
+
 ]

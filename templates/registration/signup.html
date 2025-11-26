@@ -19,7 +19,8 @@
     <div class="signup-container">
         <h1 class="signup-title">SIGN UP</h1>
 
-<form class="signup-form" enctype="multipart/form-data">
+<form class="signup-form" enctype="multipart/form-data" method="post" action="{% url 'signup' %}">
+    {% csrf_token %}
 
     <!-- Full Name -->
     <div class="form-row">
@@ -31,7 +32,7 @@
         <div class="form-group input-with-icon">
             <i class="fas fa-user input-icon"></i>
             <label for="middle_name">Middlename</label>
-            <input type="text" id="middle_name" name="middle_name" placeholder="Enter your middlename"> 
+            <input type="text" id="middle_name" name="middle_name" placeholder="Enter your middlename">
         </div>
     </div>
 
@@ -50,32 +51,32 @@
 
     <!-- Login Info -->
     <div class="form-row">
+        <!-- KEEP USERNAME FIELD -->
         <div class="form-group input-with-icon">
             <i class="fas fa-user input-icon"></i>
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter your username" required>
-            
         </div>
+
+        <!-- FIXED: Add correct EMAIL field -->
         <div class="form-group input-with-icon">
-            <i class="fas fa-lock input-icon"></i>
-            <label for="password1">Password</label>
-            <input type="password" id="password1" name="password1" placeholder="Enter your password" minlength="6" required>
-            
+            <i class="fas fa-envelope input-icon"></i>
+            <label for="email">Valid Email</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required>
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group input-with-icon">
-            <i class="fas fa-envelope input-icon"></i>
-            <label for="email">Valid Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            
+            <i class="fas fa-lock input-icon"></i>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" minlength="6" required>
         </div>
+
         <div class="form-group input-with-icon">
             <i class="fas fa-lock input-icon"></i>
             <label for="password2">Confirm Password</label>
             <input type="password" id="password2" name="password2" placeholder="Confirm your password" minlength="6" required>
-            
         </div>
     </div>
 
@@ -89,13 +90,39 @@
                 <option value="Labangon">Labangon</option>
                 <option value="Mambaling">Mambaling</option>
             </select>
-            
         </div>
+
         <div class="form-group input-with-icon">
             <i class="fas fa-map-marker-alt input-icon"></i>
             <label for="sublocation">Sub-location</label>
             <select id="sublocation" name="sublocation" required>
-                <option value="">Select Sub-location</option>
+                <option value="Balaga">Balaga</option>
+                <option value="Bliss">Bliss</option>
+                <option value="Bon Ami">Bon Ami</option>
+                <option value="Bonbonan Lower">Bonbonan Lower</option>
+                <option value="Bonbonan Upper">Bonbonan Upper</option>
+                <option value="Bugnay I">Bugnay I</option>
+                <option value="Bugnay II">Bugnay II</option>
+                <option value="Callejon">Callejon</option>
+                <option value="Camalig">Camalig</option>
+                <option value="Cogon Lower">Cogon Lower</option>
+                <option value="Cogon Upper">Cogon Upper</option>
+                <option value="Gamboa">Gamboa</option>
+                <option value="Kalumboyan">Kalumboyan</option>
+                <option value="Kamanggahan">Kamanggahan</option>
+                <option value="Kapaculan">Kapaculan</option>
+                <option value="Kolo">Kolo</option>
+                <option value="Latresass">Latresass</option>
+                <option value="Lower Banawa">Lower Banawa</option>
+                <option value="Lutaw-Lutaw">Lutaw-Lutaw</option>
+                <option value="Mahayahay">Mahayahay</option>
+                <option value="Maria Paloma Village">Maria Paloma Village</option>
+                <option value="Rosalina Village">Rosalina Village</option>
+                <option value="San Isidro">San Isidro</option>
+                <option value="Stage">Stage</option>
+                <option value="Sta. Ana">Sta. Ana</option>
+                <option value="Sto. Niño (A. Lopez)">Sto. Niño (A. Lopez)</option>
+                <option value="Tambisan">Tambisan</option>
             </select>
         </div>
     </div>
@@ -106,6 +133,7 @@
             <label for="house_number">House No. / Street</label>
             <input type="text" id="house_number" name="house_number" placeholder="House No. / Street" required>
         </div>
+
         <div class="form-group input-with-icon">
             <i class="fas fa-briefcase input-icon"></i>
             <label for="skills">Skills</label>
@@ -123,7 +151,6 @@
                 <option value="Tutoring">Tutoring</option>
                 <option value="Pedicure">Pedicure</option>
             </select>
-            
         </div>
     </div>
 
@@ -144,6 +171,7 @@
     <button type="button" class="create-account-btn" onclick="window.location.href='{% url 'login' %}'">Sign In</button>
 
 </form>
+
 
     </div>
 </div>
