@@ -1133,4 +1133,58 @@ body::before {
         font-size: 0.85rem;
         padding: 10px 18px;
     }
+    /* === Dashboard two-column grid === */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px; /* left main, right calendar (fixed) */
+    gap: 28px;
+    align-items: start;
+}
+
+/* right column calendar panel */
+.dashboard-right .calendar-panel {
+    position: sticky;
+    top: 120px; /* sticks under navbar */
+    border-radius: 16px;
+    padding: 18px;
+    background: rgba(255,255,255,0.98);
+    box-shadow: 0 8px 32px rgba(66,153,225,0.08);
+    border-left: 4px solid #4299E1;
+}
+
+.calendar-header-compact {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+}
+
+/* mini calendar root sizing */
+#miniCalRoot {
+    width: 100%;
+}
+
+/* Media queries: stack on small screens */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr 320px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    .dashboard-right {
+        order: 2;
+    }
+    .dashboard-left {
+        order: 1;
+    }
+    .dashboard-right .calendar-panel {
+        position: relative;
+        top: 0;
+    }
+}
+
 }

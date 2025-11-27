@@ -74,27 +74,21 @@
 <!-- ====================== MAIN ====================== -->
 <main class="main-content">
 
-    <!-- MESSAGES -->
-    {% if messages %}
-    <div class="messages">
-        {% for message in messages %}
-        <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
-            <span class="message-text">{{ message }}</span>
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+    <!-- NEW: Two-column layout: left = main dashboard, right = calendar -->
+    <div class="dashboard-grid">
 
-    <!-- ================= PROFILE CARD ================= -->
-    {% if user_profile %} 
-    <div class="profile-card">   
-        <div class="profile-header">
-            <img src="{% static 'images/snoopy.png' %}" class="profile-img" alt="Profile Image">
-            <div class="profile-info">
-                <h3 class="profile-name">{{ user_profile.first_name }} {{ user_profile.last_name }}</h3>
-                <p class="profile-role"><strong>Role:</strong> Resident</p>
+        <!-- LEFT COLUMN (existing dashboard content) -->
+        <div class="dashboard-left">
+            <!-- ================= MESSAGES ================= -->
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
+                    <span class="message-text">{{ message }}</span>
+                </div>
+                {% endfor %}
             </div>
-        </div>
+            {% endif %}
 
         <div class="profile-details">
             <p><strong>Email:</strong> {{ user_profile.email }}</p>
@@ -113,76 +107,127 @@
             </div>
         </div>
 
-        <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
-    </div>
-    {% else %}
-    <div class="profile-card error-card">
-        <p>Profile data not found. Please contact support.</p>
-        <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
-    </div>
-    {% endif %}
-
-    <!-- ================= REGISTERED TRAININGS ================= -->
-    <section class="registered-trainings">
-        <h2 class="section-title">My Registered Trainings</h2>
-
-        <div id="trainingsList" class="trainings-list">
-            {% if registered_trainings %}
-                <ul>
-                    {% for training in registered_trainings %}
-                        <li class="training-item">
-                            <div class="training-info">
-                                <strong>{{ training.training_name }}</strong>
-                            </div>
-                            <span class="training-date">{{ training.date_scheduled|date:"n/j/Y" }}</span>
-                            <span class="training-status">{{ training.status }}</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="empty-trainings">No trainings registered yet. <a href="{% url 'list_trainings' %}" class="link-primary">Find trainings</a></p>
-            {% endif %}
-        </div>
-    </section>
-
-    <!-- ================= MY CERTIFICATES ================= -->
-    <section class="my-certificates">
-        <h2 class="section-title">My Certificates</h2>
-
-        <button id="uploadCertBtn" class="btn-upload-cert">+ Upload Certificate</button>
-
-        <div id="certificatesList" class="certificates-list">
-            {% if certificates %}
-                <div class="certificates-grid">
-                    {% for cert in certificates %}
-                        <div class="certificate-card">
-                            <div class="certificate-info">
-                                <strong>{{ cert.training_name }}</strong>
-                            </div>
-                            <span class="training-date">{{ cert.uploaded_at|date:"n/j/Y" }}</span>
-                            <div class="certificate-actions">
-                                <a href="{{ cert.certificate_url }}" target="_blank" class="btn-view">View</a>
-                                <button class="btn-delete" data-id="{{ cert.id }}">Delete</button>
-                            </div>
-                        </div>
-                    {% endfor %}
+                <div class="profile-details">
+                    <p><strong>Email:</strong> {{ user_profile.email }}</p>
+                    <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
+                    <p><strong>Address:</strong> {{ user_profile.address }}</p>
+                    <p><strong>Employment:</strong> {{ user_profile.employment_status }}</p>
+                    <p><strong>Verification:</strong> <span class="verification-status">{{ user_profile.verification_status }}</span></p>
+                    <p><strong>Current Status:</strong> <span class="current-status">{{ current_status }}</span></p>
+                    <p><strong>Skills:</strong> <span class="skills">{{ user_profile.skills }}</span></p>
                 </div>
-            {% else %}
-                <p class="empty-certificates">No certificates uploaded yet.</p>
-            {% endif %}
-        </div>
-    </section>
 
-    <!-- ================= QUICK ACTIONS ================= -->
-    <section class="quick-actions">
-        <h2 class="section-title">Quick Actions</h2>
-        <div class="actions-grid">
-            <a href="{% url 'list_jobs' %}" class="action-btn jobs-btn">Browse Jobs</a>
-            <a href="{% url 'list_trainings' %}" class="action-btn trainings-btn">Find Trainings</a>
+                <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
+            </div>
+            {% else %}
+            <div class="profile-card error-card">
+                <p>Profile data not found. Please contact support.</p>
+                <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
+            </div>
+            {% endif %}
+
+            <!-- ================= REGISTERED TRAININGS ================= -->
+            <section class="registered-trainings">
+                <h2 class="section-title">My Registered Trainings</h2>
+                <div id="trainingsList" class="trainings-list">
+                    {% if registered_trainings %}
+                        <ul>
+                            {% for training in registered_trainings %}
+                                <li class="training-item">
+                                    <div class="training-info">
+                                        <strong>{{ training.training_name }}</strong>
+                                    </div>
+                                    <span class="training-date">{{ training.date_scheduled|date:"n/j/Y" }}</span>
+                                    <span class="training-status">{{ training.status }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="empty-trainings">No trainings registered yet. <a href="{% url 'list_trainings' %}" class="link-primary">Find trainings</a></p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- ================= MY CERTIFICATES ================= -->
+            <section class="my-certificates">
+                <h2 class="section-title">My Certificates</h2>
+                <button id="uploadCertBtn" class="btn-upload-cert">+ Upload Certificate</button>
+                <div id="certificatesList" class="certificates-list">
+                    {% if certificates %}
+                        <div class="certificates-grid">
+                            {% for cert in certificates %}
+                                <div class="certificate-card">
+                                    <div class="certificate-info">
+                                        <strong>{{ cert.training_name }}</strong>
+                                    </div>
+                                    <span class="training-date">{{ cert.uploaded_at|date:"n/j/Y" }}</span>
+                                    <div class="certificate-actions">
+                                        <a href="{{ cert.certificate_url }}" target="_blank" class="btn-view">View</a>
+                                        <button class="btn-delete" data-id="{{ cert.id }}">Delete</button>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="empty-certificates">No certificates uploaded yet.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- ================= QUICK ACTIONS ================= -->
+            <section class="quick-actions">
+                <h2 class="section-title">Quick Actions</h2>
+                <div class="actions-grid">
+                    <a href="{% url 'list_jobs' %}" class="action-btn jobs-btn">Browse Jobs</a>
+                    <a href="{% url 'list_trainings' %}" class="action-btn trainings-btn">Find Trainings</a>
+                </div>
+            </section>
+        </div> <!-- END LEFT -->
+
+        <!-- RIGHT COLUMN (calendar) -->
+        <aside class="dashboard-right">
+            <div class="calendar-panel">
+                <div class="calendar-header-compact">
+                    <h3 class="section-title">Calendar</h3>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <a href="{% url 'calendar' %}" class="action-btn" style="padding:8px 12px; font-size:0.9rem;">Open Calendar</a>
+                        <a href="{% url 'list_trainings' %}" class="btn-update" style="padding:8px 12px; font-size:0.9rem;background:linear-gradient(135deg,#805AD5,#63B3ED);">All Events</a>
+                    </div>
+                </div>
+
+                <div id="miniCalendar" style="margin-top:12px; background:rgba(255,255,255,0.98); padding:12px; border-radius:12px;">
+                    <!-- FullCalendar mini will be rendered here -->
+                    <div id="miniCalRoot"></div>
+                </div>
+
+                <p style="margin-top:12px;color:#718096;font-size:0.95rem;">Click a date to see jobs & trainings. For full view click "Open Calendar".</p>
+            </div>
+        </aside>
+
+    </div> <!-- END GRID -->
+
+    <!-- Upload Certificate Modal (keep your existing modal markup here unchanged) -->
+    <div id="uploadCertModal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Upload Certificate</h3>
+            <form id="uploadCertForm" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="modalTrainingSelect">Select Training</label>
+                <select id="modalTrainingSelect" name="training_id" required>
+                    <option value="">-- Choose a training --</option>
+                </select>
+
+                <label for="certFile">Certificate File</label>
+                <input type="file" id="certFile" name="certificates" accept=".pdf,.jpg,.jpeg" required>
+                
+                <button type="submit" class="btn-submit">Upload Certificate</button>
+            </form>
         </div>
-    </section>
+    </div>
 
 </main>
+
 
 <!-- Upload Certificate Modal -->
 <div id="uploadCertModal" class="modal hidden">
@@ -435,6 +480,57 @@ document.addEventListener('click', async (e) => {
     }
 });
 
+</script>
+<!-- FullCalendar CDN (only once) -->
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // initialize a compact month view inside #miniCalRoot
+    const el = document.getElementById('miniCalRoot');
+    if (!el) return;
+
+    const miniCal = new FullCalendar.Calendar(el, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: '',
+            center: 'title',
+            right: ''
+        },
+        height: 300,
+        events: {
+            url: "{% url 'calendar_events' %}",
+            method: 'GET',
+            failure: function() {
+                // keep it quiet and show tiny text instead of alert
+                console.warn('Calendar load failed.');
+            }
+        },
+        eventDisplay: 'block',
+        dayMaxEventRows: 2, // show up to 2 events per day in compact view
+        views: {
+            dayGridMonth: {
+                dayMaxEventRows: 2
+            }
+        },
+        eventClick: function(info) {
+            // show small quick modal (re-use your message style or use alert)
+            const evt = info.event;
+            const raw = evt.extendedProps.raw || {};
+            const title = evt.title;
+            const date = evt.start ? evt.start.toLocaleDateString() : '';
+            const desc = raw.description || raw.Description || raw.training_name || raw.Title || '';
+            // Use a simple browser modal for quick view
+            alert(title + "\n" + date + "\n\n" + desc);
+        }
+    });
+
+    miniCal.render();
+
+    // OPTIONAL: refresh events every 60s to show new posts
+    // setInterval(() => miniCal.refetchEvents(), 60000);
+});
 </script>
 
 </body>
