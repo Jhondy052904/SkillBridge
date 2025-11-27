@@ -15,65 +15,67 @@
 
 <body>
 
-<!-- ====================== NAVBAR ====================== -->
 <nav class="navbar">
-    <a href="#" class="logo-link">
-        <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
-    </a>
+    <div class="nav-left">
+        <a href="{% url 'home' %}" class="logo-link">
+            <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+        </a>
+    </div>
 
     <div class="nav-right">
-        <a href="{% url 'home' %}" class="active">Dashboard</a>
+        <a href="{% url 'home' %}">Dashboard</a>
         <a href="{% url 'list_jobs' %}">Jobs</a>
         <a href="{% url 'list_trainings' %}">Trainings</a>
 
         <div class="underline"></div>
-
-        <a style="pointer-events: none; padding: 12px 8px;">|</a>
-
-        <a href="{% url 'edit_profile' %}">Profile</a>
-
-        <!-- Notifications -->
-        <div class="notifications">
-            <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
-                Notifications
-                {% if notifications %}
-                    <span class="notif-indicator"></span>
-                {% endif %}
-            </button>
-
-            <div id="notifDropdown" class="notif-dropdown hidden">
-                {% if notifications %}
-                    {% for notif in notifications %}
-                    <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
-                        <p class="notif-message">{{ notif.message }}</p>
-                        <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
-                    </div>
-                    {% endfor %}
-                    <form method="POST" action="{% url 'clear_notifications' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="notif-clear-btn">Clear All</button>
-                    </form>
-                {% else %}
-                    <p class="notif-empty">No notifications.</p>
-                {% endif %}
-            </div>
-        </div>
-
+        <span class="separator">|</span>
+        <a href="{% url 'edit_profile' %}" class="active">Profile</a>
         <a href="{% url 'login' %}" id="logoutLink">Logout</a>
+
+<!-- Notifications -->
+<div class="notifications">
+    <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
+        <img src="/static/images/notif.png" alt="Notifications" class="notif-icon">
+
+        {% if notifications %}
+            <span class="notif-indicator"></span>
+        {% endif %}
+    </button>
+
+    <!-- DROPDOWN -->
+    <div id="notifDropdown" class="notif-dropdown hidden">
+        {% if notifications %}
+            {% for notif in notifications %}
+            <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
+                <p class="notif-message">{{ notif.message }}</p>
+                <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
+            </div>
+            {% endfor %}
+            <form method="POST" action="{% url 'clear_notifications' %}">
+                {% csrf_token %}
+                <button type="submit" class="notif-clear-btn">Clear All</button>
+            </form>
+        {% else %}
+            <p class="notif-empty">No notifications.</p>
+        {% endif %}
+    </div>
+</div>
+
     </div>
 </nav>
 
-
-<!-- ====================== TOAST MESSAGES ====================== -->
 {% if messages %}
   {% for message in messages %}
-    <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
+    <div class="editprofile-message 
+        {% if message.tags == 'success' %}success
+        {% elif message.tags == 'error' %}error
+        {% else %}info
+        {% endif %}">
       {{ message }}
     </div>
   {% endfor %}
 {% endif %}
 
-<!-- ===================== MAIN CONTENT ===================== -->
 <main class="main-content">
   <section class="editprofile-page">
 
@@ -120,25 +122,23 @@
           </select>
         </div>
 
-        <!-- ===================== SKILLS TAG MULTISELECT ===================== -->
+        <!-- SKILLS MULTISELECT -->
         <div class="field-group">
           <label>Skills</label>
 
           <div class="tag-multiselect" id="tagSelect">
 
-              <!-- Selected tags -->
-              <div id="selectedTags" class="tags-container">
-                  {% for skill in all_skills %}
-                      {% if skill.id|stringformat:"s" in selected_skill_ids %}
-                        <div class="tag" data-id="{{ skill.id }}">
-                          {{ skill.skill_name }}
-                          <span class="remove-tag" onclick="removeTag('{{ skill.id }}', this)">×</span>
-                        </div>
-                      {% endif %}
-                  {% endfor %}
-              </div>
-
-              <!-- Dropdown options -->
+            <div class="tags-container" id="selectedTags">
+              {% for skill in all_skills %}
+                {% if skill.id|stringformat:"s" in selected_skill_ids %}
+                  <div class="tag" data-id="{{ skill.id }}">
+                    {{ skill.skill_name }}
+                    <span class="remove-tag" onclick="removeTag('{{ skill.id }}', this)">×</span>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+            
               <div id="skillOptions" class="options-list">
                   {% for skill in all_skills %}
                     <div 
@@ -153,7 +153,6 @@
               </div>
           </div>
 
-          <!-- Hidden Django inputs -->
           <div id="hiddenInputs">
               {% for skill_id in selected_skill_ids %}
                 <input type="hidden" name="skills" value="{{ skill_id }}">
@@ -179,46 +178,42 @@
   </section>
 </main>
 
-
 <!-- ===================== JS ===================== -->
 <script>
-  /* ---------------- NAVBAR ---------------- */
-  function toggleNotifDropdown() {
-      const dropdown = document.getElementById('notifDropdown');
-      dropdown.classList.toggle('hidden');
-  }
+// Navbar underline animation
+const menuLinks = document.querySelectorAll('.nav-right a');
+const underline = document.querySelector('.nav-right .underline');
 
-  window.addEventListener('click', function(e) {
-      const notifBtn = document.getElementById('notifBtn');
-      const dropdown = document.getElementById('notifDropdown');
-      if (!notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
-          dropdown.classList.add('hidden');
-      }
-  });
+function moveUnderline(el) {
+    if (!underline) return;
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.closest('.nav-right').getBoundingClientRect();
+    underline.style.width = rect.width + 'px';
+    underline.style.left = (rect.left - parentRect.left) + 'px';
+}
 
-  const menuLinks = document.querySelectorAll('.nav-right a');
-  const underline = document.querySelector('.nav-right .underline');
+const activeLink = document.querySelector('.nav-right a.active');
+if (activeLink) {
+    setTimeout(() => moveUnderline(activeLink), 0);
+}
 
-  function moveUnderline(el) {
-      if (!underline || !el) return;
-      const rect = el.getBoundingClientRect();
-      const parent = el.closest('.nav-right').getBoundingClientRect();
-      underline.style.width = rect.width + 'px';
-      underline.style.left = (rect.left - parent.left) + 'px';
-  }
+menuLinks.forEach(link => {
+    link.addEventListener('mouseenter', e => {
+        if (e.target.tagName === 'A') moveUnderline(e.target);
+    });
+});
 
-  const active = document.querySelector('.nav-right a.active');
-  if (active) moveUnderline(active);
+document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+    if (activeLink) moveUnderline(activeLink);
+});
 
-  menuLinks.forEach(link => {
-      link.addEventListener('mouseenter', e => moveUnderline(e.target));
-  });
+//Notif
+const notifBtn = document.getElementById('notifBtn');
+const notifDropdown = document.getElementById('notifDropdown');
 
-  document.querySelector('.nav-right').addEventListener('mouseleave', () => {
-      if (active) moveUnderline(active);
-  });
-
-
+function toggleNotifDropdown() {
+    notifDropdown.classList.toggle('hidden');
+}
   /* ---------------- TAG MULTISELECT ---------------- */
   function addTag(id, name) {
       const tags = document.getElementById("selectedTags");
@@ -285,7 +280,6 @@
         });
     });
   }
-
 </script>
 
 </body>

@@ -1,205 +1,327 @@
-/* ====== GLOBAL PAGE WRAPPER ====== */
-.page-wrapper {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 30px 20px;
+/* ===================== 
+   BODY & BACKGROUND 
+===================== */
+body {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #2D3748;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, #EBF4F6 0%, #E8F4F8 50%, #F0F8FF 100%);
+    line-height: 1.6;
+    transition: background 0.3s ease;
 }
 
-/* ====== BACK BUTTON ====== */
-.back-container {
-    margin-bottom: 20px;
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/static/images/wall.jpg") no-repeat center 80% / cover;
+    filter: blur(2px) opacity(0.30);
+    z-index: -1;
 }
 
-.back-link {
-    color: #6c5dd3;
+/* ===================== 
+   MAIN CONTAINER 
+===================== */
+.main-container {
+    max-width: 1200px;
+    margin: 80px auto 40px;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    position: relative;
+}
+
+/* ===================== 
+   BACK BUTTON 
+===================== */
+.back-btn {
+    position: absolute;
+    top: -60px;
+    left: 20px;
+    background: transparent;
+    border: none;
+    color: #021526;
     font-weight: 600;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     text-decoration: none;
-    font-size: 0.95rem;
-    transition: 0.2s ease;
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.back-btn:hover {
+    color: #071952;
+    transform: translateY(-2px);
 }
 
-.back-link:hover {
-    color: #4b42b7;
-}
-
-/* ====== HEADER CARD ====== */
+/* =====================
+   HEADER CARD (NEW)
+===================== */
 .header-card {
-    background: #fff;
-    padding: 35px;
+    background: #EBF4F6;
+    padding: 28px 32px;
     border-radius: 20px;
-    box-shadow: 0px 8px 30px rgba(0,0,0,0.07);
-    margin-bottom: 35px;
+    border: 1px solid rgba(2, 21, 38, 0.2);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .header-chip {
-    background: #e7f0ff;
+    background: #088395;
+    color: white;
     padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: #1e4fd4;
-}
-
-.header-title {
-    margin-top: 15px;
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: #1a1f36;
-}
-
-.header-subtitle {
-    margin-top: 8px;
-    font-size: 1rem;
-    color: #6b7280;
-}
-
-/* ====== ATTENDEES CARD ====== */
-.attendees-card {
-    background: #fff;
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0px 8px 30px rgba(0,0,0,0.07);
-}
-
-/* ====== ATTENDEE ROW ====== */
-.attendee-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 18px 0;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.attendee-row:last-child {
-    border-bottom: none;
-}
-
-.attendee-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.attendee-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #1a1f36;
-}
-
-.attendee-email {
-    font-size: 0.95rem;
-    color: #6b6b6b;
-}
-
-/* ====== STATUS CHIP ====== */
-.status-chip {
-    padding: 6px 12px;
-    border-radius: 10px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    margin-top: 5px;
-    display: inline-block;
-}
-
-.status-chip.attended {
-    background: #e5f8ed;
-    color: #137333;
-}
-
-.status-chip.not-attended {
-    background: #fdebea;
-    color: #b91c1c;
-}
-
-.status-chip.pending {
-    background: #f3f4f6;
-    color: #6b7280;
-}
-
-/* ====== BUTTON STYLES ====== */
-.attendee-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.btn {
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-weight: 700;
     font-size: 0.9rem;
-    border: none;
-    cursor: pointer;
-    transition: 0.2s ease;
+    font-weight: 700;
+    border-radius: 50px;
+    width: fit-content;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.btn.success {
-    background: #4ade80;
-    color: #064e3b;
-}
-
-.btn.success:hover {
-    background: #22c55e;
-}
-
-.btn.danger {
-    background: #f87171;
-    color: #7f1d1d;
-}
-
-.btn.danger:hover {
-    background: #ef4444;
-}
-
-/* ====== EMPTY MESSAGE ====== */
-.empty-message {
-    text-align: center;
-    padding: 20px 0;
-    font-size: 1rem;
-    color: #6b7280;
-    font-style: italic;
-}
-
-/* ====== MOBILE ====== */
-@media (max-width: 768px) {
-    .attendee-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .attendee-actions {
-        width: 100%;
-        display: flex;
-        justify-content: flex-start;
-    }
-
-    /* EDIT / DELETE Training Buttons */
-.training-actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-}
-
-.btn.edit-btn {
-    background: #1976d2;
-}
-.btn.edit-btn:hover {
-    background: #1565c0;
-}
-
-.btn.delete-btn {
-    background: #d32f2f;
-}
-.btn.delete-btn:hover {
-    background: #c62828;
-}
-
-/* Header layout */
 .header-flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
+.header-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #071952;
+    margin: 0;
 }
 
+.header-subtitle {
+    color: #2D3748;
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+/* ===================== 
+   BUTTONS 
+===================== */
+.training-actions form {
+    margin: 0;
+    padding: 0;
+    gap: 10px;
+}
+
+.training-actions form .delete-btn {
+    width: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.edit-btn,
+.delete-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    font-weight: 700;
+    margin-top: 5px;
+    cursor: pointer;
+    width: 120px;
+    padding: 12px 18px;
+    border-radius: 12px;
+    transition: 0.3s;
+    border: none;
+    height: 44px;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.edit-btn {
+    background: linear-gradient(135deg, #088395, #37B7C3);
+}
+.delete-btn {
+    background: linear-gradient(135deg, rgb(128, 0, 0), rgb(165, 42, 42));
+}
+.edit-btn:hover,
+.delete-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.15);
+}
+
+/* ===================== 
+   SEARCH FORM 
+===================== */
+.search-form {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.search-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #CBD5E0;
+    border-radius: 12px;
+    outline: none;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+.search-input:focus {
+    border-color: #805AD5;
+    box-shadow: 0 0 12px rgba(128, 90, 213, 0.3);
+}
+.btn-search {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #088395, #37B7C3);
+    color: #EBF4F6;
+    font-weight: 700;
+    border-radius: 12px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-search:hover {
+    background: linear-gradient(135deg, #037E8C, #2FA6B5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* ===================== 
+   MESSAGES 
+===================== */
+.message-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.message-item {
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-weight: 500;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+.message-success { background-color: #38A169; }
+.message-error { background-color: #E53E3E; }
+.message-info { background-color: #667EEA; }
+
+/* ===================== 
+   ATTENDEES SECTION 
+===================== */
+.residents-section {
+    background-color: #37B7C3;
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 10px 28px rgba(66, 153, 225, 0.12),
+                0 6px 16px rgba(66, 153, 225, 0.08);
+    transition: all 0.3s ease;
+}
+.resident-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ===================== 
+   ATTENDEE CARD 
+===================== */
+.resident-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #EBF4F6;
+    color: #021526;
+    padding: 22px 28px;
+    border: 1px solid #088395;
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.resident-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    box-shadow: inset 0 0 14px rgba(255, 255, 255, 0.15);
+    pointer-events: none;
+}
+.resident-card:hover {
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* ===================== 
+   ATTENDEE INFO 
+===================== */
+.resident-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+}
+.resident-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #071952;
+    margin-top: 0px;
+    transition: color 0.3s ease;
+}
+.resident-name:hover { color: #021526; }
+.resident-status {
+    font-size: 1rem;
+    margin-top: 0px;
+}
+.status-hired { color: #38A169; font-weight: 700; }
+.status-training { color: #088395; font-weight: 700; }
+.status-pending { color: #718096; font-weight: 600; }
+
+/* ACTION BUTTONS BASE STYLE */
+.btn-action {
+    padding: 12px 18px;
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    width: 120px;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+/* ATTENDED BUTTON */
+.btn-action.attend {
+    background: linear-gradient(135deg, #088395, #37B7C3);
+}
+
+/* NOT ATTENDED BUTTON */
+.btn-action.not {
+    background: linear-gradient(135deg, #800000, #A52A2A);
+}
+
+/* HOVER EFFECT */
+.btn-action.attend:hover,
+.btn-action.not:hover {
+    transform: translateY(-3px) scale(1.02);
+    filter: brightness(1.12);
+}
+
+/* ===================== 
+   NO ATTENDEES TEXT 
+===================== */
+.no-residents {
+    text-align: center;
+    color: #718096;
+    font-style: italic;
+    font-size: 1.1rem;
+    padding: 24px;
+}

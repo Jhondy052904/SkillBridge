@@ -1,0 +1,259 @@
+/* ===================== 
+   BODY & BACKGROUND 
+===================== */
+body {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #2D3748;
+    overflow-x: hidden;
+    background: linear-gradient(135deg, #EBF4F6 0%, #E8F4F8 50%, #F0F8FF 100%);
+    line-height: 1.6;
+    transition: background 0.3s ease;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    
+    margin: 0;
+    padding: 0;
+
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/static/images/wall.jpg") no-repeat center 80% / cover;
+    filter: blur(2px) opacity(0.30);
+    z-index: -1;
+}
+
+/* ===================== 
+   BACK BUTTON 
+===================== */
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    border: none;
+    color: #021526;
+    font-weight: 600;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.back-btn:hover {
+    color: #071952;
+    transform: translateY(-2px);
+}
+
+/* CENTER WRAPPER */
+.center-wrapper {
+    width: 100%;
+    max-width: 600px;
+    padding: 20px;
+    background: #EBF4F6;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* change this from center */
+}
+
+/* =============== ROOT COLORS =============== */
+:root {
+    --black: #021526;
+    --navy: #071952;
+    --mint: #088395;
+    --light-mint: #37B7C3;
+    --ivory: #EBF4F6;
+    --white: #ffffff;
+}
+
+/* TITLE */
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #071952;
+    justify-content: flex-start;
+}
+
+/* =============== MESSAGES =============== */
+.message-wrapper {
+    margin-bottom: 20px;
+}
+
+.message-box {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+/* Success */
+.msg-success {
+    background: var(--mint);
+    color: var(--white);
+}
+
+/* Error */
+.msg-error {
+    background: #d9534f;
+    color: white;
+}
+
+/* Warning */
+.msg-warning {
+    background: #f0ad4e;
+    color: #333;
+}
+
+/* Default */
+.msg-default {
+    background: #6f42c1;
+    color: white;
+}
+
+/* =============== FORM CARD =============== */
+.form-container {
+    background: var(--white);
+    padding: 25px;
+    border-radius: 14px;
+    border: 1px solid #ffffff;
+    margin-top: 30px;
+}
+
+/* Form spacing */
+.form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Labels */
+.label {
+    font-weight: 600;
+    color: var(--navy);
+}
+
+/* Inputs */
+.input,
+.textarea {
+    width: 95%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #d3dadc;
+    border-radius: 8px;
+    background: #f9fafa;
+    color: var(--black);
+    transition: border 0.2s;
+}
+
+.select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #d3dadc;
+    border-radius: 8px;
+    background: #f9fafa;
+    color: var(--black);
+    transition: border 0.2s;
+}
+.input:focus,
+.textarea:focus,
+.select:focus {
+    border-color: var(--mint);
+    outline: none;
+}
+
+/* =============== SKILLS GRID =============== */
+.skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Skill button base */
+.skill-btn {
+    padding: 8px 14px;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+    border: none;
+}
+
+/* Unselected */
+.skill-normal {
+    background: #e8eef1;
+    color: var(--black);
+}
+.skill-normal:hover {
+    background: #d9e3e7;
+}
+
+/* Selected */
+.skill-selected {
+    background: var(--navy);
+    color: var(--white);
+}
+.skill-selected:hover {
+    background: var(--mint);
+}
+
+/* Helper text */
+.helper-text {
+    font-size: 13px;
+    color: #6d7a81;
+    margin-top: 4px;
+}
+
+/* Save Button */
+.save-button {
+    width: 100%;
+    padding: 12px 18px;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #088395, #37B7C3);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s ease-in-out;
+}
+.save-button:hover {
+    background: linear-gradient(135deg, #037E8C, #2FA6B5);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* Back Link at bottom */
+.back-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.back-link {
+    color: var(--navy);
+    text-decoration: underline;
+    font-weight: 600;
+}
+.back-link:hover {
+    color: var(--mint);
+}

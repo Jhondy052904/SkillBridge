@@ -1,11 +1,6 @@
-/* =====================
-    Modern Resident Dashboard
-    Clean, Consistent, Responsive
-===================== */
-
-/* =====================
-    CSS Reset & Base Styles
-===================== */
+/* =========================================================
+   GLOBAL PAGE LAYOUT 
+========================================================= */
 * {
     margin: 0;
     padding: 0;
@@ -42,7 +37,7 @@ body::before {
 ===================== */
 .navbar {
     position: fixed;
-    top: 20px;
+    top: 0px;
     left: 50%;
     transform: translateX(-50%);
     width: 95%;
@@ -55,7 +50,7 @@ body::before {
     align-items: center;
     gap: 40px;
     z-index: 990;
-    border-radius: 20px;
+    border-radius: 10px;
     box-shadow: 0 8px 32px rgba(66, 153, 225, 0.12), 
                 0 2px 8px rgba(66, 153, 225, 0.08);
     transition: all 0.3s ease;
@@ -78,22 +73,38 @@ body::before {
     transform: scale(1.05);
 }
 
+/* ensure container is positioned for absolute children */
 .navbar .nav-right {
+    position: relative;   /* REQUIRED for the underline */
     display: flex;
     gap: 8px;
     align-items: center;
 }
 
+/* underline element styles (visible and animatable) */
+.navbar .nav-right .underline {
+    position: absolute;
+    bottom: 8px; 
+    top: 40px;                /* tweak to sit under links */
+    left: 0;
+    height: 3px;
+    width: 0;
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    border-radius: 10px;
+    transition: left 0.25s ease, width 0.25s ease;
+    pointer-events: none;
+    z-index: 5;
+    display: block;              /* make sure it is visible */
+}
+
 .navbar .nav-right a,
 .navbar .nav-right .notif-link {
-    color: #4A5568;
     text-decoration: none;
     font-size: 1rem;
     font-weight: 500;
-    padding: 12px 22px;
-    border-radius: 12px;
+    padding: 8px 20px;
+    border-radius: 5px;
     transition: all 0.3s ease;
-    background: transparent;
     border: none;
     cursor: pointer;
     position: relative;
@@ -102,18 +113,13 @@ body::before {
 .navbar .nav-right a:hover,
 .navbar .nav-right .notif-link:hover {
     background: rgba(66, 153, 225, 0.08);
-    color: #4299E1;
+    color: #032947;
 }
 
 .navbar .nav-right a.active,
 .navbar .nav-right .notif-link.active {
     background: linear-gradient(135deg, #4299E1, #63B3ED);
     color: white;
-    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
-}
-
-.navbar .nav-right .underline {
-    display: none;
 }
 
 /* Notification Button Styling */
@@ -123,26 +129,28 @@ body::before {
 }
 
 .notif-btn {
-    color: #4A5568;
-    text-decoration: none;
-    font-size: 1rem;
-    font-weight: 500;
-    padding: 12px 22px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    display: inline-flex;
+    height: 40px;
+    width: 40px;
+    padding: 0;             
+    border: none;            
+    background: none;       
+    display: flex;           
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.notif-btn img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain; /* keeps image proportion */
+    pointer-events: none; /* so clicking still works normally */
 }
 
 .notif-btn:hover {
-    background: rgba(66, 153, 225, 0.08);
     color: #4299E1;
 }
+
 
 .notif-indicator {
     width: 8px;
@@ -164,12 +172,12 @@ body::before {
 /* Notification Dropdown */
 .notif-dropdown {
     position: absolute;
-    top: 60px;
+    top: 50px;
     right: 0;
     width: 340px;
     max-height: 420px;
     overflow-y: auto;
-    background: rgba(255, 255, 255, 0.98);
+    background: #EBF4F6;
     backdrop-filter: blur(20px);
     border-radius: 20px;
     box-shadow: 0 12px 40px rgba(66, 153, 225, 0.2);
@@ -234,128 +242,6 @@ body::before {
     display: none !important;
 }
 
-/* =====================
-   MAIN CONTENT
-===================== */
-.main-content {
-    margin-top: 120px;
-    width: 92%;
-    max-width: 1400px;
-    margin-left: auto;
-    margin-right: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    padding-bottom: 80px;
-}
-
-.editprofile-page {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-}
-
-.profile-card {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(20px);
-    border-radius: 24px;
-    padding: 36px;
-    box-shadow: 0 8px 32px rgba(66, 153, 225, 0.12),
-                0 2px 8px rgba(66, 153, 225, 0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.8);
-    margin-top: 20px;
-}
-
-.profile-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 48px rgba(66, 153, 225, 0.18),
-                0 4px 12px rgba(66, 153, 225, 0.12);
-}
-
-.editprofile-card {
-    margin-top: 35px;
-    max-width: 720px;
-    width: 100%;
-    margin: 0 auto;
-}
-
-.editprofile-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    letter-spacing: -0.3px;
-    color: #2D3748;
-}
-
-.editprofile-form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
-.field-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.editprofile-form label {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: #2D3748;
-}
-
-.editprofile-form input,
-.editprofile-form select {
-    padding: 14px 16px;
-    border: 2px solid #E2E8F0;
-    border-radius: 12px;
-    font-size: 1rem;
-    outline: none;
-    background: #fff;
-    transition: all 0.3s ease;
-    color: #2D3748;
-}
-
-.editprofile-form input::placeholder {
-    color: #A0AEC0;
-}
-
-.editprofile-form input:focus,
-.editprofile-form select:focus {
-    border-color: #4299E1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
-    background: #F7FAFC;
-}
-
-.editprofile-submit {
-    padding: 16px 32px;
-    background: linear-gradient(135deg, #4299E1, #63B3ED);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 1.05rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 16px rgba(66, 153, 225, 0.3);
-    margin-top: 16px;
-    align-self: flex-start;
-}
-
-.editprofile-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(66, 153, 225, 0.4);
-}
-
-.editprofile-submit:active {
-    transform: translateY(0);
-}
 
 /* =====================
    Toast Messages
@@ -517,10 +403,100 @@ body::before {
     }
 }
 
-    /* ============================================
+/* ===============================
+   MAIN CONTENT (REDESIGNED)
+=============================== */
+
+.main-content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 180px;
+    padding-bottom: 80px;
+}
+
+.editprofile-page {
+    width: 100%;
+    max-width: 950px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.editprofile-card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(18px);
+    padding: 48px 56px;
+    border-radius: 24px;
+    width: 100%;
+    max-width: 700px; /* <-- limit the card width */
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
+    margin: 0 auto;   /* center horizontally */
+}
+
+.editprofile-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+    color: #1A365D;
+    text-align: center;
+}
+
+/* FORM INPUTS */
+.field-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 22px;
+}
+
+.field-group label {
+    font-weight: 600;
+    color: #2D3748;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.field-group input,
+.field-group select {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: 2px solid #CBD5E0;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.25s ease;
+}
+
+.field-group input:focus,
+.field-group select:focus {
+    border-color: #4299E1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.18);
+    outline: none;
+}
+
+/* SUBMIT BUTTON */
+.editprofile-submit {
+    width: 100%;
+    padding: 16px 0;
+    background: linear-gradient(135deg, #4299E1, #63B3ED);
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.25s ease;
+}
+
+.editprofile-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(66, 153, 225, 0.3);
+}
+
+/* ============================================
    Tag-Based Multi-Select – Matching Your UI
 ============================================ */
-
 .tag-multiselect {
     width: 100%;
     background: rgba(255, 255, 255, 0.95);

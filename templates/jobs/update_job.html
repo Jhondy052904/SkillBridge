@@ -6,116 +6,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Job | SkillBridge</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/jobs/job_update.css' %}?v=3">
 
-    <style>
-        .soft-bg {
-            background: linear-gradient(135deg, #f7f5ff, #eff3ff);
-        }
-    </style>
 </head>
 
-<body class="soft-bg min-h-screen flex text-gray-900">
+<body>
 
-    <!-- ====================== SIDEBAR ====================== -->
-    <aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
-        <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
+    <a href="{% url 'official_dashboard' %}" class="back-button">↩ Back</a>
 
-        <nav class="space-y-2 font-medium">
-            <a href="{% url 'official_dashboard' %}" class="block p-3 rounded-lg hover:bg-purple-50">Dashboard</a>
-            <a href="{% url 'verification_panel' %}" class="block p-3 rounded-lg hover:bg-purple-50">Verify Accounts</a>
-            <a href="{% url 'post_training' %}" class="block p-3 rounded-lg bg-purple-600 text-white">Training Management</a>
-        </nav>
+    <div class="center-wrapper">
+        <h1 class="title">Edit Job</h1>
 
-        {% if official.role == "admin" or official.role == "moderator" %}
-        <div class="mt-10">
-            <a href="#audit" class="block p-3 rounded-lg hover:bg-purple-50">Audit Logs</a>
-        </div>
-        {% endif %}
-
-        <div class="mt-auto pt-8">
-            <p class="font-semibold mb-2">{{ official.name }}</p>
-            <a href="{% url 'logout' %}" class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
-                Logout
-            </a>
-        </div>
-    </aside>
-
-
-
-    <!-- ====================== MAIN CONTENT ====================== -->
-    <main class="flex-1 p-6 md:p-10">
-
-        <h1 class="text-3xl font-bold mb-8">Edit Job</h1>
-
-        <!-- Alerts -->
         {% if messages %}
-          <div class="mb-4">
-              {% for message in messages %}
-                  <div class="p-3 rounded text-white
-                      {% if message.tags == 'success' %} bg-green-600
-                      {% elif message.tags == 'error' %} bg-red-600
-                      {% elif message.tags == 'warning' %} bg-yellow-500 text-black
-                      {% else %} bg-purple-600 {% endif %}">
-                      {{ message }}
-                  </div>
-              {% endfor %}
-          </div>
+        <div class="message-wrapper">
+            {% for message in messages %}
+                <div class="message-box 
+                    {% if message.tags == 'success' %} msg-success
+                    {% elif message.tags == 'error' %} msg-error
+                    {% elif message.tags == 'warning' %} msg-warning
+                    {% else %} msg-default {% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
         {% endif %}
 
-        <!-- Form Card -->
-        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 max-w-2xl">
+        <div class="form-container">
 
-            <form method="POST" class="space-y-5">
+            <form method="POST" class="form-fields">
                 {% csrf_token %}
 
-                <div>
-                    <label class="block font-semibold mb-1">Job Title</label>
-                    <input type="text" name="title" value="{{ job.Title }}"
-                           class="w-full border px-3 py-2 rounded" required>
+                <div class="input-group">
+                    <label class="label">Job Title</label>
+                    <input type="text" name="title" value="{{ job.Title }}" class="input" required>
                 </div>
 
-                <div>
-                    <label class="block font-semibold mb-1">Description</label>
-                    <textarea name="description" class="w-full border px-3 py-2 rounded" rows="4" required>{{ job.Description }}</textarea>
+                <div class="input-group">
+                    <label class="label">Description</label>
+                    <textarea name="description" class="textarea" rows="4" required>{{ job.Description }}</textarea>
                 </div>
 
-                <div>
-                    <label class="block font-semibold mb-1">Status</label>
-                    <select name="status" class="w-full border px-3 py-2 rounded" required>
+                <div class="input-group">
+                    <label class="label">Status</label>
+                    <select name="status" class="select" required>
                         <option value="Open" {% if job.Status == 'Open' %}selected{% endif %}>Open</option>
                         <option value="Closed" {% if job.Status == 'Closed' %}selected{% endif %}>Closed</option>
                     </select>
                 </div>
 
-                <div>
-                    <label class="block font-semibold mb-1">Required Skills</label>
-                    <div id="skills-container" class="flex flex-wrap gap-2">
+                <div class="input-group">
+                    <label class="label">Required Skills</label>
+
+                    <div id="skills-container" class="skills-grid">
                         {% for skill in skills %}
-                        <button type="button" class="skill-tile px-3 py-2 rounded-lg {% if skill.SkillID in job_skill_ids %}selected bg-purple-600 text-white{% else %}bg-gray-100 text-gray-700{% endif %} hover:bg-gray-200 transition-colors" data-skill-id="{{ skill.SkillID }}">
+                        <button type="button" 
+                            class="skill-btn {% if skill.SkillID in job_skill_ids %} skill-selected {% else %} skill-normal {% endif %}"
+                            data-skill-id="{{ skill.SkillID }}">
                             {{ skill.SkillName }}
                         </button>
                         {% endfor %}
                     </div>
+
                     <div id="hidden-skills">
                         {% for skill_id in job_skill_ids %}
                         <input type="hidden" name="skills" value="{{ skill_id }}">
                         {% endfor %}
                     </div>
-                    <p class="text-sm text-gray-500 mt-1">Click to select/deselect skills.</p>
+
+                    <p class="helper-text">Click to select/deselect skills.</p>
                 </div>
 
-                <button class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg shadow">
-                    Save Job
-                </button>
+                <button class="save-button">Save Job</button>
+
             </form>
 
-            <div class="mt-6">
-                <a href="{% url 'official_dashboard' %}" class="text-purple-600 font-semibold hover:underline">Back</a>
-            </div>
         </div>
-
-    </main>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -123,23 +89,18 @@
             const hiddenSkills = document.getElementById('hidden-skills');
 
             skillsContainer.addEventListener('click', function(e) {
-                if (e.target.classList.contains('skill-tile')) {
+                if (e.target.classList.contains('skill-btn')) {
                     const tile = e.target;
                     const skillId = tile.dataset.skillId;
-                    const isSelected = tile.classList.contains('selected');
 
-                    if (isSelected) {
-                        // Deselect
-                        tile.classList.remove('selected', 'bg-purple-600', 'text-white');
-                        tile.classList.add('bg-gray-100', 'text-gray-700');
-                        // Remove hidden input
-                        const hiddenInput = hiddenSkills.querySelector(`input[value="${skillId}"]`);
-                        if (hiddenInput) hiddenInput.remove();
+                    if (tile.classList.contains('skill-selected')) {
+                        tile.classList.remove('skill-selected');
+                        tile.classList.add('skill-normal');
+                        const input = hiddenSkills.querySelector(`input[value="${skillId}"]`);
+                        if (input) input.remove();
                     } else {
-                        // Select
-                        tile.classList.add('selected', 'bg-purple-600', 'text-white');
-                        tile.classList.remove('bg-gray-100', 'text-gray-700');
-                        // Add hidden input
+                        tile.classList.add('skill-selected');
+                        tile.classList.remove('skill-normal');
                         const input = document.createElement('input');
                         input.type = 'hidden';
                         input.name = 'skills';
@@ -153,3 +114,4 @@
 
 </body>
 </html>
+

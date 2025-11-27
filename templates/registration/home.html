@@ -1,4 +1,6 @@
 {% load static %}
+{% load custom_filters %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,47 +15,59 @@
 <!-- ====================== NAVBAR ====================== -->
 <nav class="navbar">
     <div class="nav-left">
-        <a href="#" class="logo-link">
+        <a href="{% url 'home' %}" class="logo-link">
             <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
         </a>
     </div>
+
     <div class="nav-right">
-        <a href="{% url 'home' %}" class="active">Dashboard</a>
+
+        <!-- Main Navigation -->
+        <a href="{% url 'home' %}"  class="active">Dashboard</a>
         <a href="{% url 'list_jobs' %}">Jobs</a>
         <a href="{% url 'list_trainings' %}">Trainings</a>
-        <div class="underline"></div>
-        <a>|</a>
-        <a href="{% url 'edit_profile' %}">Profile</a>
-        
-        <!-- Notifications as Text Button -->
-        <div class="notifications">
-            <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
-                Notifications
-                {% if notifications %}
-                    <span class="notif-indicator"></span>
-                {% endif %}
-            </button>
 
-            <!-- DROPDOWN -->
-            <div id="notifDropdown" class="notif-dropdown hidden">
-                {% if notifications %}
-                    {% for notif in notifications %}
-                    <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
-                        <p class="notif-message">{{ notif.message }}</p>
-                        <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
-                    </div>
-                    {% endfor %}
-                    <form method="POST" action="{% url 'clear_notifications' %}">
-                        {% csrf_token %}
-                        <button type="submit" class="notif-clear-btn">Clear All</button>
-                    </form>
-                {% else %}
-                    <p class="notif-empty">No notifications.</p>
-                {% endif %}
-            </div>
-        </div>
-        
+        <!-- Underline Element for Animation -->
+        <div class="underline"></div>
+
+        <!-- Separator -->
+        <span class="separator">|</span>
+
+        <!-- Profile Link -->
+        <a href="{% url 'edit_profile' %}">Profile</a>
+
+        <!-- Logout -->
         <a href="{% url 'login' %}" id="logoutLink">Logout</a>
+        
+<!-- Notifications -->
+<div class="notifications">
+    <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
+        <img src="/static/images/notif.png" alt="Notifications" class="notif-icon">
+
+        {% if notifications %}
+            <span class="notif-indicator"></span>
+        {% endif %}
+    </button>
+
+    <!-- DROPDOWN -->
+    <div id="notifDropdown" class="notif-dropdown hidden">
+        {% if notifications %}
+            {% for notif in notifications %}
+            <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
+                <p class="notif-message">{{ notif.message }}</p>
+                <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
+            </div>
+            {% endfor %}
+            <form method="POST" action="{% url 'clear_notifications' %}">
+                {% csrf_token %}
+                <button type="submit" class="notif-clear-btn">Clear All</button>
+            </form>
+        {% else %}
+            <p class="notif-empty">No notifications.</p>
+        {% endif %}
+    </div>
+</div>
+
     </div>
 </nav>
 
@@ -76,16 +90,22 @@
             </div>
             {% endif %}
 
-            <!-- ================= PROFILE CARD ================= -->
-            {% if user_profile %}
-            <div class="profile-card">   
-                <div class="profile-header">
-                    <img src="{% static 'images/snoopy.png' %}" class="profile-img" alt="Profile Image">
-                    <div class="profile-info">
-                        <h3 class="profile-name">{{ user_profile.first_name }} {{ user_profile.last_name }}</h3>
-                        <p class="profile-role"><strong>Role:</strong> Resident</p>
-                    </div>
+        <div class="profile-details">
+            <p><strong>Email:</strong> {{ user_profile.email }}</p>
+            <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
+            <p><strong>Address:</strong> {{ user_profile.address }}</p>
+            <p><strong>Employment:</strong> {{ user_profile.employment_status }}</p>
+            <p><strong>Verification:</strong> <span class="verification-status">{{ user_profile.verification_status }}</span></p>
+            <p><strong>Current Status:</strong> <span class="current-status">{{ current_status }}</span></p>
+            <div class="skills-dropdown">
+                <button class="skills-button">View Skills ▼</button>
+                        <div class="skills-content">
+                            {% for skill in user_profile.skills|split:',' %}
+                        <div class="skill-item">{{ skill }}</div>
+                     {% endfor %}
                 </div>
+            </div>
+        </div>
 
                 <div class="profile-details">
                     <p><strong>Email:</strong> {{ user_profile.email }}</p>
@@ -230,6 +250,35 @@
 </div>
 
 <script>
+
+// Navbar underline animation
+const menuLinks = document.querySelectorAll('.nav-right a');
+const underline = document.querySelector('.nav-right .underline');
+
+function moveUnderline(el) {
+    if (!underline) return;
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.closest('.nav-right').getBoundingClientRect();
+    underline.style.width = rect.width + 'px';
+    underline.style.left = (rect.left - parentRect.left) + 'px';
+}
+
+const activeLink = document.querySelector('.nav-right a.active');
+if (activeLink) {
+    setTimeout(() => moveUnderline(activeLink), 0);
+}
+
+menuLinks.forEach(link => {
+    link.addEventListener('mouseenter', e => {
+        if (e.target.tagName === 'A') moveUnderline(e.target);
+    });
+});
+
+document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+    if (activeLink) moveUnderline(activeLink);
+});
+
+//Notif
 const notifBtn = document.getElementById('notifBtn');
 const notifDropdown = document.getElementById('notifDropdown');
 
@@ -430,6 +479,7 @@ document.addEventListener('click', async (e) => {
         }
     }
 });
+
 </script>
 <!-- FullCalendar CDN (only once) -->
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />

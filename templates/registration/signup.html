@@ -175,6 +175,49 @@
 
     </div>
 </div>
+<script>
+// Define sublocations for each barangay
+const sublocations = {
+    "Labangon": [
+        "Villa Cristina",
+        "West City Homes",
+        "Woodberry Subdivision",
+        "Santo Niño Village",
+        "Labangon Heights",
+        "San Antonio Compound",
+        "Rosario Park",
+        "Sitio Bliss"
+    ],
+    "Mambaling": [
+        "Alumnus Street",
+        "Avocado Street",
+        "C Padilla Street",
+        "San Jose Village",
+        "Mambaling Heights",
+        "Gulayon Compound",
+        "Basak Extension"
+    ]
+};
 
+// Get dropdown elements
+const barangaySelect = document.getElementById('barangay');
+const sublocationSelect = document.getElementById('sublocation');
+
+barangaySelect.addEventListener('change', function() {
+    const barangay = this.value;
+
+    // Clear existing options
+    sublocationSelect.innerHTML = '<option value="">Select Sub-location</option>';
+
+    if (barangay && sublocations[barangay]) {
+        sublocations[barangay].forEach(sub => {
+            const option = document.createElement('option');
+            option.value = sub;
+            option.textContent = sub;
+            sublocationSelect.appendChild(option);
+        });
+    }
+});
+</script>
 </body>
 </html>

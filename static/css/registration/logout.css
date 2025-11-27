@@ -1,24 +1,51 @@
 /* =====================
-   Redesigned Logout Confirmation Pop-up
+   Modern Logout Pop-up
 ===================== */
 .logout-popup {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    background: #EBF4F6;           /* ivory background */
-    color: #021526;                 /* main text color */
-    border: 3px solid #088395;      /* mint green border */
-    border-radius: 16px;
-    padding: 30px 40px;
+    transform: translate(-50%, -50%) scale(0.97);
+    background: #ffffff;                          
+    color: #1a202c;
+    border-radius: 20px;
+    padding: 28px 36px;
     z-index: 9999;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+
+    /* softer & modern shadow */
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        0 4px 12px rgba(0, 0, 0, 0.04);
+
     text-align: center;
-    min-width: 350px;
-    max-width: 450px;
-    animation: popupFadeIn 0.4s ease forwards;
-    opacity: 1;                     /* for fade out */
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    min-width: 360px;
+    max-width: 420px;
+
+    animation: popupFadeIn 0.25s ease forwards;
+    opacity: 0;
+}
+
+/* Warning icon for popup */
+.logout-popup::before {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 16px auto;
+    background: url("/static/images/warning.png") no-repeat center center;
+    background-size: contain;
+}
+
+/* Fade + scale animation */
+@keyframes popupFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.92);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 /* Message text */
@@ -26,13 +53,13 @@
     font-size: 1.3rem;
     font-weight: 600;
     margin-bottom: 20px;
-    color: #021526;
+    color: #000000ff;
 }
 
 /* Separator line */
 .logout-popup .separator {
     height: 1px;
-    background: #088395;
+    background: #EBF4F6;
     margin: 20px 0;
     opacity: 0.4;
 }
@@ -56,16 +83,10 @@
 }
 
 /* Cancel button */
-.logout-popup #cancelLogout {
+.logout-popup #cancelLogout,
+.logout-popup #confirmLogout {
     background: #EBF4F6;            /* ivory */
     color: #021526;                 /* dark text */
-    border: 2px solid #088395;      /* mint border */
-}
-
-/* Confirm/Yes button */
-.logout-popup #confirmLogout {
-    background: #021526;            /* dark blue */
-    color: #EBF4F6;                 /* ivory text */
     border: 2px solid #088395;      /* mint border */
 }
 
