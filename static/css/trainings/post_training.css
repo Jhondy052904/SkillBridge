@@ -22,7 +22,6 @@ body {
     
     margin: 0;
     padding: 0;
-
 }
 
 body::before {
@@ -36,7 +35,6 @@ body::before {
     filter: blur(2px) opacity(0.30);
     z-index: -1;
 }
-
 /* ===================== 
    BACK BUTTON 
 ===================== */
@@ -62,62 +60,49 @@ body::before {
     transform: translateY(-2px);
 }
 
+
 /* ===================== 
-   MAIN WRAPPER (same as center-wrapper) 
+   MAIN WRAPPER 
 ===================== */
 .main-wrapper {
     width: 100%;
-    background: #EBF4F6;
     max-width: 600px;
     padding: 20px;
     border-radius: 16px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    background: #EBF4F6;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* change this from center */
+    align-items: flex-start;
 }
 
 /* ===================== 
    HEADER 
 ===================== */
-.header-section {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.page-title {
-    ont-size: 32px;
+.main-wrapper h2 {
+    font-size: 28px;
     font-weight: 700;
     color: #071952;
+    margin-bottom: 20px;
 }
 
 /* ===================== 
    ALERTS 
 ===================== */
-.alerts-wrapper {
-    margin-bottom: 15px;
-    width: 100%;
-}
-
 .alert {
+    width: 100%;
     padding: 10px 14px;
-    border-radius: 6px;
+    margin-bottom: 10px;
+    border-radius: 8px;
     font-weight: 600;
-    margin-bottom: 6px;
+    background: #088395; /* success default */
+    color: #ffffff;
 }
-
-/* Alert types */
-.alert-success { background: #088395; color: white; }
-.alert-error { background: #d9534f; color: white; }
-.alert-warning { background: #f0ad4e; color: black; }
-.alert-default { background: #6f42c1; color: white; }
 
 /* ===================== 
-   FORM CARD 
+   FORM 
 ===================== */
-.form-card {
+.training-form {
     margin-top: 30px;
     background: #ffff;
     padding: 25px;
@@ -127,96 +112,44 @@ body::before {
     border-style: solid;
 }
 
-
-/* ===================== 
-   FORM FIELDS 
-===================== */
-.job-form {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-}
-
-.form-label {
-    font-weight: 700;
-    margin-bottom: 4px;
+/* Labels */
+.training-form label {
+    font-weight: 600;
+    font-size: 14px;
+    gap: 30px; 
     color: #071952;
-    font-size: 14px;
 }
 
-.form-input {
-    padding: 8px 10px;
+/* Inputs */
+.training-form input,
+.training-form textarea {
+    width: 95%;
+    padding: 10px 12px;
     font-size: 14px;
+    border-radius: 8px;
+    margin-top: 10px;
     border: 1px solid #d3dadc;
-    border-radius: 6px;
     background: #f9fafa;
     color: #021526;
     transition: border 0.2s;
 }
 
-.form-input:focus {
+.training-form input:focus,
+.training-form textarea:focus {
     border-color: #088395;
     outline: none;
 }
 
 /* ===================== 
-   SKILLS GRID 
-===================== */
-.skills-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.skill-tile {
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: #e8eef1;
-    color: #021526;
-    cursor: pointer;
-    transition: 0.2s ease-in-out;
-    border: 1px solid transparent;
-    font-size: 13px;
-}
-
-.skill-tile:hover {
-    background: #d9e3e7;
-}
-
-.skill-tile.selected {
-    background: #071952;
-    color: white;
-}
-
-.skill-tile.selected:hover {
-    background: #088395;
-}
-
-/* ===================== 
-   HELPER TEXT 
-===================== */
-.helper-text {
-    font-size: 12px;
-    color: #6d7a81;
-    margin-top: 2px;
-}
-
-/* ===================== 
-   SUBMIT BUTTON 
+   SUBMIT BUTTON (outside form) 
 ===================== */
 .submit-btn {
     width: 100%;
-    padding: 10px 16px;
-    margin-top: 8px;
-    font-size: 15px;
+    padding: 12px 18px;
+    margin-top: 20px;
+    font-size: 16px;
     font-weight: 600;
-    border-radius: 8px;
+    border-radius: 10px;
     background: linear-gradient(135deg, #088395, #37B7C3);
     color: white;
     border: none;
@@ -227,6 +160,5 @@ body::before {
 .submit-btn:hover {
     background: linear-gradient(135deg, #037E8C, #2FA6B5);
     transform: translateY(-1px);
-    box-shadow: 0 5px 14px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }
-

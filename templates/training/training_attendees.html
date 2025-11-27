@@ -1,85 +1,97 @@
-{% extends "registration/base.html" %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Attendees | SkillBridge</title>
+    <link rel="stylesheet" href="{% static 'css/trainings/training_attendees.css' %}?v=2">
+</head>
+<body>
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/trainings/training_attendees.css' %}">
-{% endblock %}
+    <!-- BACK BUTTON -->
+    <a href="{% url 'official_dashboard' %}" class="back-btn">↩ Back</a>
 
-{% block content %}
+    <!-- ================== MAIN CONTAINER ================== -->
+    <main class="main-container">
 
-<!-- MAIN CONTAINER -->
-<div class="page-wrapper">
+        <!-- HEADER CARD -->
+        <div class="header-card">
+            <span class="header-chip">Training</span>
 
-    <!-- BACK -->
-    <div class="back-container">
-        <a href="{% url 'official_dashboard' %}" class="back-link">← Back</a>
-    </div>
+            <div class="header-flex">
+                <h1 class="header-title">Attendees for: {{ training.training_name }}</h1>
 
-    <!-- HEADER CARD -->
-    <div class="header-card">
-        <span class="header-chip">Training</span>
+                <!-- TRAINING ACTIONS -->
+                <div class="training-actions">
+                    <a href="{% url 'edit_training' training.id %}" class="edit-btn">
+                        Edit
+                    </a>
 
-        <div class="header-flex">
-            <h1 class="header-title">Attendees for: {{ training.training_name }}</h1>
-
-            <!-- TRAINING ACTIONS -->
-            <div class="training-actions">
-                <a href="{% url 'edit_training' training.id %}" class="btn edit-btn">
-                    Edit
-                </a>
-
-                <form action="{% url 'delete_training' training.id %}" method="POST"
-                    onsubmit="return confirm('Are you sure you want to delete this training event?')">
-                    {% csrf_token %}
-                    <button class="btn delete-btn">Delete</button>
-                </form>
+                    <form action="{% url 'delete_training' training.id %}" method="POST"
+                        onsubmit="return confirm('Are you sure you want to delete this training event?')">
+                        {% csrf_token %}
+                        <button class="delete-btn">Delete</button>
+                    </form>
+                </div>
             </div>
+
+            <p class="header-subtitle">View all residents registered for this training.</p>
         </div>
 
-        <p class="header-subtitle">View all residents registered for this training.</p>
-    </div>
+        <!-- SEARCH (optional) -->
+        <form method="get" class="search-form">
+            <input type="text" name="search" placeholder="Search by name or email..." value="{{ request.GET.search }}" class="search-input">
+            <button type="submit" class="btn-search">Search</button>
+        </form>
 
-    <!-- ATTENDEES CARD -->
-    <div class="attendees-card">
-
-        {% if attendees %}
-            {% for attendee in attendees %}
-                <div class="attendee-row">
-
-                    <div class="attendee-info">
-                        <p class="attendee-name">{{ attendee.full_name }}</p>
-                        <p class="attendee-email">{{ attendee.email }}</p>
-
-                        <span class="status-chip 
-                            {% if attendee.attendance_status == 'Attended' %} attended
-                            {% elif attendee.attendance_status == 'Not Attended' %} not-attended
-                            {% else %} pending
-                            {% endif %}
-                        ">
-                            {{ attendee.attendance_status|default:"Pending" }}
-                        </span>
-                    </div>
-
-                    <div class="attendee-actions">
-                        <form action="{% url 'mark_attended' attendee.id %}" method="POST">
-                            {% csrf_token %}
-                            <button class="btn success">Attended</button>
-                        </form>
-
-                        <form action="{% url 'mark_not_attended' attendee.id %}" method="POST">
-                            {% csrf_token %}
-                            <button class="btn danger">Not Attended</button>
-                        </form>
-                    </div>
-
-                </div>
+        <!-- MESSAGES -->
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <div class="message-item {% if message.tags == 'success' %}message-success{% elif message.tags == 'error' %}message-error{% else %}message-info{% endif %}">
+                {{ message }}
+            </div>
             {% endfor %}
-        {% else %}
-            <p class="empty-message">No attendees yet.</p>
+        </div>
         {% endif %}
 
-    </div>
+        <!-- ATTENDEES LIST -->
+        <section class="residents-section">
+            {% if attendees %}
+            <div class="resident-list">
+                {% for attendee in attendees %}
+                <div class="resident-card">
+                    <div class="resident-info">
+                        <h3 class="resident-name">{{ attendee.full_name }}</h3>
+                        <p class="resident-status">Email: {{ attendee.email }}</p>
+                        <p class="resident-status">Status: 
+                            <span class="{% if attendee.attendance_status == 'Attended' %}status-hired{% elif attendee.attendance_status == 'Not Attended' %}status-pending{% else %}status-training{% endif %}">
+                                {{ attendee.attendance_status|default:"Pending" }}
+                            </span>
+                        </p>
+                    </div>
 
-</div>
+                    <!-- ACTIONS -->
+                    <div class="resident-action">
+                        <form action="{% url 'mark_attended' attendee.id %}" method="POST" style="margin-bottom: 6px;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-action attend">Attended</button>
+                        </form>
+                        <form action="{% url 'mark_not_attended' attendee.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-action not">Not Attended</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="no-residents">No attendees yet.</p>
+            {% endif %}
+        </section>
 
-{% endblock %}
+    </main>
+
+</body>
+</html>

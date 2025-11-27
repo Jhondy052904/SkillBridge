@@ -395,7 +395,7 @@ body::before {
 }
 
 .profile-info p {
-    font-size: 1.05rem;
+    font-size: 1rem;
     color: #718096;
 }
 
@@ -403,7 +403,7 @@ body::before {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 20px 36px;
-    font-size: 1rem;
+    font-size: 1.3rem;
     color: #2D3748;
 }
 
@@ -417,18 +417,71 @@ body::before {
     font-weight: 600;
 }
 
-.verification-status {
-    background: linear-gradient(135deg, #E6FFFA, #B2F5EA);
-    color: #2C7A7B;
-    padding: 6px 14px;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 600;
+/* =====================
+  Skills
+===================== */
+.skills-dropdown {
+    position: relative;
+    display: inline-block;
 }
 
-.skills {
-    color: #805AD5;
-    font-weight: 500;
+.skills-button {
+    background: #088395;
+    color: white;
+    font-weight: 600;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 140px;
+}
+
+.skills-button:hover {
+    background: #037E8C;
+}
+
+.skills-content {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: #EBF4F6;
+    min-width: 160px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin-top: 4px;
+    z-index: 1;
+}
+
+.skill-item {
+    padding: 8px 12px;
+    color: #071952;
+    cursor: default;
+}
+
+.skill-item:hover {
+    background-color: #D3EAF0;
+}
+
+.skills-dropdown:hover .skills-content {
+    display: block; /* Show dropdown on hover */
+}
+
+/* =====================
+   Status
+===================== */
+.verification-status {
+    display: inline-block;
+    background: linear-gradient(135deg, #E6FFFA, #B2F5EA); /* soft gradient */
+    color: #2C7A7B; /* text color */
+    padding: 8px; /* slightly larger padding for better spacing */
+    border-radius: 12px; /* smoother rounded corners */
+    font-size: 0.95rem; /* slightly larger and more readable */
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(44, 122, 123, 0.2); /* soft shadow for depth */
+    border: 1px solid rgba(44, 122, 123, 0.3); /* subtle border */
+    transition: all 0.25s ease-in-out; /* smooth transition for hover effects */
+    text-align: center;
+    cursor: default;
+    margin-left: 5px;
 }
 
 .btn-update {

@@ -6,82 +6,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resident Verification Panel | SkillBridge</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/official/verification.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 
-    <style>
-        .soft-bg {
-            background: linear-gradient(135deg, #f7f5ff, #eff3ff);
-        }
-    </style>
 </head>
+<body>
 
-<body class="soft-bg min-h-screen flex text-gray-900">
+    <!-- ====================== NAVBAR ====================== -->
+<nav class="navbar">
+    <div class="nav-left">
+        <a href="{% url 'official_dashboard' %}" class="logo-link">
+            <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
+        </a>
+    </div>
 
-    <!-- ====================== SIDEBAR ====================== -->
-    <aside class="w-64 bg-white border-r shadow-md p-6 hidden md:block">
-        <h2 class="text-2xl font-bold mb-8 text-purple-700">SkillBridge</h2>
+    <div class="nav-right">
+        <a href="{% url 'official_dashboard' %}">Dashboard</a>
+        <a href="{% url 'verification_panel' %}" class="active">Verify Residents</a>
 
-        <nav class="space-y-2 font-medium">
-            <a href="{% url 'official_dashboard' %}" class="block p-3 rounded-lg hover:bg-purple-50">Dashboard</a>
-            <a href="{% url 'verification_panel' %}" class="block p-3 rounded-lg bg-purple-600 text-white">Verify Accounts</a>
-        </nav>
+        <!-- Underline Element for Animation -->
+        <div class="underline"></div>
 
         {% if official.role == "admin" or official.role == "moderator" %}
-        <div class="mt-10">
-            <a href="#audit" class="block p-3 rounded-lg hover:bg-purple-50">Audit Logs</a>
-        </div>
+        <div><a href="{% url 'residents_list' %}">Residents</a></div>
         {% endif %}
 
-        <div class="mt-auto pt-8">
-            <p class="font-semibold mb-2">{{ official.name }}</p>
-            <a href="{% url 'logout' %}" class="block bg-red-500 hover:bg-red-600 text-white text-center p-3 rounded-lg">
-                Logout
-            </a>
-        </div>
-    </aside>
-
-
+        <!-- Logout -->
+        <a href="{% url 'login' %}" id="logoutLink">Logout</a>
+    </div>
+</nav>
 
     <!-- ====================== MAIN ====================== -->
-    <main class="flex-1 p-6 md:p-10">
+    <main class="main-container">
 
-        <h1 class="text-3xl font-bold mb-8">Resident Verification Panel</h1>
+        <h1 class="page-title">Resident Verification Panel</h1>
 
         {% if residents %}
-        <div class="bg-white rounded-2xl p-6 shadow-md border border-gray-100 overflow-x-auto">
+        <div class="table-container">
 
-            <table class="w-full text-left border-collapse">
-                <thead class="bg-purple-50 text-gray-700 font-semibold">
+            <table class="residents-table">
+                <thead>
                     <tr>
-                        <th class="p-3">ID</th>
-                        <th class="p-3">Full Name</th>
-                        <th class="p-3">Email</th>
-                        <th class="p-3">Address</th>
-                        <th class="p-3">Actions</th>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Address</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    {% for r in residents %}
-                    <tr class="border-t hover:bg-purple-50 transition">
-                        <td class="p-3">{{ r.id }}</td>
-                        <td class="p-3">{{ r.first_name }} {{ r.last_name }}</td>
-                        <td class="p-3">{{ r.email }}</td>
-                        <td class="p-3">{{ r.address }}</td>
-
-                        <td class="p-3 flex gap-2">
-                            <a href="{% url 'resident_details' r.id %}"
-                               class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm font-semibold">
-                               View
-                            </a>
-                            <a href="{% url 'approve_resident' r.id %}"
-                               class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg text-sm font-semibold">
-                               Approve
-                            </a>
-                            <a href="{% url 'deny_resident' r.id %}"
-                               class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm font-semibold">
-                               Deny
-                            </a>
+                    {% for resident in residents %}
+                    <tr class="resident-row">
+                        <td>{{ resident.id }}</td>
+                        <td>{{ resident.first_name }} {{ resident.last_name }}</td>
+                        <td>{{ resident.email }}</td>
+                        <td>{{ resident.address }}</td>
+                        <td class="resident-actions">
+                            <a href="{% url 'resident_details' resident.id %}" class="btn-view">View</a>
+                            <a href="{% url 'approve_resident' resident.id %}" class="btn-approve">Approve</a>
+                            <a href="{% url 'deny_resident' resident.id %}" class="btn-deny">Deny</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -90,10 +74,66 @@
 
         </div>
         {% else %}
-            <p class="text-gray-500 italic">No pending residents found.</p>
+            <p class="no-residents-text">No pending residents found.</p>
         {% endif %}
 
     </main>
 
+<script>
+// Navbar underline animation
+const menuLinks = document.querySelectorAll('.nav-right a');
+const underline = document.querySelector('.nav-right .underline');
+
+function moveUnderline(el) {
+    if (!underline) return;
+    const rect = el.getBoundingClientRect();
+    const parentRect = el.closest('.nav-right').getBoundingClientRect();
+    underline.style.width = rect.width + 'px';
+    underline.style.left = (rect.left - parentRect.left) + 'px';
+}
+
+const activeLink = document.querySelector('.nav-right a.active');
+if (activeLink) {
+    setTimeout(() => moveUnderline(activeLink), 0);
+}
+
+menuLinks.forEach(link => {
+    link.addEventListener('mouseenter', e => {
+        if (e.target.tagName === 'A') moveUnderline(e.target);
+    });
+});
+
+document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+    if (activeLink) moveUnderline(activeLink);
+});
+
+// Logout confirmation popup
+const logoutLink = document.getElementById('logoutLink');
+
+logoutLink.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    const popup = document.createElement('div');
+    popup.className = 'logout-popup';
+    popup.innerHTML = `
+        <p>Are you sure you want to end your session?</p>
+        <div class="separator"></div>
+        <div class="popup-buttons">
+            <button id="cancelLogout">Cancel</button>
+            <button id="confirmLogout">Yes</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    document.getElementById('confirmLogout').addEventListener('click', () => {
+        window.location.href = logoutLink.href;
+    });
+
+    document.getElementById('cancelLogout').addEventListener('click', () => {
+        popup.classList.add('fade-out');
+        setTimeout(() => popup.remove(), 500);
+    });
+});
+</script>
 </body>
 </html>

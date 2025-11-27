@@ -1,4 +1,6 @@
 {% load static %}
+{% load custom_filters %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -101,7 +103,14 @@
             <p><strong>Employment:</strong> {{ user_profile.employment_status }}</p>
             <p><strong>Verification:</strong> <span class="verification-status">{{ user_profile.verification_status }}</span></p>
             <p><strong>Current Status:</strong> <span class="current-status">{{ current_status }}</span></p>
-            <p><strong>Skills:</strong> <span class="skills">{{ user_profile.skills }}</span></p>
+            <div class="skills-dropdown">
+                <button class="skills-button">View Skills ▼</button>
+                        <div class="skills-content">
+                            {% for skill in user_profile.skills|split:',' %}
+                        <div class="skill-item">{{ skill }}</div>
+                     {% endfor %}
+                </div>
+            </div>
         </div>
 
         <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
@@ -425,6 +434,7 @@ document.addEventListener('click', async (e) => {
         }
     }
 });
+
 </script>
 
 </body>

@@ -25,6 +25,17 @@
     opacity: 0;
 }
 
+/* Warning icon for popup */
+.logout-popup::before {
+    content: "";
+    display: block;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 16px auto;
+    background: url("/static/images/warning.png") no-repeat center center;
+    background-size: contain;
+}
+
 /* Fade + scale animation */
 @keyframes popupFadeIn {
     from {

@@ -5,117 +5,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post Job | SkillBridge</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-    <style>
-        .soft-bg {
-            background: linear-gradient(135deg, #f7f5ff, #eff3ff);
-        }
-
-        .skill-tile {
-            transition: 0.25s ease;
-        }
-
-        .skill-tile.selected {
-            background: #7c3aed !important;
-            color: white !important;
-            transform: scale(1.04);
-            box-shadow: 0 4px 12px rgba(124,58,237,0.3);
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/jobs/post_job.css' %}?v=3">
 </head>
+<body>
 
-<body class="soft-bg min-h-screen flex text-gray-900">
+<a href="{% url 'official_dashboard' %}" class="back-button">↩ Back</a>
 
+<main class="main-wrapper">
 
-<!-- ====================== MAIN CONTENT ====================== -->
-<main class="flex-1 p-6 md:p-10">
-
-    <header class="flex justify-between items-center mb-10">
-        <h1 class="text-3xl font-bold">Post a New Job</h1>
-
-        <a href="{% url 'logout' %}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 md:hidden">
-            Logout
-        </a>
+    <header class="header-section">
+        <h1 class="page-title">Post Job</h1>
     </header>
 
     <!-- Alerts -->
     {% if messages %}
-    <div class="mb-6">
+    <div class="alerts-wrapper">
         {% for message in messages %}
-            <div class="p-3 rounded-lg text-white mb-2
-                {% if message.tags == 'success' %}bg-green-600
-                {% elif message.tags == 'error' %}bg-red-600
-                {% elif message.tags == 'warning' %}bg-yellow-500 text-black
-                {% else %}bg-purple-600{% endif %}">
+            <div class="alert
+                {% if message.tags == 'success' %} alert-success
+                {% elif message.tags == 'error' %} alert-error
+                {% elif message.tags == 'warning' %} alert-warning
+                {% else %} alert-default {% endif %}">
                 {{ message }}
             </div>
         {% endfor %}
     </div>
     {% endif %}
 
-    <!-- ====================== JOB FORM ====================== -->
-    <div class="bg-white rounded-2xl p-8 shadow-md border border-gray-100">
-
-        <form method="POST" class="space-y-6">
+    <!-- Job Form -->
+    <div class="form-card">
+        <form method="POST" class="job-form">
             {% csrf_token %}
 
-            <div>
-                <label class="font-semibold block mb-1">Job Title</label>
-                <input type="text" name="title" class="w-full border px-3 py-2 rounded-lg" required>
+            <div class="form-group">
+                <label class="form-label">Job Title</label>
+                <input type="text" name="title" class="form-input" required>
             </div>
 
-            <div>
-                <label class="font-semibold block mb-1">Description</label>
-                <textarea name="description" rows="4" class="w-full border px-3 py-2 rounded-lg" required></textarea>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea name="description" rows="4" class="form-input" required></textarea>
             </div>
 
-            <div>
-                <label class="font-semibold block mb-1">Status</label>
-                <select name="status" class="w-full border px-3 py-2 rounded-lg">
+            <div class="form-group">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-input">
                     <option value="Open">Open</option>
                     <option value="Closed">Closed</option>
                 </select>
             </div>
 
-            <!-- ===================== SKILL TILES ===================== -->
-            <div>
-                <label class="font-semibold block mb-2">Required Skills</label>
-
-                <div id="skills-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <!-- Skill Tiles -->
+            <div class="form-group">
+                <label class="form-label">Required Skills</label>
+                <div id="skills-container" class="skills-grid">
                     {% for skill in skills %}
-                        <div
-                            type="button"
-                            class="skill-tile cursor-pointer p-3 border rounded-lg bg-gray-100 text-gray-700 hover:bg-purple-100"
-                            data-skill-id="{{ skill.SkillID }}"
-                        >
+                        <div class="skill-tile" data-skill-id="{{ skill.SkillID }}">
                             {{ skill.SkillName }}
                         </div>
                     {% endfor %}
                 </div>
 
                 <input type="hidden" name="skills_list" id="skills_list">
-                <p class="text-sm text-gray-500 mt-1">Click tiles to select/deselect skills.</p>
+                <p class="helper-text">Click tiles to select/deselect skills.</p>
             </div>
 
-            <button class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-semibold shadow">
-                Post Job
-            </button>
+            <button type="submit" class="submit-btn">Post Job</button>
         </form>
-
-        <div class="mt-6">
-            <a href="{% url 'official_dashboard' %}" class="text-purple-600 hover:underline font-semibold">
-                ⬅ Back
-            </a>
-        </div>
 
     </div>
 
 </main>
 
-
-<!-- ===================== JS: Tile Selection ===================== -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const tiles = document.querySelectorAll(".skill-tile");
@@ -130,14 +91,11 @@ document.addEventListener("DOMContentLoaded", () => {
             tile.classList.toggle("selected");
 
             if (selectedSkills.includes(skillId)) {
-                // Remove selection
                 selectedSkills = selectedSkills.filter(id => id !== skillId);
             } else {
-                // Add selection
                 selectedSkills.push(skillId);
             }
 
-            // Update hidden field as CSV
             hiddenField.value = selectedSkills.join(",");
         });
     });
