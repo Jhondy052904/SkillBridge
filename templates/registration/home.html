@@ -90,6 +90,7 @@
             </div>
             {% endif %}
 
+        {% if user_profile %}
         <div class="profile-details">
             <p><strong>Email:</strong> {{ user_profile.email }}</p>
             <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
@@ -107,17 +108,7 @@
             </div>
         </div>
 
-                <div class="profile-details">
-                    <p><strong>Email:</strong> {{ user_profile.email }}</p>
-                    <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
-                    <p><strong>Address:</strong> {{ user_profile.address }}</p>
-                    <p><strong>Employment:</strong> {{ user_profile.employment_status }}</p>
-                    <p><strong>Verification:</strong> <span class="verification-status">{{ user_profile.verification_status }}</span></p>
-                    <p><strong>Current Status:</strong> <span class="current-status">{{ current_status }}</span></p>
-                    <p><strong>Skills:</strong> <span class="skills">{{ user_profile.skills }}</span></p>
-                </div>
-
-                <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
+            <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
             </div>
             {% else %}
             <div class="profile-card error-card">

@@ -132,10 +132,20 @@ def list_jobs(request):
         # Add skills to each job
         for job in jobs:
             job['skills'] = job_skills.get(job['JobID'], [])
+
+        # Get recommended jobs based on resident's skills
+        resident = get_resident_by_user_id(request.user.id)
+        recommended_jobs = []
+        if resident:
+            resident_skills_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident["id"]).execute()
+            resident_skill_ids = set(s["skill_id"] for s in resident_skills_resp.data) if resident_skills_resp.data else set()
+            recommended_jobs = [job for job in jobs if any(skill_id in resident_skill_ids for skill_id in job_skills.get(job['JobID'], []))]
+
     except Exception as e:
         messages.error(request, f"Error loading jobs: {str(e)}")
         jobs = []
-    return render(request, 'jobs/list_jobs.html', {'jobs': jobs})
+        recommended_jobs = []
+    return render(request, 'jobs/list_jobs.html', {'jobs': jobs, 'recommended_jobs': recommended_jobs})
 
 
 # ==========================================================

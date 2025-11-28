@@ -32,7 +32,7 @@ class Resident(models.Model):
         ('Other', 'Other'),
     ]
     VERIFICATION_STATUS = [
-        ('Pending', 'Pending'),
+        ('Pending Verification', 'Pending Verification'),
         ('Verified', 'Verified'),
         ('Rejected', 'Rejected'),
     ]
@@ -42,7 +42,7 @@ class Resident(models.Model):
         ('Training', 'Training'),
     ]
 
-    verification_status = models.CharField(max_length=10, choices=VERIFICATION_STATUS, default="Pending")
+    verification_status = models.CharField(max_length=20, choices=VERIFICATION_STATUS, default="Pending Verification")
     current_status = models.CharField(max_length=20, choices=CURRENT_STATUS_CHOICES, default='Not Hired')
 
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE, null=True, blank=True)
