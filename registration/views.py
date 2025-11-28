@@ -565,11 +565,12 @@ def login_view(request):
                 messages.success(request, "Welcome, Barangay Official!")
                 request.session['user_email'] = email
                 request.session['user_role'] = 'Official'
-
+                request.session.save()
+        
                 # 👇 Make Django recognize this user as authenticated
                 django_user, _ = User.objects.get_or_create(username=email, defaults={'email': email, 'is_staff': True})
                 login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
-
+        
                 return redirect('official_dashboard')
 
             # ✅ Otherwise, check resident status
@@ -582,12 +583,13 @@ def login_view(request):
                 if status == 'verified':
                     request.session['user_email'] = user.email
                     request.session['user_role'] = 'Resident'
+                    request.session.save()
                     messages.success(request, "Welcome back!")
-
+        
                     # 👇 Make Django recognize the resident as logged in
                     django_user, _ = User.objects.get_or_create(username=user.email, defaults={'email': user.email})
                     login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
-
+        
                     return redirect('home')
 
                 else:

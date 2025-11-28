@@ -47,8 +47,10 @@ def job_success(request):
 # ==========================================================
 # POST JOB (OFFICIAL)
 # ==========================================================
-@login_required
 def post_job(request):
+    if request.session.get('user_role') != 'Official':
+        messages.error(request, "Access denied. Officials only.")
+        return redirect('login')
     try:
         email = request.user.email.strip().lower()
         official = supabase.table("registration_official").select("*").ilike("email", email).execute()
@@ -115,8 +117,9 @@ def post_job(request):
 # ==========================================================
 # LIST JOBS
 # ==========================================================
-@login_required
 def list_jobs(request):
+    if request.session.get('user_role') != 'Resident':
+        return redirect('login')
     try:
         # ==========================
         # 1. Fetch All Jobs
@@ -194,8 +197,10 @@ def list_jobs(request):
 # ==========================================================
 # UPDATE JOB
 # ==========================================================
-@login_required
 def update_job_view(request, job_id):
+    if request.session.get('user_role') != 'Official':
+        messages.error(request, "Access denied. Officials only.")
+        return redirect('login')
 
     email = request.user.email.strip().lower()
     official = supabase.table("registration_official").select("*").ilike("email", email).execute()
@@ -253,8 +258,10 @@ def update_job_view(request, job_id):
 # ==========================================================
 # DELETE JOB
 # ==========================================================
-@login_required
 def delete_job_view(request, job_id):
+    if request.session.get('user_role') != 'Official':
+        messages.error(request, "Access denied. Officials only.")
+        return redirect('login')
     try:
         delete_job(job_id)
         log_action("delete", "job", job_id, request)
@@ -267,8 +274,10 @@ def delete_job_view(request, job_id):
 # ==========================================================
 # APPLY FOR JOB
 # ==========================================================
-@login_required
 def apply_job(request, job_id):
+    if request.session.get('user_role') != 'Resident':
+        messages.error(request, "Access denied. Residents only.")
+        return redirect('login')
     try:
         resident = get_resident_by_user_id(request.user.id)
 
