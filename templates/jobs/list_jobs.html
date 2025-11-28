@@ -122,42 +122,47 @@
     </div>
 
     <!-- Recommended Jobs Section -->
-    {% if recommended_jobs %}
     <section class="jobs-section">
         <h2 class="section-title">Recommended Jobs</h2>
         <p class="section-subtitle">Based on your skills</p>
 
         <div id="recommendedJobList" class="job-cards-container">
-            {% for job in recommended_jobs %}
-                {% if job.Status == "Open" %}
-                <a href="{% url 'job_detail' job.JobID %}" class="job-card-link">
-                    <div class="job-card">
+            {% if recommended_jobs %}
+                {% for job in recommended_jobs %}
+                    {% if job.Status == "Open" %}
+                    <a href="{% url 'job_detail' job.JobID %}" class="job-card-link">
+                        <div class="job-card">
 
-                        <div class="job-card-content">
-                            <h3 class="job-title">{{ job.Title }}</h3>
-                            <p class="job-description">{{ job.Description|truncatechars:100 }}</p>
-                                <div class="card-header">
-                            <div class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">{{ job.Status }}</div>
-                        </div>
-                            {% if job.skills %}
-                            <div class="job-skills">
-                                {% for skill in job.skills %}
-                                    <span class="skill-tag">{{ skill }}</span>
-                                {% endfor %}
+                            <div class="job-card-content">
+                                <h3 class="job-title">{{ job.Title }}</h3>
+                                <p class="job-description">{{ job.Description|truncatechars:100 }}</p>
+                                    <div class="card-header">
+                                <div class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">{{ job.Status }}</div>
                             </div>
-                            {% else %}
-                            <div class="job-skills">
-                                <span class="skill-tag no-skills">No specific skills required</span>
+                                {% if job.skills %}
+                                <div class="job-skills">
+                                    {% for skill in job.skills %}
+                                        <span class="skill-tag">{{ skill }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <div class="job-skills">
+                                    <span class="skill-tag no-skills">No specific skills required</span>
+                                </div>
+                                {% endif %}
                             </div>
-                            {% endif %}
                         </div>
-                    </div>
-                </a>
-                {% endif %}
-            {% endfor %}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No recommended jobs at the moment.</p>
+                    <p class="empty-state-secondary">Update your profile with skills to see personalized job recommendations!</p>
+                </div>
+            {% endif %}
         </div>
     </section>
-    {% endif %}
 
     <!-- Job Listings Section -->
     <section class="jobs-section">
