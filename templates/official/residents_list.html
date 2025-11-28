@@ -15,7 +15,6 @@
     ↩ Back
 </a>
 
-
     <!-- ================== MAIN ================== -->
     <main class="main-container">
 
@@ -47,8 +46,8 @@
                 {% for resident in residents %}
                 <div class="resident-card">
                     <div class="resident-info">
-                        <a href="{% url 'dashboard_resident_details' resident.id %}" class="resident-link">
-                            <h3 class="resident-name">{{ resident.first_name }} {{ resident.last_name }}</h3>
+                        <a href="#" class="open-resident-modal" data-resident-id="{{ resident.id }}">
+                            <h3 class="resident-name">Name: {{ resident.first_name }} {{ resident.last_name }}</h3>
                         </a>
                         <p class="resident-status">Status: 
                             <span class="{% if resident.current_status == 'Hired' %}status-hired{% elif resident.current_status == 'Training' %}status-training{% else %}status-pending{% endif %}">
@@ -73,6 +72,55 @@
         </section>
 
     </main>
+
+<div id="residentModal" class="modal hidden">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div id="modalDetails">Loading...</div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("residentModal");
+    const modalDetails = document.getElementById("modalDetails");
+
+    document.querySelectorAll('.open-resident-modal').forEach(link => {
+        link.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const residentId = link.dataset.residentId;
+
+            try {
+                const res = await fetch(`/official/resident/${residentId}/details/`);
+                if (res.ok) {
+                    const html = await res.text();
+                    modalDetails.innerHTML = html; 
+                    modal.classList.remove("hidden");
+                } else {
+                    alert('Resident details not found');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error fetching resident details');
+            }
+        });
+    });
+
+    // Close modal
+    document.querySelector(".close-modal").onclick = () => {
+        modal.classList.add("hidden");
+    };
+
+    // Close modal on clicking outside
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add("hidden");
+        }
+    });
+});
+
+
+</script>
 
 </body>
 </html>

@@ -1,0 +1,92 @@
+<style>
+body {
+    background-color: #EBF4F6; /* Ivory background */
+    font-family: 'Inter', sans-serif;
+    color: #021526; /* Black text */
+    padding: 20px;
+}
+
+h1.section-title {
+    text-align: center;
+    color: #071952; /* Navy Blue */
+    font-size: 36px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #088395; /* Mint Green underline */
+    display: inline-block;
+    padding-bottom: 6px;
+}
+
+.resident-details-card {
+    border: 2px solid #071952; /* Navy Blue border */
+    padding: 36px;
+    border-radius: 16px;
+    max-width: 800px;
+    background: #EBF4F6; /* Ivory background */
+    margin: 0 auto 40px auto;
+    font-size: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    color: #021526;
+}
+
+.resident-details-card p {
+    margin: 12px 0;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.resident-details-card strong {
+    color: #071952; /* Navy Blue for labels */
+}
+
+.section-content {
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    padding: 24px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.section-content ul {
+    list-style-type: disc;
+    margin-left: 20px;
+    font-size: 18px;
+    line-height: 1.6;
+}
+</style>
+
+<h1 class="section-title">Resident Details</h1>
+
+<div class="resident-details-card">
+    <h3>Personal Details</h3>
+    <p><strong>Name:</strong> {{ resident.first_name }} {{ resident.middle_name }} {{ resident.last_name }}</p>
+    <p><strong>Email:</strong> {{ resident.email }}</p>
+    <p><strong>Address:</strong> {{ resident.address }}</p>
+    <p><strong>Contact Number:</strong> {{ resident.contact_number }}</p>
+    <p><strong>Gender:</strong> {{ resident.gender|default:"-" }}</p>
+    <p><strong>Employment Status:</strong> {{ resident.employment_status }}</p>
+    <p><strong>Verification Status:</strong> {{ resident.verification_status }}</p>
+    <p><strong>Skills:</strong>
+        {% if skills %}
+            {% for skill in skills %}
+                <span>
+                    {{ skill }}
+                </span>
+            {% endfor %}
+        {% else %}
+            <span>No skills listed.</span>
+        {% endif %}
+    </p>
+</div>
+<h1 class="section-title">Attended Trainings</h1>
+<div class="section-content">
+    {% if resident.trainings %}
+        <ul>
+            {% for training in resident.trainings %}
+                <li>{{ training.name }} ({{ training.date|date:"M d, Y" }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No trainings attended.</p>
+    {% endif %}
+</div>
