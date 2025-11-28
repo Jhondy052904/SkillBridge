@@ -10,7 +10,6 @@ from .services.supabase_crud import (
     delete_job,
     get_job_by_id,
     create_job_application,
-    get_resident_by_user_id,
     get_applied_jobs_by_resident,
 )
 
@@ -119,33 +118,77 @@ def post_job(request):
 @login_required
 def list_jobs(request):
     try:
+        # ==========================
+        # 1. Fetch All Jobs
+        # ==========================
         jobs = get_jobs()
-        # Fetch skills for all jobs
-        skills_resp = supabase.table("job_skill_list").select("job_id, skill_list!inner(SkillName)").execute()
-        job_skills = {}
-        for item in skills_resp.data:
-            job_id = item['job_id']
-            skill_name = item['skill_list']['SkillName']
-            if job_id not in job_skills:
-                job_skills[job_id] = []
-            job_skills[job_id].append(skill_name)
-        # Add skills to each job
-        for job in jobs:
-            job['skills'] = job_skills.get(job['JobID'], [])
 
-        # Get recommended jobs based on resident's skills
-        resident = get_resident_by_user_id(request.user.id)
+        # ==========================
+        # 2. Fetch all job-skill relations
+        # ==========================
+        skills_resp = supabase.table("job_skill_list").select(
+            "job_id, skill_list!inner(SkillID, SkillName)"
+        ).execute()
+
+        job_skills_by_id = {}       # skill IDs
+        job_skills_by_name = {}     # skill names
+
+        for item in skills_resp.data:
+            job_id = item["job_id"]
+            skill_id = item["skill_list"]["SkillID"]
+            skill_name = item["skill_list"]["SkillName"]
+
+            if job_id not in job_skills_by_id:
+                job_skills_by_id[job_id] = []
+                job_skills_by_name[job_id] = []
+
+            job_skills_by_id[job_id].append(skill_id)
+            job_skills_by_name[job_id].append(skill_name)
+
+        # Attach skill names to job object for UI
+        for job in jobs:
+            job["skills"] = job_skills_by_name.get(job["JobID"], [])
+
+        print("DEBUG JOB SKILLS:", job_skills_by_id)
+
+        # ======================================================
+        # 3. Get Resident Info from Supabase
+        # ======================================================
+        resident_email = request.user.email
+        supabase_resident = supabase.table("resident").select("id").eq("email", resident_email).execute()
         recommended_jobs = []
-        if resident:
-            resident_skills_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident["id"]).execute()
-            resident_skill_ids = set(s["skill_id"] for s in resident_skills_resp.data) if resident_skills_resp.data else set()
-            recommended_jobs = [job for job in jobs if any(skill_id in resident_skill_ids for skill_id in job_skills.get(job['JobID'], []))]
+
+        if supabase_resident.data:
+            resident_id = supabase_resident.data[0]["id"]
+
+            # ======================================================
+            # 4. Fetch resident skills from Supabase
+            # ======================================================
+            resident_skill_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident_id).execute()
+            resident_skill_ids = {item["skill_id"] for item in resident_skill_resp.data}
+
+            # ======================================================
+            # 5. Filter recommended jobs
+            # ======================================================
+            recommended_jobs = [
+                job for job in jobs
+                if any(skill_id in resident_skill_ids for skill_id in job_skills_by_id.get(job["JobID"], []))
+            ]
 
     except Exception as e:
+        print("ERROR:", str(e))
         messages.error(request, f"Error loading jobs: {str(e)}")
         jobs = []
         recommended_jobs = []
-    return render(request, 'jobs/list_jobs.html', {'jobs': jobs, 'recommended_jobs': recommended_jobs})
+
+    # ==========================
+    # Render Template
+    # ==========================
+    return render(request, "jobs/list_jobs.html", {
+        "jobs": jobs,
+        "recommended_jobs": recommended_jobs
+    })
+
 
 
 # ==========================================================
