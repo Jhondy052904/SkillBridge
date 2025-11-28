@@ -224,3 +224,35 @@ button[type="submit"]:hover {
 .back-icon {
   font-size: 1.1rem;
 }
+
+/* Messages */
+.floating-messages {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.editprofile-message {
+  background: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transform: translateX(50px);
+  opacity: 0;
+  animation: slideIn 0.5s ease forwards;
+}
+
+.editprofile-message.success { background: #4CAF50; }
+.editprofile-message.error { background: #f44336; }
+.editprofile-message.warning { background: #ff9800; }
+.editprofile-message.info { background: #2196F3; }
+
+@keyframes slideIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
