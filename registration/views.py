@@ -420,15 +420,22 @@ def signup_view(request):
         # For address, combine barangay, sublocation, house_number
         address = f"{house_number}, {sublocation}, {barangay}"
 
-        # Handle proof of residency file
-        proof_data = None
-        proof_file = request.FILES.get('proof_residency')
-        if proof_file:
-            bucket = 'proof_residency'  # Assume bucket exists for proof files
-            file_path = f"{email}/{proof_file.name}"
-            supabase_service.storage.from_(bucket).upload(file_path, proof_file.read(), {"content-type": proof_file.content_type})
-            public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
-            proof_data = public_url.encode('utf-8')
+    # Handle proof of residency file
+    proof_data = None
+    proof_file = request.FILES.get('proof_residency')
+    if proof_file:
+        bucket = 'proof_residency'  # Assume bucket exists for proof files
+        file_path = f"{email}/{proof_file.name}"
+        supabase_service.storage.from_(bucket).upload(file_path, proof_file.read(), {"content-type": proof_file.content_type})
+        public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
+        # Save the URL as a string (do NOT .encode())
+        # If get_public_url returns a dict, grab the url field (e.g. public_url['publicURL'])
+        if isinstance(public_url, dict):
+            # adjust key name depending on return structure; common key is 'publicURL'
+            proof_data = public_url.get('publicURL') or public_url.get('public_url') or str(public_url)
+        else:
+            proof_data = str(public_url)
+
 
         try:
             auth_response = supabase.auth.sign_up({
@@ -474,18 +481,19 @@ def signup_view(request):
                         f"Thank you for signing up for SkillBridge.\n\n"
                         f"Please verify your email address using the confirmation link sent to your inbox.\n\n"
                         f"After verifying your email, your Barangay Official will review your registration.\n\n"
-                        f"You’ll receive another message once your account has been approved.\n\n"
+                        f"You'll receive another message once your account has been approved.\n\n"
                         f"— The SkillBridge Team"
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[email],
                     fail_silently=False,
                 )
+                logger.info("Verification email sent successfully to %s", email)
+                messages.success(request, "Signup successful! Please check your email to verify your account.")
             except Exception as e:
-                print(f"Email sending failed: {e}")
-                messages.warning(request, "Signup successful, but there was an issue sending the verification email. Please contact support if you don't receive it.")
+                logger.exception("Email sending failed: %s", e)
+                messages.warning(request, "Signup successful! However, we couldn't send the verification email. Please contact support.")
 
-            messages.success(request, "Signup successful! Please check your email to verify your account. Wait for official approval before logging in.")
             return redirect('login')
 
         except Exception as e:
