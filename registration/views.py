@@ -533,78 +533,114 @@ def confirm_email(request, email):
 # ------------------------------------------------------------
 # LOGIN 
 # ------------------------------------------------------------
+import logging
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.conf import settings
+
 from skillbridge.supabase_client import supabase
 
+logger = logging.getLogger(__name__)
 
+@csrf_protect
 def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('username')
-        password = request.POST.get('password')
+    if request.method != 'POST':
+        return render(request, 'registration/login.html')
 
-        try:
-            # Authenticate with Supabase Auth
-            auth_response = supabase.auth.sign_in_with_password({
-                "email": email,
-                "password": password
-            })
+    email = request.POST.get('username', '').strip().lower()
+    password = request.POST.get('password', '')
 
-            user = auth_response.user
-            if not user:
-                messages.error(request, "Invalid email or password.")
+    if not email or not password:
+        messages.error(request, "Please enter both email and password.")
+        return render(request, 'registration/login.html')
+
+    try:
+        auth_response = supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+        })
+
+        # Defensive extraction of user from response
+        user_obj = None
+        if hasattr(auth_response, 'user'):
+            user_obj = auth_response.user
+        elif isinstance(auth_response, dict):
+            # supabase-js sometimes returns { data: { user }, error }
+            user_obj = auth_response.get('user') or (auth_response.get('data') or {}).get('user')
+
+        if not user_obj:
+            logger.info("Supabase auth failed for %s: %s", email, auth_response)
+            messages.error(request, "Invalid email or password.")
+            return render(request, 'registration/login.html')
+
+        # OFFICIAL check (prefer domain-driven)
+        OFFICIAL_DOMAINS = getattr(settings, 'OFFICIAL_EMAIL_DOMAINS', ['skillbridge.com'])
+        is_official = any(email.endswith(f"@{d}") for d in OFFICIAL_DOMAINS)
+
+        if is_official:
+            # create django user (ensure usable state) before calling login()
+            django_user, created = User.objects.get_or_create(
+                username=email,
+                defaults={'email': email, 'is_staff': True, 'is_active': True}
+            )
+            # make sure staff flag is set
+            if not django_user.is_staff:
+                django_user.is_staff = True
+                django_user.save(update_fields=['is_staff'])
+
+            # Important: set an unusable password so Django does not think there is a plaintext password
+            if created:
+                django_user.set_unusable_password()
+                django_user.save(update_fields=['password'])
+
+            # login the Django user (this should not raise normally)
+            login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
+
+            # set user session keys AFTER successful login
+            request.session['user_email'] = email
+            request.session['user_role'] = 'Official'
+
+            messages.success(request, "Welcome, Barangay Official!")
+            return redirect('official_dashboard')
+
+        # ---------- Resident path ----------
+        resident_resp = supabase.table('resident').select('*').eq('email', user_obj.email).execute()
+        resident_list = getattr(resident_resp, 'data', None) if resident_resp is not None else None
+        if isinstance(resident_resp, dict):
+            resident_list = resident_resp.get('data')
+
+        if resident_list:
+            resident = resident_list[0]
+            status = str(resident.get('verification_status', '')).lower()
+            if status == 'verified':
+                django_user, created = User.objects.get_or_create(
+                    username=user_obj.email,
+                    defaults={'email': user_obj.email, 'is_active': True}
+                )
+                if created:
+                    django_user.set_unusable_password()
+                    django_user.save(update_fields=['password'])
+
+                login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
+                request.session['user_email'] = user_obj.email
+                request.session['user_role'] = 'Resident'
+                messages.success(request, "Welcome back!")
+                return redirect('home')
+            else:
+                messages.warning(request, "Your account is still pending approval.")
                 return render(request, 'registration/login.html')
 
-            # ✅ Check if email belongs to an official
-            OFFICIAL_EMAILS = ["official@skillbridge.com", "admin@skillbridge.com"]
+        messages.error(request, "No matching account found.")
+        return render(request, 'registration/login.html')
 
-            if email in OFFICIAL_EMAILS:
-                messages.success(request, "Welcome, Barangay Official!")
-                request.session['user_email'] = email
-                request.session['user_role'] = 'Official'
-                request.session.save()
-        
-                # 👇 Make Django recognize this user as authenticated
-                django_user, _ = User.objects.get_or_create(username=email, defaults={'email': email, 'is_staff': True})
-                login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
-        
-                return redirect('official_dashboard')
-
-            # ✅ Otherwise, check resident status
-            resident_data = supabase.table('resident').select('*').eq('email', user.email).execute()
-
-            if resident_data.data:
-                resident = resident_data.data[0]
-                status = resident.get('verification_status', '').lower()
-
-                if status == 'verified':
-                    request.session['user_email'] = user.email
-                    request.session['user_role'] = 'Resident'
-                    request.session.save()
-                    messages.success(request, "Welcome back!")
-        
-                    # 👇 Make Django recognize the resident as logged in
-                    django_user, _ = User.objects.get_or_create(username=user.email, defaults={'email': user.email})
-                    login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
-        
-                    return redirect('home')
-
-                else:
-                    messages.warning(request, "Your account is still pending approval.")
-                    return redirect('login')
-
-            messages.error(request, "No matching account found.")
-            return redirect('login')
-
-        except Exception as e:
-            messages.error(request, f"Login failed: {str(e)}")
-
-    # Ensure session is saved to set CSRF token cookie
-    request.session['login_page_loaded'] = True
-    return render(request, 'registration/login.html')
+    except Exception:
+        # Log full traceback for debugging; show user a generic message
+        logger.exception("Error during login for %s", email)
+        messages.error(request, "Login failed due to a server error. Please try again.")
+        return render(request, 'registration/login.html')
 
 
 
