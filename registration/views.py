@@ -531,9 +531,10 @@ def confirm_email(request, email):
         })
 
 # ------------------------------------------------------------
-# LOGIN 
+# LOGIN (patched)
 # ------------------------------------------------------------
-import logging
+import logging 
+from supabase_auth.errors import AuthApiError
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
@@ -550,6 +551,7 @@ def login_view(request):
     if request.method != 'POST':
         return render(request, 'registration/login.html')
 
+    # normalize input once and reuse
     email = request.POST.get('username', '').strip().lower()
     password = request.POST.get('password', '')
 
@@ -558,74 +560,98 @@ def login_view(request):
         return render(request, 'registration/login.html')
 
     try:
-        auth_response = supabase.auth.sign_in_with_password({
-            "email": email,
-            "password": password
-        })
+        # Attempt sign-in and handle client that raises on 4xx (supabase_auth does)
+        try:
+            auth_response = supabase.auth.sign_in_with_password({
+                "email": email,
+                "password": password
+            })
+            logger.debug("supabase.sign_in_with_password response for %s: %r", email, auth_response)
+        except AuthApiError as auth_exc:
+            # Client raised due to invalid credentials or other 4xx
+            msg = str(auth_exc).lower()
+            logger.info("Supabase AuthApiError for %s: %s", email, msg)
+            if "invalid login credentials" in msg or "invalid" in msg or "401" in msg or "bad request" in msg or "unauthorized" in msg:
+                messages.error(request, "Invalid email or password.")
+                return render(request, 'registration/login.html')
+            # Not an auth-like error: re-raise to be handled by outer except
+            raise
+        except Exception as exc:
+            # Unexpected exception during sign-in (network, parsing, etc.)
+            logger.warning("Unexpected exception during supabase sign-in for %s: %s", email, exc, exc_info=True)
+            if any(term in str(exc).lower() for term in ('invalid', 'unauthorized', '401', 'password')):
+                messages.error(request, "Invalid email or password.")
+                return render(request, 'registration/login.html')
+            raise
 
-        # Defensive extraction of user from response
+        # Defensive extraction of user_obj from whatever shape the client returns
         user_obj = None
         if hasattr(auth_response, 'user'):
-            user_obj = auth_response.user
+            user_obj = getattr(auth_response, 'user', None)
         elif isinstance(auth_response, dict):
-            # supabase-js sometimes returns { data: { user }, error }
-            user_obj = auth_response.get('user') or (auth_response.get('data') or {}).get('user')
+            data = auth_response.get('data') or {}
+            user_obj = auth_response.get('user') or data.get('user') or (auth_response.get('data') or {}).get('user')
 
         if not user_obj:
-            logger.info("Supabase auth failed for %s: %s", email, auth_response)
+            logger.info("Supabase auth returned no user for %s: %r", email, auth_response)
             messages.error(request, "Invalid email or password.")
             return render(request, 'registration/login.html')
 
-        # OFFICIAL check (prefer domain-driven)
+        # Prefer the normalized email for DB queries — avoids mismatch/casing issues
+        user_email = email
+
+        # OFFICIAL check (domain-driven)
         OFFICIAL_DOMAINS = getattr(settings, 'OFFICIAL_EMAIL_DOMAINS', ['skillbridge.com'])
-        is_official = any(email.endswith(f"@{d}") for d in OFFICIAL_DOMAINS)
+        is_official = any(user_email.endswith(f"@{d}") for d in OFFICIAL_DOMAINS)
 
         if is_official:
-            # create django user (ensure usable state) before calling login()
             django_user, created = User.objects.get_or_create(
-                username=email,
-                defaults={'email': email, 'is_staff': True, 'is_active': True}
+                username=user_email,
+                defaults={'email': user_email, 'is_staff': True, 'is_active': True}
             )
-            # make sure staff flag is set
             if not django_user.is_staff:
                 django_user.is_staff = True
                 django_user.save(update_fields=['is_staff'])
 
-            # Important: set an unusable password so Django does not think there is a plaintext password
             if created:
                 django_user.set_unusable_password()
                 django_user.save(update_fields=['password'])
 
-            # login the Django user (this should not raise normally)
             login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
 
-            # set user session keys AFTER successful login
-            request.session['user_email'] = email
+            request.session['user_email'] = user_email
             request.session['user_role'] = 'Official'
 
             messages.success(request, "Welcome, Barangay Official!")
             return redirect('official_dashboard')
 
         # ---------- Resident path ----------
-        resident_resp = supabase.table('resident').select('*').eq('email', user_obj.email).execute()
-        resident_list = getattr(resident_resp, 'data', None) if resident_resp is not None else None
-        if isinstance(resident_resp, dict):
+        resident_resp = supabase.table('resident').select('*').eq('email', user_email).execute()
+        logger.debug("resident table response for %s: %r", user_email, resident_resp)
+
+        resident_list = None
+        if resident_resp is None:
+            resident_list = None
+        elif isinstance(resident_resp, dict):
             resident_list = resident_resp.get('data')
+        else:
+            resident_list = getattr(resident_resp, 'data', None)
 
         if resident_list:
             resident = resident_list[0]
             status = str(resident.get('verification_status', '')).lower()
             if status == 'verified':
                 django_user, created = User.objects.get_or_create(
-                    username=user_obj.email,
-                    defaults={'email': user_obj.email, 'is_active': True}
+                    username=user_email,
+                    defaults={'email': user_email, 'is_active': True}
                 )
                 if created:
                     django_user.set_unusable_password()
                     django_user.save(update_fields=['password'])
 
                 login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
-                request.session['user_email'] = user_obj.email
+
+                request.session['user_email'] = user_email
                 request.session['user_role'] = 'Resident'
                 messages.success(request, "Welcome back!")
                 return redirect('home')
@@ -637,10 +663,11 @@ def login_view(request):
         return render(request, 'registration/login.html')
 
     except Exception:
-        # Log full traceback for debugging; show user a generic message
+        # Genuine unexpected/server-side errors reach here
         logger.exception("Error during login for %s", email)
         messages.error(request, "Login failed due to a server error. Please try again.")
         return render(request, 'registration/login.html')
+
 
 
 
