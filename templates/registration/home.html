@@ -81,10 +81,10 @@
         <div class="dashboard-left">
             <!-- ================= MESSAGES ================= -->
             {% if messages %}
-            <div class="messages">
+            <div class="floating-messages">
                 {% for message in messages %}
-                <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
-                    <span class="message-text">{{ message }}</span>
+                <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+                    {{ message }}
                 </div>
                 {% endfor %}
             </div>
@@ -367,26 +367,7 @@ async function fetchRegisteredTrainings() {
 fetchRegisteredTrainings();
 setInterval(fetchRegisteredTrainings, 5000);
 
-// Welcome message
-document.addEventListener('DOMContentLoaded', () => {
-    const messages = document.querySelectorAll('.messages .message');
 
-    messages.forEach(msg => {
-        const closeBtn = document.createElement('span');
-        closeBtn.className = 'close-msg';
-        closeBtn.innerHTML = '&times;';
-        msg.appendChild(closeBtn);
-
-        closeBtn.addEventListener('click', () => msg.remove());
-
-        setTimeout(() => {
-            msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            msg.style.opacity = '0';
-            msg.style.transform = 'translateX(50px)';
-            msg.addEventListener('transitionend', () => msg.remove(), { once: true });
-        }, 5000);
-    });
-});
 
 // Certificate upload modal
 const uploadCertBtn = document.getElementById('uploadCertBtn');

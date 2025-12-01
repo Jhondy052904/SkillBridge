@@ -1176,6 +1176,7 @@ def dashboard_resident_details(request, resident_id):
 
 from django.core.mail import send_mail
 from django.conf import settings
+from utils.send_email import send_approval_email, send_rejection_email
 
 def approve_resident(request, resident_id):
     try:
@@ -1183,23 +1184,22 @@ def approve_resident(request, resident_id):
             "verification_status": "Verified"
         }).eq("id", resident_id).execute()
 
-        # Send email
+        # Send email using SendGrid
         try:
             resident_email = response.data[0]["email"]
-            send_mail(
-                subject="SkillBridge Account Approved",
-                message=(
-                    "Congratulations! Your SkillBridge account has been verified.\n"
-                    "You can now log in and access job and training opportunities.\n\n"
-                    "Thank you,\nSkillBridge Team"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[resident_email],
-                fail_silently=True,  # Changed to True to prevent SMTP crashes
-            )
-            messages.success(request, "Resident approved and email sent!")
-        except Exception:
-            messages.warning(request, "Approved but email failed. Please notify manually.")
+            resident_first_name = response.data[0].get("first_name", "User")
+            
+            # Use SendGrid email function
+            email_sent = send_approval_email(resident_email, resident_first_name)
+            
+            if email_sent:
+                messages.success(request, "Resident approved and approval email sent!")
+            else:
+                messages.warning(request, "Resident approved, but email sending failed. Please notify manually.")
+                
+        except Exception as e:
+            print(f"Email sending error: {e}")
+            messages.warning(request, "Resident approved, but email failed. Please notify manually.")
 
     except Exception as e:
         messages.error(request, f"Error: {e}")
@@ -1213,23 +1213,22 @@ def deny_resident(request, resident_id):
             "verification_status": "Rejected"
         }).eq("id", resident_id).execute()
 
-        # Send rejection email
+        # Send rejection email using SendGrid
         try:
             resident_email = response.data[0]["email"]
-            send_mail(
-                subject="SkillBridge Account Verification Result",
-                message=(
-                    "Your SkillBridge registration was not approved.\n"
-                    "Please contact your barangay office if you believe this is an error.\n\n"
-                    "Thank you,\nSkillBridge Team"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[resident_email],
-                fail_silently=True,  # Changed to True to prevent SMTP crashes
-            )
-            messages.success(request, "Resident denied and email sent.")
-        except Exception:
-            messages.warning(request, "Denied but email failed. Please notify manually.")
+            resident_first_name = response.data[0].get("first_name", "User")
+            
+            # Use SendGrid email function
+            email_sent = send_rejection_email(resident_email, resident_first_name)
+            
+            if email_sent:
+                messages.success(request, "Resident denied and rejection email sent.")
+            else:
+                messages.warning(request, "Resident denied, but email sending failed. Please notify manually.")
+                
+        except Exception as e:
+            print(f"Email sending error: {e}")
+            messages.warning(request, "Resident denied, but email failed. Please notify manually.")
 
     except Exception as e:
         messages.error(request, f"Error: {e}")

@@ -47,9 +47,11 @@
 
 <!-- ================== Status & Messages ================== -->
 {% if messages %}
-<div class="messages-container">
+<div class="floating-messages">
   {% for message in messages %}
-  <div class="message-item message-{{ message.tags }}">{{ message }}</div>
+  <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+    {{ message }}
+  </div>
   {% endfor %}
 </div>
 {% endif %}
@@ -182,25 +184,7 @@
           if (activeLink) moveUnderline(activeLink);
         });
 
-        //Message gone 
 
-        document.addEventListener('DOMContentLoaded', function() {
-    const messages = document.querySelectorAll('.message-item');
-
-    // Set timeout for 5 seconds (5000ms)
-    setTimeout(() => {
-        messages.forEach(msg => {
-            // Fade out effect
-            msg.style.transition = 'opacity 0.5s ease';
-            msg.style.opacity = '0';
-
-            // Remove from DOM after fade out
-            setTimeout(() => {
-                msg.remove();
-            }, 500);
-        });
-    }, 5000);
-});
 
 // Logout confirmation popup
 const logoutLink = document.getElementById('logoutLink');
@@ -230,6 +214,20 @@ logoutLink.addEventListener('click', function(e) {
     });
 });
 
+    </script>
+
+    <!-- Message auto-dismiss script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const messages = document.querySelectorAll('.editprofile-message');
+        messages.forEach(msg => {
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateX(50px)';
+                setTimeout(() => msg.remove(), 500);
+            }, 5000); // 5 seconds
+        });
+    });
     </script>
   </body>
 </html>
