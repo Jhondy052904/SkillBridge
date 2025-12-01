@@ -428,7 +428,7 @@ def signup_view(request):
             file_path = f"{email}/{proof_file.name}"
             supabase_service.storage.from_(bucket).upload(file_path, proof_file.read(), {"content-type": proof_file.content_type})
             public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
-            proof_data = public_url.encode('utf-8')
+            proof_data = public_url  # Store URL as string, not bytes
 
         try:
             auth_response = supabase.auth.sign_up({
