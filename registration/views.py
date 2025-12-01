@@ -474,18 +474,19 @@ def signup_view(request):
                         f"Thank you for signing up for SkillBridge.\n\n"
                         f"Please verify your email address using the confirmation link sent to your inbox.\n\n"
                         f"After verifying your email, your Barangay Official will review your registration.\n\n"
-                        f"You’ll receive another message once your account has been approved.\n\n"
+                        f"You'll receive another message once your account has been approved.\n\n"
                         f"— The SkillBridge Team"
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[email],
                     fail_silently=False,
                 )
+                logger.info("Verification email sent successfully to %s", email)
+                messages.success(request, "Signup successful! Please check your email to verify your account.")
             except Exception as e:
-                print(f"Email sending failed: {e}")
-                messages.warning(request, "Signup successful, but there was an issue sending the verification email. Please contact support if you don't receive it.")
+                logger.exception("Email sending failed: %s", e)
+                messages.warning(request, "Signup successful! However, we couldn't send the verification email. Please contact support.")
 
-            messages.success(request, "Signup successful! Please check your email to verify your account. Wait for official approval before logging in.")
             return redirect('login')
 
         except Exception as e:
