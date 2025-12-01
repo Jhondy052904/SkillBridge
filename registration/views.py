@@ -420,22 +420,15 @@ def signup_view(request):
         # For address, combine barangay, sublocation, house_number
         address = f"{house_number}, {sublocation}, {barangay}"
 
-    # Handle proof of residency file
-    proof_data = None
-    proof_file = request.FILES.get('proof_residency')
-    if proof_file:
-        bucket = 'proof_residency'  # Assume bucket exists for proof files
-        file_path = f"{email}/{proof_file.name}"
-        supabase_service.storage.from_(bucket).upload(file_path, proof_file.read(), {"content-type": proof_file.content_type})
-        public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
-        # Save the URL as a string (do NOT .encode())
-        # If get_public_url returns a dict, grab the url field (e.g. public_url['publicURL'])
-        if isinstance(public_url, dict):
-            # adjust key name depending on return structure; common key is 'publicURL'
-            proof_data = public_url.get('publicURL') or public_url.get('public_url') or str(public_url)
-        else:
-            proof_data = str(public_url)
-
+        # Handle proof of residency file
+        proof_data = None
+        proof_file = request.FILES.get('proof_residency')
+        if proof_file:
+            bucket = 'proof_residency'  # Assume bucket exists for proof files
+            file_path = f"{email}/{proof_file.name}"
+            supabase_service.storage.from_(bucket).upload(file_path, proof_file.read(), {"content-type": proof_file.content_type})
+            public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
+            proof_data = public_url  # Store URL as string, not bytes
 
         try:
             auth_response = supabase.auth.sign_up({
