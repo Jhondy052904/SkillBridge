@@ -428,11 +428,24 @@ def signup_view(request):
         proof_data = None
         proof_file = request.FILES.get('proof_residency')
         if proof_file:
-            bucket = 'proof_residency'  # Assume bucket exists for proof files
-            file_path = f"{email}/{proof_file.name}"
-            supabase_service.storage.from_(bucket).upload(file_path, proof_file.read(), {"content-type": proof_file.content_type})
-            public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
-            proof_data = public_url  # Store URL as string, not bytes
+            try:
+                bucket = 'proof_residency'  # Assume bucket exists for proof files
+                # Create a unique file path to avoid conflicts
+                import re
+                import time
+                clean_name = re.sub(r'[^\w\.-]', '_', proof_file.name)  # sanitize filename
+                timestamp = int(time.time())
+                file_path = f"{email}/{timestamp}_{clean_name}"
+                
+                # Upload file to Supabase storage
+                supabase_service.storage.from_(bucket).upload(file_path, proof_file.read(), {"content-type": proof_file.content_type})
+                public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
+                proof_data = public_url  # Store URL as string, not bytes
+            except Exception as storage_error:
+                # Handle storage upload errors gracefully
+                print(f"Storage upload error: {storage_error}")
+                # Continue without proof file if upload fails
+                proof_data = None
 
         try:
             auth_response = supabase.auth.sign_up({
@@ -1315,7 +1328,12 @@ def upload_certificate(request):
         try:
             # Upload file to Supabase Storage (use training_certificates bucket)
             bucket = os.getenv('SUPABASE_CERT_BUCKET', 'training_certificates')
-            file_path = f"{email}/{certificate_file.name}"
+            # Create unique file path to avoid conflicts
+            import re
+            clean_name = re.sub(r'[^\w\.-]', '_', certificate_file.name)  # sanitize filename
+            timestamp = int(time.time())
+            file_path = f"{email}/{timestamp}_{clean_name}"
+            
             supabase_service.storage.from_(bucket).upload(file_path, certificate_file.read(), {'content-type': certificate_file.content_type})
 
             # Get public URL
