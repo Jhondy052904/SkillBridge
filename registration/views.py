@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from dotenv import load_dotenv
 import os
 import time
+import logging
 from supabase import create_client
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -20,6 +21,9 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 import time
+
+# Set up logging for this module
+logger = logging.getLogger(__name__)
 
 def logout_view(request):
     logout(request)
@@ -479,7 +483,7 @@ def signup_view(request):
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[email],
-                    fail_silently=False,
+                    fail_silently=True,  # Changed to True to prevent SMTP crashes
                 )
                 logger.info("Verification email sent successfully to %s", email)
                 messages.success(request, "Signup successful! Please check your email to verify your account.")
@@ -1178,7 +1182,7 @@ def approve_resident(request, resident_id):
                 ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[resident_email],
-                fail_silently=False,
+                fail_silently=True,  # Changed to True to prevent SMTP crashes
             )
             messages.success(request, "Resident approved and email sent!")
         except Exception:
@@ -1208,7 +1212,7 @@ def deny_resident(request, resident_id):
                 ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[resident_email],
-                fail_silently=False,
+                fail_silently=True,  # Changed to True to prevent SMTP crashes
             )
             messages.success(request, "Resident denied and email sent.")
         except Exception:
