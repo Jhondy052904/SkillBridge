@@ -17,17 +17,13 @@
         <h1 class="page-title">Post Job</h1>
     </header>
 
-    <!-- Alerts -->
+    <!-- Messages -->
     {% if messages %}
-    <div class="alerts-wrapper">
+    <div class="floating-messages">
         {% for message in messages %}
-            <div class="alert
-                {% if message.tags == 'success' %} alert-success
-                {% elif message.tags == 'error' %} alert-error
-                {% elif message.tags == 'warning' %} alert-warning
-                {% else %} alert-default {% endif %}">
-                {{ message }}
-            </div>
+        <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+            {{ message }}
+        </div>
         {% endfor %}
     </div>
     {% endif %}
@@ -98,6 +94,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
             hiddenField.value = selectedSkills.join(",");
         });
+    });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const messages = document.querySelectorAll('.editprofile-message');
+    messages.forEach(msg => {
+        setTimeout(() => {
+            msg.style.opacity = '0';
+            msg.style.transform = 'translateX(50px)';
+            setTimeout(() => msg.remove(), 500);
+        }, 5000); // 5 seconds
     });
 });
 </script>

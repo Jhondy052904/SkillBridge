@@ -14,11 +14,15 @@
         <!-- Header -->
         <h2>Add Training</h2>
 
-        <!-- Alerts -->
+        <!-- Messages -->
         {% if messages %}
+        <div class="floating-messages">
             {% for message in messages %}
-                <p class="alert">{{ message }}</p>
+            <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+                {{ message }}
+            </div>
             {% endfor %}
+        </div>
         {% endif %}
 
         <!-- Form -->
@@ -41,5 +45,19 @@
         </form>
         
     </div>
+
+    <!-- Message auto-dismiss script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const messages = document.querySelectorAll('.editprofile-message');
+        messages.forEach(msg => {
+            setTimeout(() => {
+                msg.style.opacity = '0';
+                msg.style.transform = 'translateX(50px)';
+                setTimeout(() => msg.remove(), 500);
+            }, 5000); // 5 seconds
+        });
+    });
+    </script>
 </body>
 </html>
