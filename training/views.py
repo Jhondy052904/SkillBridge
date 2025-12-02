@@ -150,7 +150,24 @@ def list_trainings(request):
 
     try:
         response = supabase.table("training").select("*").order("created_at", desc=True).execute()
-        trainings = response.data
+        trainings_raw = response.data or []
+        
+        # Calculate available slots for each training
+        for training in trainings_raw:
+            try:
+                # Get count of registered attendees
+                attendees_resp = supabase.table("training_attendees").select("id", count="exact").eq("training_id", training['id']).execute()
+                registered_count = attendees_resp.count or 0
+                total_slots = training.get('slots', 0) or 0
+                available_slots = max(0, total_slots - registered_count)
+                training['available_slots'] = available_slots
+                training['registered_count'] = registered_count
+            except Exception as e:
+                print(f"Error calculating slots for training {training.get('id')}: {e}")
+                training['available_slots'] = training.get('slots', 0) or 0
+                training['registered_count'] = 0
+        
+        trainings = trainings_raw
     except Exception as e:
         trainings = []
         messages.error(request, f"Unable to load training list: {e}")

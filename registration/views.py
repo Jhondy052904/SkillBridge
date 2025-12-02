@@ -68,9 +68,60 @@ def resident_details_partial(request, id):
             print("Error converting proof_residency:", e)
             proof_url = None
 
+    # Fetch attended trainings
+    attended_trainings = []
+    try:
+        attendees_resp = supabase.table("training_attendees").select("*").eq("email", resident['email']).in_("attendance_status", ["Attended", "Completed"]).execute()
+        attendees = attendees_resp.data or []
+        for att in attendees:
+            try:
+                training_resp = supabase.table("training").select("training_name, date_scheduled").eq("id", att['training_id']).single().execute()
+                training = training_resp.data
+                if training:
+                    attended_trainings.append({
+                        'name': training['training_name'],
+                        'date': training['date_scheduled']
+                    })
+            except Exception as e:
+                print(f"Training fetch error for {att['training_id']}: {e}")
+    except Exception as e:
+        print(f"Attended trainings fetch error: {e}")
+
+    # Add trainings to resident data for template
+    resident['trainings'] = attended_trainings
+
+    # Fetch skills
+    skills = []
+    try:
+        # First try to get skills from resident_skills table (normalized data)
+        skills_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", id).execute()
+        skill_ids = [s['skill_id'] for s in skills_resp.data or []]
+        
+        if skill_ids:
+            # Get skill names from skill_list table
+            skills_resp = supabase.table("skill_list").select("SkillName").in_("SkillID", skill_ids).execute()
+            skills = [s['SkillName'] for s in skills_resp.data or []]
+        else:
+            # Fallback: parse comma-separated skills from Supabase resident profile
+            supa_skills = resident.get('skills')
+            if supa_skills:
+                skills = [s.strip() for s in supa_skills.split(',') if s.strip()]
+    except Exception as e:
+        print(f"Skills fetch error: {e}")
+        # Final fallback: try to get skills from Django model
+        try:
+            django_resident = Resident.objects.filter(email=resident['email']).first()
+            if django_resident:
+                skills_list = django_resident.get_skills()
+                skills = [skill.skill_name for skill in skills_list]
+        except Exception as django_e:
+            print(f"Django skills fetch error: {django_e}")
+            skills = []
+
     return render(request, "official/resident_details_partial.html", {
         "resident": resident,
-        "proof_url": proof_url
+        "proof_url": proof_url,
+        "skills": skills
     })
 
 
@@ -700,23 +751,42 @@ def official_dashboard(request):
     except:
         messages.error(request, "Failed to load job posts")
 
-    # Fetch TRAINING
+    # Fetch TRAINING with available slots calculation
     trainings = []
     try:
-        trainings = supabase.table("training") \
+        trainings_raw = supabase.table("training") \
             .select("*") \
             .eq("created_by", email) \
             .order("created_at", desc=True) \
             .execute().data
+        
+        # Calculate available slots for each training
+        for training in trainings_raw:
+            try:
+                # Get count of registered attendees
+                attendees_resp = supabase.table("training_attendees").select("id", count="exact").eq("training_id", training['id']).execute()
+                registered_count = attendees_resp.count or 0
+                total_slots = training.get('slots', 0) or 0
+                available_slots = max(0, total_slots - registered_count)
+                training['available_slots'] = available_slots
+                training['registered_count'] = registered_count
+            except Exception as e:
+                print(f"Error calculating slots for training {training.get('id')}: {e}")
+                training['available_slots'] = training.get('slots', 0) or 0
+                training['registered_count'] = 0
+        
+        trainings = trainings_raw
     except:
         messages.error(request, "Failed to load training data")
 
     # Fetch resident statistics
     total_residents = 0
     total_applicants = 0
+    pending_verifications = 0
     try:
         total_residents = supabase_service.table("resident").select("id", count="exact").execute().count
         total_applicants = supabase.table("JobApplication").select("ApplicationID", count="exact").execute().count
+        pending_verifications = supabase_service.table("resident").select("id", count="exact").eq("verification_status", "Pending Verification").execute().count
     except:
         pass  # ignore errors
 
@@ -725,7 +795,8 @@ def official_dashboard(request):
         "jobs": jobs,
         "trainings": trainings,
         "total_residents": total_residents,
-        "total_applicants": total_applicants
+        "total_applicants": total_applicants,
+        "pending_verifications": pending_verifications
     })
 
 
@@ -1008,11 +1079,14 @@ def edit_profile_view(request):
 
     # Create form with initial data for choices
     initial = user_profile.copy() if isinstance(user_profile, dict) else {}
+    selected_skill_ids = []
     # If we have a Django Resident, use its skills M2M for initial selection
     try:
         from .models import Skill
         if resident:
-            initial['skills'] = list(resident.get_skills().values_list('id', flat=True))
+            skill_ids = list(resident.get_skills().values_list('id', flat=True))
+            initial['skills'] = skill_ids
+            selected_skill_ids = [str(id) for id in skill_ids]
         else:
             # Try to parse comma-separated skills from Supabase profile
             supa_skills = user_profile.get('skills') if isinstance(user_profile, dict) else None
@@ -1020,8 +1094,11 @@ def edit_profile_view(request):
                 # map names to ids where possible
                 names = [s.strip() for s in supa_skills.split(',') if s.strip()]
                 skill_qs = Skill.objects.filter(skill_name__in=names)
-                initial['skills'] = list(skill_qs.values_list('id', flat=True))
-    except Exception:
+                skill_ids = list(skill_qs.values_list('id', flat=True))
+                initial['skills'] = skill_ids
+                selected_skill_ids = [str(id) for id in skill_ids]
+    except Exception as e:
+        print(f"Error loading skills for edit form: {e}")
         # If mapping fails, leave skills initial blank
         pass
 
@@ -1031,6 +1108,7 @@ def edit_profile_view(request):
         'user_profile': user_profile,
         'form': form,
         'all_skills': Skill.objects.all() if 'Skill' in globals() or 'Skill' in locals() else [],
+        'selected_skill_ids': selected_skill_ids,
     })
 
 
@@ -1059,9 +1137,62 @@ def resident_details(request, resident_id):
         except Exception as e:
             print("URL Decode Error:", e)
 
+    # Fetch current_status from Django Resident
+    django_resident = Resident.objects.filter(email=resident['email']).first()
+    current_status = django_resident.current_status if django_resident else 'Not Hired'
+
+    # Fetch attended trainings
+    attended_trainings = []
+    try:
+        attendees_resp = supabase.table("training_attendees").select("*").eq("email", resident['email']).in_("attendance_status", ["Attended", "Completed"]).execute()
+        attendees = attendees_resp.data or []
+        for att in attendees:
+            try:
+                training_resp = supabase.table("training").select("training_name, date_scheduled").eq("id", att['training_id']).single().execute()
+                training = training_resp.data
+                if training:
+                    attended_trainings.append({
+                        'name': training['training_name'],
+                        'date': training['date_scheduled']
+                    })
+            except Exception as e:
+                print(f"Training fetch error for {att['training_id']}: {e}")
+    except Exception as e:
+        print(f"Attended trainings fetch error: {e}")
+
+    # Fetch skills
+    skills = []
+    try:
+        # First try to get skills from resident_skills table (normalized data)
+        skills_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident_id).execute()
+        skill_ids = [s['skill_id'] for s in skills_resp.data or []]
+        
+        if skill_ids:
+            # Get skill names from skill_list table
+            skills_resp = supabase.table("skill_list").select("SkillName").in_("SkillID", skill_ids).execute()
+            skills = [s['SkillName'] for s in skills_resp.data or []]
+        else:
+            # Fallback: parse comma-separated skills from Supabase resident profile
+            supa_skills = resident.get('skills')
+            if supa_skills:
+                skills = [s.strip() for s in supa_skills.split(',') if s.strip()]
+    except Exception as e:
+        print(f"Skills fetch error: {e}")
+        # Final fallback: try to get skills from Django model
+        try:
+            if django_resident:
+                skills_list = django_resident.get_skills()
+                skills = [skill.skill_name for skill in skills_list]
+        except Exception as django_e:
+            print(f"Django skills fetch error: {django_e}")
+            skills = []
+
     return render(request, "official/resident_details.html", {
         "resident": resident,
-        "proof_url": proof_url
+        "proof_url": proof_url,
+        "current_status": current_status,
+        "attended_trainings": attended_trainings,
+        "skills": skills
     })
 
 

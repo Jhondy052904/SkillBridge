@@ -4,42 +4,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resident Details</title>
-
+    <title>Resident Details - {{ resident.first_name }} {{ resident.last_name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+        }
+        .section-title {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+        .info-row {
+            margin-bottom: 10px;
+        }
+        .skills-list, .training-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .skill-tag, .training-item {
+            background: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+        .training-item {
+            background: #28a745;
+        }
+        .badge-status {
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-    <h3>Resident Details</h3>
-    <hr>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Resident Details</h2>
+        <a href="{% url 'verification_panel' %}" class="btn btn-secondary">← Back to Verification Panel</a>
+    </div>
 
-    <p><strong>Name:</strong> {{ resident.first_name }} {{ resident.last_name }}</p>
-    <p><strong>Email:</strong> {{ resident.email }}</p>
-    <p><strong>Address:</strong> {{ resident.address }}</p>
-    <p><strong>Contact Number:</strong> {{ resident.contact_number }}</p>
-    <p><strong>Gender:</strong> {{ resident.gender }}</p>
-    <p><strong>Employment Status:</strong> {{ resident.employment_status }}</p>
-    <p><strong>Verification Status:</strong> {{ resident.verification_status }}</p>
+    <div class="section">
+        <h4 class="section-title">Personal Information</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-row"><strong>Name:</strong> {{ resident.first_name }} {{ resident.middle_name }} {{ resident.last_name }}</div>
+                <div class="info-row"><strong>Email:</strong> {{ resident.email }}</div>
+                <div class="info-row"><strong>Address:</strong> {{ resident.address }}</div>
+                <div class="info-row"><strong>Contact Number:</strong> {{ resident.contact_number }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="info-row"><strong>Employment Status:</strong> {{ resident.employment_status }}</div>
+                <div class="info-row"><strong>Current Status:</strong> {{ current_status }}</div>
+                <div class="info-row">
+                    <strong>Verification Status:</strong> 
+                    <span class="badge badge-status {% if resident.verification_status == 'Verified' %}bg-success{% elif resident.verification_status == 'Pending Verification' %}bg-warning{% else %}bg-danger{% endif %}">
+                        {{ resident.verification_status }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <p><strong>Proof of Residency:</strong></p>
+    <div class="section">
+        <h4 class="section-title">Skills</h4>
+        {% if skills %}
+            <div class="skills-list">
+                {% for skill in skills %}
+                    <span class="skill-tag">{{ skill }}</span>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">No skills listed.</p>
+        {% endif %}
+    </div>
 
-    {% if proof_url %}
-        <img src="{{ proof_url }}" alt="Proof of Residency" class="border rounded shadow max-w-full max-h-96 mb-3">
-        <br>
-        <a href="{{ proof_url }}" target="_blank" class="btn btn-outline-primary">Open Full Image</a>
-    {% else %}
-        <span class="text-muted">File unavailable</span>
-    {% endif %}
+    <div class="section">
+        <h4 class="section-title">Attended Trainings</h4>
+        {% if attended_trainings %}
+            <div class="training-list">
+                {% for training in attended_trainings %}
+                    <div class="training-item">
+                        <strong>{{ training.name }}</strong>
+                        <br>
+                        <small>{{ training.date|date:"M d, Y" }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-muted">No trainings attended.</p>
+        {% endif %}
+    </div>
 
-    <hr>
-    <div>
-        <a href="{% url 'approve_resident' resident.id %}" class="btn btn-success">Approve</a>
-        <a href="{% url 'deny_resident' resident.id %}" class="btn btn-danger">Deny</a>
-        <a href="{% url 'verification_panel' %}" class="btn btn-secondary">Back to List</a>
+    <div class="section">
+        <h4 class="section-title">Proof of Residency</h4>
+        {% if proof_url %}
+            <img src="{{ proof_url }}" alt="Proof of Residency" class="img-fluid rounded border" style="max-width: 100%; max-height: 400px;">
+            <br><br>
+            <a href="{{ proof_url }}" target="_blank" class="btn btn-outline-primary">Open Full Image</a>
+        {% else %}
+            <span class="text-muted">File unavailable</span>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <h4 class="section-title">Actions</h4>
+        <div class="d-flex gap-2">
+            {% if resident.verification_status == "Pending Verification" %}
+                <a href="{% url 'approve_resident' resident.id %}" class="btn btn-success">Approve Resident</a>
+                <a href="{% url 'deny_resident' resident.id %}" class="btn btn-danger">Deny Resident</a>
+            {% else %}
+                <span class="text-muted">Resident is already {{ resident.verification_status|lower }}</span>
+            {% endif %}
+        </div>
     </div>
 </div>
 
-
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

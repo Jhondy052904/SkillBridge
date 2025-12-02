@@ -66,6 +66,7 @@
 
         {% if user_profile %}
         <div class="profile-details">
+            <p><strong>Full Name:</strong> {{ user_profile.first_name }} {% if user_profile.middle_name %}{{ user_profile.middle_name }} {% endif %}{{ user_profile.last_name }}</p>
             <p><strong>Email:</strong> {{ user_profile.email }}</p>
             <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
             <p><strong>Address:</strong> {{ user_profile.address }}</p>
@@ -139,14 +140,7 @@
                 </div>
             </section>
 
-            <!-- ================= QUICK ACTIONS ================= -->
-            <section class="quick-actions">
-                <h2 class="section-title">Quick Actions</h2>
-                <div class="actions-grid">
-                    <a href="{% url 'list_jobs' %}" class="action-btn jobs-btn">Browse Jobs</a>
-                    <a href="{% url 'list_trainings' %}" class="action-btn trainings-btn">Find Trainings</a>
-                </div>
-            </section>
+
         </div> <!-- END LEFT -->
 
         <!-- RIGHT COLUMN (calendar) -->
