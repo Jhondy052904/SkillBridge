@@ -1,108 +1,176 @@
-        body {
-            background-color: #EBF4F6;
-            font-family: Arial, sans-serif;
-        }
+/* =========================================================
+   GLOBAL PAGE LAYOUT
+========================================================= */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #EBF4F6 0%, #37B7C3 50%, #088395 100%);
+}
 
-        .back-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: transparent;
-            border: none;
-            color: #021526;
-            font-weight: 600;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-decoration: none;
-            cursor: pointer;
-            padding: 6px 10px;
-            z-index: 1100;
-            transition: transform 0.2s ease, color 0.2s ease;
-        }
-        .back-btn:hover {
-            color: #071952;
-            transform: translateY(-2px);
-        }
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
 
-        .container {
-            max-width: 700px;
-            margin: 30px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
+/* =========================================================
+   Back Button
+========================================================= */
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: transparent;
+    border: none;
+    color: #021526;
+    font-weight: 600;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    padding: 6px 10px;
+    z-index: 1100;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.back-btn:hover {
+    color: #071952;
+    transform: translateY(-2px);
+}
 
-        .section {
-            margin-bottom: 25px;
-            padding: 18px;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-        }
+/* =========================================================
+   Main Container
+========================================================= */
+.container {
+    max-width: 700px;
+    width: 100%;
+    margin: 30px auto;
+    background: #EBF4F6; /* Ivory background */
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(2, 21, 38, 0.12);
+    border: 1px solid rgba(2, 21, 38, 0.08);
+}
 
-        .section-title {
-            color: #071952;
-            border-bottom: 2px solid #088395;
-            padding-bottom: 6px;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
+/* =========================================================
+   Sections
+========================================================= */
+.section {
+    margin-bottom: 25px;
+    padding: 20px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 3px 8px rgba(2, 21, 38, 0.05);
+}
 
-        .info-row {
-            margin-bottom: 8px;
-        }
+.section-title {
+    color: #021526;
+    border-bottom: 2px solid #088395;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
 
-        .skills-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 8px;
-        }
+/* =========================================================
+   Skills / Tags
+========================================================= */
+.skills-list, .job-skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+}
 
-        .skill-tag {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 13px;
-            color: white;
-            background-color: #088395;
-        }
+.skill-tag {
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    color: #EBF4F6;
+    background: #088395;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.skill-tag:hover {
+    background: #37B7C3;
+    transform: translateY(-2px);
+}
+.skill-tag.no-skills {
+    background: rgba(156, 163, 175, 0.2);
+    color: #6B7280;
+    font-style: italic;
+}
 
-        .status-badge {
-            font-size: 13px;
-            padding: 3px 7px;
-        }
+/* =========================================================
+   Status Badges
+========================================================= */
+.status-badge {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 14px;
+    text-transform: uppercase;
+}
 
-        .btn-apply {
-            background-color: #088395;
-            color: white;
-            border: 1px solid #37B7C3;
-            transition: background-color 0.3s, transform 0.2s;
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .btn-apply:hover {
-            background-color: #37B7C3;
-            transform: translateY(-2px);
-            color: white;
-        }
+.status-open {
+    background-color: #FFF3CD; /* Light yellow */
+    color: #F59E0B; /* Golden yellow */
+}
 
-        .status-open {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-        }
+.status-closed {
+    background-color: #F8D7DA;
+    color: #DC2626;
+}
 
-        .status-closed {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-        }
+/* =========================================================
+   Apply Button
+========================================================= */
+.btn-apply {
+    background: linear-gradient(135deg, #088395, #37B7C3);
+    color: #EBF4F6;
+    font-weight: 600;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+.btn-apply:hover {
+    background: linear-gradient(135deg, #37B7C3, #088395);
+    transform: translateY(-2px);
+    color: #EBF4F6;
+}
+
+/* =========================================================
+   Responsive Adjustments
+========================================================= */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .section {
+        padding: 16px;
+    }
+
+    .back-btn {
+        font-size: 1.3rem;
+        padding: 4px 8px;
+    }
+
+    .skill-tag {
+        font-size: 0.8rem;
+        padding: 4px 10px;
+    }
+
+    .btn-apply {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+}

@@ -12,18 +12,11 @@
 
 <body>
 
+    <!-- Back Button -->
+    <a href="{% url 'list_trainings' %}" class="back-btn">↩ Back</a>
+
 <!-- ====================== MAIN CONTENT ====================== -->
 <main>
-
-    <!-- Back Button -->
-    <div class="back-button-container">
-        {% if user_role == "Official" %}
-            <a href="{% url 'official_dashboard' %}" class="back-button">↩ Back to Dashboard</a>
-        {% else %}
-            <a href="{% url 'list_trainings' %}" class="back-button">↩ Back to Trainings</a>
-        {% endif %}
-    </div>
-
     <!-- Training Header -->
     <div class="training-header">
         <div class="header-content">

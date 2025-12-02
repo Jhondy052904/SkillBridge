@@ -16,7 +16,7 @@ body {
     font-weight: 400;
     color: #2D3748;
     overflow-x: hidden;
-    background: linear-gradient(135deg, #E8F4F8 0%, #F0F8FF 50%, #E3F2FD 100%);
+    background: linear-gradient(135deg, #B5D4E2 0%, #C7E0F0 50%, #A8C8DA 100%);
     line-height: 1.6;
 }
 
@@ -147,7 +147,7 @@ main {
 
 .section-subtitle {
     font-size: 1rem;
-    color: #7389A7;
+    color: #021526;
     margin-top: 6px;
 }
 
