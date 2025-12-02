@@ -1,28 +1,35 @@
 /* =====================
-   General Page Styling
+   Body / General Layout
 ===================== */
 body {
-    position: relative;
-    height: 100vh;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
+    justify-content: center; /* vertically center content */
+    align-items: center;     /* horizontally center content */
+    min-height: 100vh;       /* full viewport height */
+    margin: 0;
     font-family: 'Poppins', Arial, sans-serif;
-    font-size: 0.9rem;
-    color: #1B3C53;
-    overflow-x: hidden;
-
     background: 
         linear-gradient(to bottom, transparent 82%, #EBF4F6 20%),
-        url("/static/images/b1.jpg") no-repeat center 90% / cover;
+        url("/static/images/b1.jpg") no-repeat center 20% / cover;
 }
 
+/* Prevent horizontal overflow */
+html, body {
+    overflow-x: hidden;
+}
+
+/* =====================
+   Footer Styling
+===================== */
+.footer {
+    flex-shrink: 0;  /* prevents shrinking */
+    width: 100%;
+    color: #000000ff;
+    padding: 30px 20px;
+    text-align: center;
+    font-size: 1rem;
+}
 
 /* =====================
    Navigation Bar
@@ -108,49 +115,75 @@ body {
     border-radius: 2px;
     transition: all 0.4s ease; /* gentle slide */
 }
+
 /* =====================
-   Main Section
+   Content Section
 ===================== */
 .content {
-  position: relative;
-  z-index: 2;
-  max-width: 1400px;
-  width: 90%;
-  padding: 0 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 70vh;
-  margin-top: 50px; /* same spacing from navbar */
-  text-align: center;
-  color: white; /* text color */
+    flex: 1 0 auto; /* allows footer to stay at bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertically center content inside .content */
+    align-items: center;     /* horizontally center content inside .content */
+    text-align: center;
+    color: white;
+    width: 90%;
+    max-width: 1400px;
+    margin-top: 50px; /* spacing from navbar */
 }
-
 .upper-section {
   flex: 0.4;
 }
 
+/* Title */
 .title {
+  margin-top: 160px;
   font-size: 5rem;
   font-weight: 700;
-  margin-bottom: 0.2rem;
   letter-spacing: 1.5px;
   text-shadow: 9px 8px rgba(0, 0, 0, 0.6);
 }
 
+/* Subtitle */
 .subtitle {
   font-size: 3rem;
   font-weight: 500;
   opacity: 0.95;
-  margin-top: 20px;
+  margin-top: -30px; /* closer to title */
   color: #EBF4F6; /* ivory text */
   text-shadow: 0px 2px 10px rgba(0, 0, 0, 0.9);
 }
 
-
+/* Lower Section (button) */
 .lower-section {
   flex: 0.8;
+  margin-top: -110px; /* button closer to subtitle */
 }
+
+/* =====================
+   Button
+===================== */
+.btn-get-started {
+  display: inline-block;
+  padding: 0.9rem 2.2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1B3C53, #456882);
+  border-radius: 50px;
+  border: 1px solid #ffffff;
+  text-decoration: none;
+  box-shadow: 0 8px 15px rgba(8, 131, 149, 0.4);
+  transition: 
+    transform 0.3s ease, 
+    color 0.3s ease, 
+    box-shadow 0.3s ease;
+}
+
+.btn-get-started:hover {
+  transform: scale(1.1);
+}
+
 
 /* =====================
    Button
@@ -216,30 +249,40 @@ body {
   font-weight: 600;
 }
 
+/*==========
+ FOR IMAGES
+===========*/
 .square-section {
   width: 20%;
   height: 250px;
-  background: url("/static/images/workspace.jpg") no-repeat center 42%; /* adjust vertical position */
-  background-size: cover; /* zoom in 20% horizontally while keeping aspect ratio */
   border-radius: 30px;
   position: absolute;
   bottom: 70px;
   left: 70%;
   transform: translateX(-50%);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
   z-index: 2;
 }
 
-.footer {
-    position: absolute; /* stays at the bottom of the page */
-    bottom: 15px;
-    width: 100%;
-    text-align: center;
-    font-size: 1rem;
-    color: #000000ff;
-    opacity: 0.6;
-    z-index: 2;
+.slider-track {
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  animation: slide 15s linear infinite;
 }
+
+.slider-track img.slide {
+  height: 100%;        /* Keep height consistent */
+  width: auto;          /* Adjust width automatically */
+  border-radius: 30px;
+  object-fit: contain;  /* Prevent zoom/cropping */
+}
+
+/* Sliding animation */
+@keyframes slide {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-120%); } 
 
 /* Message Container */
 .message-container {
@@ -298,5 +341,3 @@ body {
 .alert.debug {
     background-color: #6c757d;
 }
-
-

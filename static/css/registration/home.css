@@ -236,22 +236,29 @@ body::before {
     backdrop-filter: blur(20px);
     border-radius: 24px;
     padding: 36px;
-    box-shadow: 0 8px 32px rgba(66, 153, 225, 0.12),
-                0 2px 8px rgba(66, 153, 225, 0.08);
     display: flex;
     flex-direction: column;
     gap: 28px;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.8);
     margin-top: 20px;
+    
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 
+        0 8px 32px rgba(66, 153, 225, 0.12),
+        0 2px 8px rgba(66, 153, 225, 0.08);
+    
+    transition: all 0.3s ease;
 }
 
 .profile-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 16px 48px rgba(66, 153, 225, 0.18),
-                0 4px 12px rgba(66, 153, 225, 0.12);
+    box-shadow: 
+        0 16px 48px rgba(66, 153, 225, 0.18),
+        0 4px 12px rgba(66, 153, 225, 0.12);
 }
 
+/* =====================
+   Header
+===================== */
 .profile-header {
     display: flex;
     align-items: center;
@@ -263,8 +270,9 @@ body::before {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    box-shadow: 0 8px 24px rgba(66, 153, 225, 0.2);
+
     border: 4px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 24px rgba(66, 153, 225, 0.2);
 }
 
 .profile-info h3 {
@@ -279,23 +287,63 @@ body::before {
     color: #718096;
 }
 
+/* =====================
+   Modern Details Grid
+===================== */
 .profile-details {
+    margin-top: 50px;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px 36px;
-    font-size: 1.3rem;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px 36px;
+
+    padding: 24px 28px;
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 
+        0 4px 18px rgba(0, 0, 0, 0.05),
+        0 1px 4px rgba(0, 0, 0, 0.04);
+
+    font-size: 1.1rem;
     color: #2D3748;
 }
 
+/* Each line inside the grid */
 .profile-details p {
     margin: 0;
-    line-height: 1.8;
+    padding: 14px 0;
+    line-height: 1.7;
+
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.profile-details strong {
-    color: #4A5568;
-    font-weight: 600;
+/* Remove border on last items in each column */
+.profile-details p:last-child {
+    border-bottom: none;
 }
+
+/* Label text */
+.profile-details strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #000000ff;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* Value text */
+.profile-details span {
+    font-size: 1.15rem;
+    color: #2D3748;
+    font-weight: 500;
+}
+
 
 /* =====================
   Skills
@@ -373,7 +421,8 @@ body::before {
     font-size: 1.05rem;
     text-decoration: none;
     align-self: flex-start;
-    margin-top: 8px;
+    margin-top: 25px;
+    margin-bottom: 25px;
     transition: all 0.3s ease;
     background: linear-gradient(135deg, #4299E1, #63B3ED);
     box-shadow: 0 4px 16px rgba(66, 153, 225, 0.3);

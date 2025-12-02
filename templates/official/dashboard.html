@@ -46,15 +46,17 @@
       </header>
 
 <!-- ================== Status & Messages ================== -->
-{% if messages %}
-<div class="floating-messages">
-  {% for message in messages %}
-  <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
-    {{ message }}
-  </div>
-  {% endfor %}
-</div>
-{% endif %}
+
+        <!-- Messages -->
+        {% if messages %}
+            <div class="floating-messages">
+                <ul>
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
 
       <!-- ================= DASHBOARD CARDS ================= -->
       <div class="stats-grid">
@@ -184,8 +186,6 @@
           if (activeLink) moveUnderline(activeLink);
         });
 
-
-
 // Logout confirmation popup
 const logoutLink = document.getElementById('logoutLink');
 
@@ -214,12 +214,9 @@ logoutLink.addEventListener('click', function(e) {
     });
 });
 
-    </script>
-
-    <!-- Message auto-dismiss script -->
-    <script>
+//Message auto-dismiss script 
     document.addEventListener('DOMContentLoaded', () => {
-        const messages = document.querySelectorAll('.editprofile-message');
+        const messages = document.querySelectorAll('.floating-messages');
         messages.forEach(msg => {
             setTimeout(() => {
                 msg.style.opacity = '0';
@@ -228,6 +225,6 @@ logoutLink.addEventListener('click', function(e) {
             }, 5000); // 5 seconds
         });
     });
-    </script>
-  </body>
+</script>
+</body>
 </html>

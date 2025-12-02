@@ -247,6 +247,23 @@ document.querySelector('.nav-right').addEventListener('mouseleave', () => {
         });
     });
   }
+
+  // Grab the multiselect container and the options list
+const multiselect = document.querySelector('.tag-multiselect');
+const optionsList = document.querySelector('.options-list');
+
+// Toggle dropdown on click
+multiselect.addEventListener('click', (e) => {
+    optionsList.classList.toggle('active');
+});
+
+// Close the dropdown if clicking outside
+document.addEventListener('click', (e) => {
+    if (!multiselect.contains(e.target)) {
+        optionsList.classList.remove('active');
+    }
+});
+
 </script>
 
 </body>

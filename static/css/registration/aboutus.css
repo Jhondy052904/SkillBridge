@@ -1,13 +1,23 @@
+/* =====================
+   General Page Styling
+===================== */
 body {
-  font-family: 'Poppins', Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-}
+    position: relative;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
 
-html {
-    overflow-y: scroll; /* prevent shifting due to scrollbar */
+    font-family: 'Poppins', Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #1B3C53;
+    overflow-x: hidden;
+
+    background: 
+        linear-gradient(to bottom, transparent 82%, #EBF4F6 20%),
+        url("/static/images/b1.jpg") no-repeat center 20% / cover;
+
+    /* Remove centering flex that breaks layout */
+    display: block;
 }
 
 /* =====================
@@ -110,7 +120,8 @@ html {
 /* CONTENT-1 */
 .Content-1 {
   width: 100%;
-  background: url("/static/images/table.jpg") no-repeat center 50% / cover;
+  background: url("/static/images/b1.jpg") no-repeat center 80% / cover;
+  background-color: ;
   padding: 140px;
   margin: 0;
   border-radius: 0;
@@ -120,6 +131,16 @@ html {
     margin-top: 60px;
     color: #EBF4F6;
 }
+
+.text-block1 h1 {
+  font-size: 2.1rem;
+  text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.7);
+}
+
+.text-block1 h3 {
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+}
+
 /* SKILLBRIDGE ASK */
 .SkillBridgeAsk {
   width: 45%;
@@ -158,8 +179,8 @@ html {
 
 .CirclePic {
   position: absolute;
-  top: 63%;
-  right: 150px;
+  top: 42%;
+  right: 120px;
   transform: translateY(-50%) scaleX(-1);
   width: 590px;
   height: 590px;
@@ -167,8 +188,10 @@ html {
   background: url("/static/images/work.jpg") no-repeat center 120% / cover;
   background-size: cover;
   background-position: center;
-}
 
+  /* Light shadow */
+  box-shadow: 0 8px 20px rgba(36, 36, 36, 1);
+}
 
 
 /* CONTENT-3 (Footer) */

@@ -148,8 +148,8 @@ body::before {
 }
 
 .residents-table thead {
-    background-color: #E9D8FD;
-    color: #4A5568;
+    background-color: #37B7C3;
+    color: #F3E8FF;
     font-weight: 600;
 }
 
@@ -165,7 +165,7 @@ body::before {
 }
 
 .resident-row:hover {
-    background-color: #F3E8FF;
+    background-color: #37b7c35d;
 }
 
 /* Actions */
@@ -183,14 +183,41 @@ body::before {
     color: white;
 }
 
-.btn-view { background-color: #4299E1; }
-.btn-view:hover { background-color: #3182CE; }
+/* View Button - Dark Blue */
+.btn-view {
+    background-color: #021526; /* Dark Blue */
+    color: white;
+    border: 1px solid #071952; /* Navy Blue border for subtle depth */
+    transition: background-color 0.3s, transform 0.2s;
+}
+.btn-view:hover {
+    background-color: #1c327a; /* Navy Blue */
+    transform: translateY(-2px);
+}
 
-.btn-approve { background-color: #38A169; }
-.btn-approve:hover { background-color: #2F855A; }
+/* Approve Button - Mint Green */
+.btn-approve {
+    background-color: #088395 ; /* Mint Green */
+    color: white;
+    border: 1px solid #37B7C3; /* Light Mint Green border */
+    transition: background-color 0.3s, transform 0.2s;
+}
+.btn-approve:hover {
+    background-color: #37B7C3; /* Light Mint Green */
+    transform: translateY(-2px);
+}
 
-.btn-deny { background-color: #E53E3E; }
-.btn-deny:hover { background-color: #C53030; }
+/* Deny Button - Maroon */
+.btn-deny {
+    background-color: #800000; /* red*/
+    color: white;
+    border: 1px solid ;
+    transition: background-color 0.3s, transform 0.2s;
+}
+.btn-deny:hover {
+    background-color: #E53E3E; /* Darker Maroon */
+    transform: translateY(-2px);
+}
 
 /* No residents message */
 .no-residents-text {
@@ -200,3 +227,58 @@ body::before {
     text-align: center;
     margin-top: 20px;
 }
+
+/* Floating messages container */
+.floating-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 9999; /* above everything */
+}
+
+/* Base style for messages */
+.floating-messages li {
+    list-style: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    min-width: 250px;
+    max-width: 400px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* Success message */
+.floating-messages li.success {
+    background-color: #37B7C3; /* Mint Green */
+    color: #EBF4F6; /* Ivory */
+    border-left: 4px solid #088395;
+}
+
+/* Error message */
+.floating-messages li.error {
+    background-color: #F8D7DA;
+    color: #842029;
+    border: 1px solid #F5C2C7;
+}
+
+/* Warning message */
+.floating-messages li.warning {
+    background-color: #FFF3CD;
+    color: #856404;
+    border: 1px solid #FFEEBA;
+}
+
+/* Info message */
+.floating-messages li.info {
+    background-color: #CCE5FF;
+    color: #084298;
+    border: 1px solid #B6D4FE;
+}
+
+

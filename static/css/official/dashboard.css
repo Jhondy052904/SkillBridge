@@ -141,22 +141,59 @@ main {
 /* =====================
        MESSAGES
 ===================== */
-.messages-container {
+
+/* Floating messages container */
+.floating-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    z-index: 9999; /* above everything */
 }
 
-.message-item {
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-weight: 500;
-    color: #EBF4F6; /* Light text for contrast */
+/* Base style for messages */
+.floating-messages li {
+    list-style: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    min-width: 250px;
+    max-width: 400px;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    opacity: 1;
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-.message-success { background-color: #088395; }  /* Mint Green */
-.message-error { background-color: #E53E3E; }    /* Keep error red */
-.message-info { background-color: #071952; }     /* Navy Blue */
+/* Success message */
+.floating-messages li.success {
+    background-color: #37B7C3; /* Mint Green */
+    color: #EBF4F6; /* Ivory */
+    border-left: 4px solid #088395;
+}
+
+/* Error message */
+.floating-messages li.error {
+    background-color: #F8D7DA;
+    color: #842029;
+    border: 1px solid #F5C2C7;
+}
+
+/* Warning message */
+.floating-messages li.warning {
+    background-color: #FFF3CD;
+    color: #856404;
+    border: 1px solid #FFEEBA;
+}
+
+/* Info message */
+.floating-messages li.info {
+    background-color: #CCE5FF;
+    color: #084298;
+    border: 1px solid #B6D4FE;
+}
 
 /* =====================
        DASHBOARD CARDS
@@ -290,8 +327,8 @@ main {
     color: #021526; /* Deep text */
 }
 .training-slots {
-    font-size: 2.5rem; /* slightly bigger */
-    font-weight: 800; /* bolder */
+    font-size: 1.5rem;
+    font-weight: 600; /* bolder */
     color: #088395; /* Mint Green for pop */
     text-shadow: 1px 1px 3px rgba(0,0,0,0.2); /* subtle shadow */
     margin: 0; /* ensure minimal gap */

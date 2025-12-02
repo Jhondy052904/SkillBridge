@@ -50,12 +50,20 @@
 <div class="rectangle-section">
     <div class="rectangle-text">
         Welcome to Skill Bridge! Connect, Learn, and Grow. <br><br>
-        Welcome to Skill Bridge! Connect, Learn, and Grow.
+        Bridge Your Skills and Expand Your Path to Success.
     </div>
 </div>
 
 <!-- Decorative Square -->
-<div class="square-section"></div>
+<div class="square-section">
+  <div class="slider-track">
+    <img src="{% static 'images/img1.jpg' %}" class="slide active">
+    <img src="{% static 'images/img2.jpg' %}" class="slide">
+    <img src="{% static 'images/img3.jpg' %}" class="slide">
+    <img src="{% static 'images/img4.jpg' %}" class="slide">
+    <img src="{% static 'images/img5.jpg' %}" class="slide">
+  </div>
+</div>
 
 <!-- Footer -->
 <footer class="footer">
@@ -120,6 +128,24 @@ logoutLink.addEventListener('click', function(e) {
     });
 });
 
+// Image slider inside square-section 
+document.addEventListener("DOMContentLoaded", function() {
+  const slides = document.querySelectorAll('.slider-track img.slide');
+  const track = document.querySelector('.slider-track');
+  const container = document.querySelector('.square-section');
+  let current = 0;
+
+  function showNextSlide() {
+    // slide to the next image
+    const offset = container.clientWidth * current;
+    track.style.transform = `translateX(-${offset}px)`;
+
+    current = (current + 1) % slides.length;
+  }
+
+  // every 3 seconds
+  setInterval(showNextSlide, 3000);
+});
 
 
 </script>

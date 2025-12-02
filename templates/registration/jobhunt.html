@@ -5,54 +5,175 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Hunt</title>
-    <!--NAVBAR-->
-    <link rel="stylesheet" href="{% static 'css/registration/index.css' %}?v=3">
-
+    <link rel="stylesheet" href="{% static 'css/registration/jobhunt.css' %}?v=10">
 </head>
 <body>
 
-<!-- Navbar -->
+<!-- NAVBAR -->
 <nav class="navbar">
-  <div class="nav-left">
-    <a href="#" class="logo-link">
-      <img src="/static/images/Skillogo.png" alt="Skill Bridge Logo" class="logo">
-    </a>
-  </div>
-  <div class="nav-right">
-    <a href="{% url 'index' %}">Home</a>
-    <a href="{% url 'aboutus' %}">About Us</a>
-    <a href="{% url 'jobhunt' %}" class="active">Job Hunt</a>
-    <div class="underline"></div>
-    <a>|</a>
-    <a href="{% url 'login' %}" class="btn">Sign In</a>
-    <a href="{% url 'signup' %}" class="btn join">Join Us</a>
-  </div>
+    <div class="nav-left">
+        <a href="{% url 'index' %}" class="logo-link">
+            <img src="{% static 'images/Skillogo.png' %}" class="logo" alt="Logo">
+        </a>
+    </div>
+    <div class="nav-right">
+        <a href="{% url 'index' %}">Home</a>
+        <a href="{% url 'aboutus' %}">About Us</a>
+        <a href="{% url 'jobhunt' %}" class="active">Job Hunt</a>
+        <div class="underline"></div>
+        <span>|</span>
+        <a href="{% url 'login' %}" class="btn">Sign In</a>
+        <a href="{% url 'signup' %}" class="btn join">Join Us</a>
+    </div>
 </nav>
 
+<main>
+    <!-- Header -->
+    <section class="header-section">
+        <h1 class="section-subtitle">Explore open positions and apply now.</h1>
+    </section>
+
+    <!-- Search & Filters -->
+    <section class="search-filter-section">
+        <div class="search-container">
+            <input id="searchInput" type="text" placeholder="Search jobs by title, company...">
+            <svg width="20" height="20" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+            </svg>
+        </div>
+        <select id="filterSelect" class="filter-select">
+            <option value="other" selected>Other</option>
+            <option>Haircut</option><option>Plumbing</option>
+            <option>Electrical</option><option>Carpentry</option>
+            <option>Cleaning</option><option>Cooking</option>
+            <option>Driving</option><option>Babysitting</option>
+            <option>Elderly Care</option><option>Tutoring</option>
+            <option>Pedicure</option>
+        </select>
+        <button class="btn-search" onclick="filterJobs()">Search</button>
+    </section>
+
+    <!-- Recommended Jobs -->
+    {% if recommended_jobs %}
+    <section class="jobs-section">
+        <h2 class="section-title">Recommended Jobs</h2>
+        <div id="recommendedJobList" class="job-cards-container">
+            {% for job in recommended_jobs %}
+                {% if job.Status == "Open" %}
+                <div class="job-card modern-card">
+                    <div class="card-header">
+                        <h3 class="job-title">{{ job.Title }}</h3>
+                        <span class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">
+                            {{ job.Status }}
+                        </span>
+                    </div>
+                    <p class="job-description">{{ job.Description|truncatechars:100 }}</p>
+                    <div class="job-skills">
+                        {% if job.skills %}
+                            {% for skill in job.skills %}
+                                <span class="skill-tag">{{ skill }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="skill-tag no-skills">No specific skills required</span>
+                        {% endif %}
+                    </div>
+                    <div class="job-actions">
+                        {% if user.is_authenticated and request.session.user_role == 'Resident' %}
+                            <a href="{% url 'apply_job' job.JobID %}" class="btn-apply">Apply</a>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={% url 'jobhunt' %}" class="btn-apply">Login to Apply</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- All Available Jobs -->
+    <section class="jobs-section">
+        <h2 class="section-title">{% if recommended_jobs %}All {% endif %}Available Jobs</h2>
+        <div id="jobList" class="job-cards-container">
+            {% if jobs %}
+                {% for job in jobs %}
+                    {% if job.Status == "Open" %}
+                    <div class="job-card modern-card">
+                        <div class="card-header">
+                            <h3 class="job-title">{{ job.Title }}</h3>
+                            <span class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">
+                                {{ job.Status }}
+                            </span>
+                        </div>
+                        <p class="job-description">{{ job.Description|truncatechars:150 }}</p>
+                        <div class="job-skills">
+                            {% if job.skills %}
+                                {% for skill in job.skills %}
+                                    <span class="skill-tag">{{ skill }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="skill-tag no-skills">No specific skills required</span>
+                            {% endif %}
+                        </div>
+                        <div class="job-actions">
+                            {% if user.is_authenticated and request.session.user_role == 'Resident' %}
+                                <a href="{% url 'apply_job' job.JobID %}" class="btn-apply">Apply</a>
+                            {% else %}
+                                <a href="{% url 'login' %}?next={% url 'jobhunt' %}" class="btn-apply">Login to Apply</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No job postings available at the moment.</p>
+                    <p class="empty-state-secondary">Check back soon for new opportunities!</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+</main>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const menuLinks = document.querySelectorAll('.nav-right a');
-  const underline = document.querySelector('.nav-right .underline');
+    // Navbar underline animation
+    const menuLinks = document.querySelectorAll('.nav-right a');
+    const underline = document.querySelector('.nav-right .underline');
 
-  function moveUnderline(el) {
-      const rect = el.getBoundingClientRect();
-      const parentRect = el.closest('.nav-right').getBoundingClientRect();
-      underline.style.width = rect.width + 'px';
-      underline.style.left = (rect.left - parentRect.left) + 'px';
-  }
+    function moveUnderline(el) {
+        const rect = el.getBoundingClientRect();
+        const parentRect = el.closest('.nav-right').getBoundingClientRect();
+        underline.style.width = rect.width + 'px';
+        underline.style.left = (rect.left - parentRect.left) + 'px';
+    }
 
-  const activeLink = document.querySelector('.nav-right a.active');
-  if (activeLink) moveUnderline(activeLink);
+    const activeLink = document.querySelector('.nav-right a.active');
+    if (activeLink) moveUnderline(activeLink);
 
-  menuLinks.forEach(link => {
-      link.addEventListener('mouseenter', e => moveUnderline(e.target));
-  });
+    menuLinks.forEach(link => {
+        link.addEventListener('mouseenter', e => moveUnderline(e.target));
+    });
 
-  document.querySelector('.nav-right').addEventListener('mouseleave', () => {
-      if (activeLink) moveUnderline(activeLink);
-  });
-});
+    document.querySelector('.nav-right').addEventListener('mouseleave', () => {
+        if (activeLink) moveUnderline(activeLink);
+    });
 
+    // Job filter
+    function filterJobs() {
+        const search = document.getElementById("searchInput").value.toLowerCase();
+        const filter = document.getElementById("filterSelect").value.toLowerCase();
+        const cards = document.querySelectorAll(".job-card");
+
+        cards.forEach(card => {
+            const title = card.querySelector(".job-title").textContent.toLowerCase();
+            const skills = card.querySelector(".job-skills").innerText.toLowerCase();
+            const matchSearch = title.includes(search);
+            const matchFilter = filter === "other" || skills.includes(filter);
+            card.style.display = matchSearch && matchFilter ? "block" : "none";
+        });
+    }
 </script>
+
 </body>
 </html>

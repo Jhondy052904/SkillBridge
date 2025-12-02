@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resident Verification Panel | SkillBridge</title>
 
-    <link rel="stylesheet" href="{% static 'css/official/verification.css' %}?v=3">
+    <link rel="stylesheet" href="{% static 'css/official/verification.css' %}">
     <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 
 </head>
@@ -37,27 +37,21 @@
 </nav>
 
     <!-- ====================== MAIN ====================== -->
-{% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li class="{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
-    <main class="main-container">
-
-        <h1 class="page-title">Resident Verification Panel</h1>
 
         <!-- Messages -->
         {% if messages %}
-        <div class="floating-messages">
-            {% for message in messages %}
-            <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
-                {{ message }}
+            <div class="floating-messages">
+                <ul>
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
             </div>
-            {% endfor %}
-        </div>
         {% endif %}
+
+        <main class="main-container">
+
+        <h1 class="page-title">Resident Verification Panel</h1>
 
         {% if residents %}
         <div class="table-container">
@@ -152,20 +146,21 @@ logoutLink.addEventListener('click', function(e) {
         setTimeout(() => popup.remove(), 500);
     });
 });
-</script>
 
-<!-- Message auto-dismiss script -->
-<script>
+
+// Message auto-dismiss script
+
 document.addEventListener('DOMContentLoaded', () => {
-    const messages = document.querySelectorAll('.editprofile-message');
+    const messages = document.querySelectorAll('.floating-messages li');
     messages.forEach(msg => {
         setTimeout(() => {
             msg.style.opacity = '0';
             msg.style.transform = 'translateX(50px)';
             setTimeout(() => msg.remove(), 500);
-        }, 5000); // 5 seconds
+        }, 100000); // disappear after 5 seconds
     });
 });
+
 </script>
 
 </body>

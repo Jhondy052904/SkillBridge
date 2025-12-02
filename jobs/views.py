@@ -192,6 +192,60 @@ def list_jobs(request):
         "recommended_jobs": recommended_jobs
     })
 
+# ==========================================================
+# JOB HUNT
+# ==========================================================# 
+from django.shortcuts import render
+from skillbridge.supabase_client import supabase
+from .services.supabase_crud import get_jobs
+
+def jobhunt(request):
+    try:
+        # Fetch all jobs
+        jobs = get_jobs()  # Returns list of dicts, e.g., [{"JobID": 1, "Title": ..., "Status": "Open"}, ...]
+
+        # Fetch job-skill relations
+        skills_resp = supabase.table("job_skill_list").select(
+            "job_id, skill_list!inner(SkillID, SkillName)"
+        ).execute()
+
+        job_skills_by_name = {}
+        job_skills_by_id = {}
+        for item in skills_resp.data:
+            job_id = item["job_id"]
+            skill_name = item["skill_list"]["SkillName"]
+            skill_id = item["skill_list"]["SkillID"]
+
+            job_skills_by_name.setdefault(job_id, []).append(skill_name)
+            job_skills_by_id.setdefault(job_id, []).append(skill_id)
+
+        # Attach skills to jobs
+        for job in jobs:
+            job["skills"] = job_skills_by_name.get(job["JobID"], [])
+
+        # Recommended jobs for logged-in residents only
+        recommended_jobs = []
+        if request.user.is_authenticated and request.session.get("user_role") == "Resident":
+            resident_email = request.user.email
+            supabase_resident = supabase.table("resident").select("id").eq("email", resident_email).execute()
+            if supabase_resident.data:
+                resident_id = supabase_resident.data[0]["id"]
+                resident_skill_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident_id).execute()
+                resident_skill_ids = {item["skill_id"] for item in resident_skill_resp.data}
+                recommended_jobs = [
+                    job for job in jobs
+                    if any(skill_id in resident_skill_ids for skill_id in job_skills_by_id.get(job["JobID"], []))
+                ]
+
+    except Exception as e:
+        print("Error fetching jobs:", e)
+        jobs = []
+        recommended_jobs = []
+
+    return render(request, 'registration/jobhunt.html', {
+        'jobs': jobs,
+        'recommended_jobs': recommended_jobs
+    })
 
 
 # ==========================================================

@@ -121,7 +121,6 @@ body::before {
     background: linear-gradient(135deg, #4299E1, #63B3ED);
     color: white;
 }
-
 /* =====================
    Toast Messages
 ===================== */
@@ -285,86 +284,106 @@ body::before {
 /* ===============================
    MAIN CONTENT (REDESIGNED)
 =============================== */
-
 .main-content {
     width: 100%;
     display: flex;
     justify-content: center;
-    padding-top: 180px;
-    padding-bottom: 80px;
+    padding: 120px 20px 60px; /* reduce top padding for a tighter look */
+    background: #F7FAFC;
+    min-height: 100vh;
 }
 
 .editprofile-page {
     width: 100%;
-    max-width: 950px;
-    padding: 0 20px;
+    max-width: 800px;
     display: flex;
     justify-content: center;
+    flex-direction: column;
+    gap: 24px;
 }
 
-.editprofile-card {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(18px);
-    padding: 48px 56px;
-    border-radius: 24px;
-    width: 100%;
-    max-width: 700px; /* <-- limit the card width */
-    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.12);
-    margin: 0 auto;   /* center horizontally */
+/* =========================
+   Edit Profile Card
+========================= */
+.profile-card.editprofile-card {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+    padding: 32px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    transition: all 0.3s ease;
 }
 
+.profile-card.editprofile-card:hover {
+    box-shadow: 0 16px 36px rgba(0,0,0,0.12);
+}
+
+/* Card Title */
 .editprofile-title {
     font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 28px;
-    color: #1A365D;
+    color: #1A202C;
     text-align: center;
+    margin-bottom: 20px;
 }
 
-/* FORM INPUTS */
+/* =========================
+   Form Layout
+========================= */
+.profile-card.editprofile-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Field Groups */
 .field-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 22px;
+    gap: 6px;
 }
 
 .field-group label {
     font-weight: 600;
-    color: #2D3748;
-    margin-bottom: 8px;
     font-size: 0.95rem;
+    color: #2D3748;
 }
 
+/* Inputs and Selects */
 .field-group input,
 .field-group select {
     width: 100%;
-    padding: 14px 16px;
-    font-size: 1rem;
-    border-radius: 12px;
-    border: 2px solid #CBD5E0;
-    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    border-radius: 14px;
+    border: 1.5px solid #CBD5E0;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 3px 10px rgba(66, 153, 225, 0.08);
     transition: all 0.25s ease;
+    outline: none;
 }
 
 .field-group input:focus,
 .field-group select:focus {
     border-color: #4299E1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.18);
-    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
 }
 
-/* SUBMIT BUTTON */
+/* =========================
+   Submit Button
+========================= */
 .editprofile-submit {
     width: 100%;
-    padding: 16px 0;
+    padding: 14px 0;
     background: linear-gradient(135deg, #4299E1, #63B3ED);
     border: none;
     border-radius: 14px;
     color: #fff;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 10px;
     transition: all 0.25s ease;
 }
 
@@ -373,56 +392,66 @@ body::before {
     box-shadow: 0 6px 18px rgba(66, 153, 225, 0.3);
 }
 
-/* ============================================
-   Tag-Based Multi-Select – Matching Your UI
-============================================ */
+/* =========================
+   Tag / Multi-Select Styling
+========================= */
 .tag-multiselect {
-    width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    border: 2px solid #E2E8F0;
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 4px 16px rgba(66, 153, 225, 0.12);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
     position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    background: #F8FAFC;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(66, 153, 225, 0.08);
+    cursor: text;
+    transition: all 0.3s ease;
 }
 
+.tag-multiselect::after {
+    content: '▾';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #3182CE;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Tags container */
 .tags-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    min-height: 40px;
+    gap: 4px;
+    min-height: 32px;
+    flex: 1;
 }
 
+/* Individual tag */
 .tag {
     background: linear-gradient(135deg, #4299E1, #63B3ED);
     color: #fff;
-    padding: 8px 14px;
-    border-radius: 14px;
-    font-size: 0.9rem;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
     font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.25);
-    animation: fadeInTag 0.2s ease-out;
+    gap: 4px;
+    box-shadow: 0 3px 10px rgba(66, 153, 225, 0.2);
 }
 
-@keyframes fadeInTag {
-    from { opacity: 0; transform: scale(0.85); }
-    to { opacity: 1; transform: scale(1); }
-}
-
+/* Remove tag button */
 .remove-tag {
     font-weight: bold;
     cursor: pointer;
     opacity: 0.85;
-    transition: 0.2s ease;
     background: rgba(255, 255, 255, 0.25);
-    padding: 2px 7px;
+    padding: 2px 6px;
     border-radius: 50%;
 }
 
@@ -431,36 +460,41 @@ body::before {
     opacity: 1;
 }
 
+/* Input inside multiselect */
 #skillSearch {
-    width: 100%;
-    border: 2px solid #E2E8F0;
-    border-radius: 12px;
-    padding: 12px 14px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-#skillSearch:focus {
+    flex: 1;
+    border: none;
+    padding: 6px;
+    font-size: 0.95rem;
+    background: transparent;
     outline: none;
-    border-color: #4299E1;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.18);
 }
 
-/* Skill dropdown */
+/* Options dropdown */
 .options-list {
-    max-height: 200px;
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 180px;
     overflow-y: auto;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.95);
+    background: #fff;
     border: 1px solid #E2E8F0;
     box-shadow: 0 4px 16px rgba(66, 153, 225, 0.12);
-    padding: 6px 0;
+    z-index: 100;
+    padding: 4px 0;
+}
+
+.options-list.active {
+    display: block;
 }
 
 .option-item {
-    padding: 12px 16px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
     cursor: pointer;
-    font-size: 0.95rem;
     transition: all 0.2s ease;
 }
 
@@ -469,192 +503,39 @@ body::before {
     color: #4299E1;
 }
 
-.option-item.hidden {
-    display: none;
-}
-
-/* Scoped / higher-specificity rules to ensure styles apply when other global CSS exists */
-.profile-card .tag-multiselect {
-    background: rgba(255, 255, 255, 0.98) !important;
-    border: 2px solid #E2E8F0 !important;
-    padding: 14px !important;
-}
-
-.profile-card .tags-container {
-    display: flex !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    min-height: 36px !important;
-}
-
-.profile-card .tag {
-    background: linear-gradient(135deg, #4299E1, #63B3ED) !important;
-    color: #fff !important;
-    padding: 8px 12px !important;
-    border-radius: 14px !important;
-    font-weight: 600 !important;
-}
-
-.profile-card .remove-tag {
-    margin-left: 8px;
-    background: rgba(255,255,255,0.22) !important;
-    padding: 2px 6px !important;
-    border-radius: 50% !important;
-}
-
-.profile-card .options-list .option-item {
-    padding: 10px 14px !important;
-    cursor: pointer !important;
-    display: block !important;
-}
-
-.profile-card .option-item:hover {
-    background: rgba(66, 153, 225, 0.08) !important;
-    color: #3182CE !important;
-}
-
-/* Scrollbar Styling (matching your UI) */
-.options-list::-webkit-scrollbar {
-    width: 8px;
-}
-
-.options-list::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #4299E1, #63B3ED);
-    border-radius: 10px;
-}
-
-.options-list::-webkit-scrollbar-track {
-    background: rgba(226, 232, 240, 0.4);
-}
-
-/* Field group spacing fix */
-.field-group label {
-    font-weight: 600;
-    color: #2D3748;
-    margin-bottom: 6px;
-}
-
-/* Make sure the multi-select matches mobile UI */
+/* =========================
+   Responsive Adjustments
+========================= */
 @media (max-width: 768px) {
-    .tag-multiselect {
-        padding: 12px;
-    }
-
-    .tag {
-        font-size: 0.85rem;
-        padding: 6px 12px;
-    }
-
-    #skillSearch {
-        padding: 10px;
-    }
-
-    .option-item {
-        padding: 10px 12px;
-    }
-}
-
-
-/* =====================
-   Responsive Design
-===================== */
-@media (max-width: 1024px) {
-    .editprofile-card {
-        max-width: 640px;
-    }
-}
-
-@media (max-width: 768px) {
-    .navbar {
-        width: 90%;
-        padding: 16px 24px;
-        gap: 20px;
-    }
-
-    .navbar .nav-right {
-        gap: 4px;
-    }
-
-    .navbar .nav-right a {
-        padding: 10px 16px;
-        font-size: 0.9rem;
-    }
-
-    .main-content {
-        width: 95%;
-        margin-top: 100px;
-        gap: 24px;
-    }
-
-    .profile-card {
-        padding: 32px;
-        border-radius: 16px;
+    .profile-card.editprofile-card {
+        padding: 24px 20px;
     }
 
     .editprofile-title {
-        text-align: center;
         font-size: 1.6rem;
     }
 
-    .editprofile-submit {
-        width: 100%;
-        text-align: center;
-    }
-
-    .editprofile-message {
-        left: 16px;
-        right: 16px;
-        max-width: none;
-        top: 80px;
-    }
-}
-
-@media (max-width: 480px) {
-    .navbar {
-        width: 95%;
-        padding: 14px 20px;
-        gap: 16px;
-    }
-
-    .navbar .nav-right a {
-        padding: 8px 12px;
-        font-size: 0.85rem;
-    }
-
-    .main-content {
-        margin-top: 90px;
-        width: 100%;
-        padding: 0 16px;
-    }
-
-    .profile-card {
-        padding: 24px;
-        border-radius: 16px;
-    }
-
-    .editprofile-title {
-        font-size: 1.4rem;
-        margin-bottom: 24px;
-    }
-
-    .editprofile-form {
-        gap: 18px;
-    }
-
-    .editprofile-form input,
-    .editprofile-form select {
-        font-size: 0.95rem;
-        padding: 12px 14px;
-    }
-
-    .editprofile-submit {
-        padding: 14px 24px;
-        font-size: 1rem;
-    }
-
-    .editprofile-message {
+    .field-group input,
+    .field-group select {
+        padding: 10px 12px;
         font-size: 0.9rem;
-        padding: 14px 18px;
-        max-width: calc(100% - 32px);
+    }
+
+    .editprofile-submit {
+        padding: 12px 0;
+        font-size: 0.95rem;
+    }
+
+    .tag-multiselect {
+        padding: 8px 12px;
+    }
+
+    .tag {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+    }
+
+    .option-item {
+        padding: 5px 10px;
     }
 }
