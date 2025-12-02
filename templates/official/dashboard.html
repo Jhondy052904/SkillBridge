@@ -131,7 +131,7 @@
 
             <p class="training-date">{{ t.date_scheduled|date:"M d, Y" }}</p>
 
-            <span class="training-slots"> {{ t.slots }} slots </span>
+            <span class="training-slots"> {{ t.available_slots }} available slots ({{ t.registered_count }}/{{ t.slots }} registered) </span>
           </a>
           {% endfor %}
         </div>
