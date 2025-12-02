@@ -6,9 +6,12 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f5 100%);
+    font-family: Arial, sans-serif;
     min-height: 100vh;
+    background: linear-gradient(135deg, #B5D4E2 0%, #C7E0F0 50%, #A8C8DA 100%);
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 /* ====================== MAIN CONTENT ====================== */
@@ -18,28 +21,33 @@ main {
     padding: 40px 20px;
 }
 
-/* ====================== BACK BUTTON ====================== */
-.back-button-container {
-    margin-bottom: 30px;
-}
-
-.back-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: #4f46e5; /* Indigo-600 */
-    text-decoration: none;
+/* =========================================================
+   Back Button
+========================================================= */
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9999; /* ensure it floats above everything */
+    border-radius: 8px;
+    padding: 6px 12px;
     font-weight: 600;
-    font-size: 0.95rem;
-    padding: 8px 12px;
-    border-radius: 6px;
-    transition: all 0.3s ease;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    color: #021526;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.back-button:hover {
-    background: rgba(79, 70, 229, 0.1);
-    color: #6366f1; /* Indigo-500 */
+.back-btn:hover {
+    color: #071952;
+    transform: translateY(-2px);
 }
+
+
 
 /* ====================== TRAINING HEADER ====================== */
 .training-header {
@@ -64,7 +72,7 @@ main {
     display: flex;
     align-items: flex-start;
     padding: 16px;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); /* Indigo-Purple */
+    background: linear-gradient(135deg, #B5D4E2 0%, #C7E0F0 50%, #A8C8DA 100%);
 }
 
 .header-badge .badge {
@@ -273,7 +281,7 @@ main {
 
 /* ====================== ACTION CARD ====================== */
 .action-card {
-    background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(139,92,246,0.05)); /* Indigo-Purple soft */
+    background: linear-gradient(135deg, #B5D4E2 0%, #95cdf0ff 50%, #A8C8DA 100%);
     border: 2px solid #e5e7eb; /* Gray-200 */
 }
 

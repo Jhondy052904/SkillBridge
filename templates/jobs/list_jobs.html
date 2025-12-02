@@ -137,23 +137,41 @@
         </div>
     </section>
 
-    <!-- Job Listings Section -->
-    <section class="jobs-section">
-        <h2 class="section-title">{% if recommended_jobs %}All {% endif %}Available Jobs</h2>
+<!-- Job Listings Section -->
+<section class="jobs-section">
+    <h2 class="section-title">{% if recommended_jobs %}All {% endif %}Available Jobs</h2>
 
-        <div id="jobList" class="job-cards-container">
-            {% for job in jobs %}
-                {% if job.Status == "Open" %}
-                <a href="{% url 'job_detail' job.JobID %}" class="job-card-link">
-                    <div class="job-card">
-                        
+    <div id="jobList" class="job-cards-container">
+        {% for job in jobs %}
+            {% if job.Status == "Open" %}
+            <a href="{% url 'job_detail' job.JobID %}" class="job-card-link">
+                <div class="job-card">
 
-                        <div class="job-card-content">
-                            <h3 class="job-title">{{ job.Title }}</h3>
-                            <p class="job-description">{{ job.Description|truncatechars:100 }}</p>
-                                <div class="card-header">
-                            <div class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">{{ job.Status }}</div>
+                    <div class="job-card-content">
+
+                        <!-- Job Status -->
+                        <div class="card-header">
+                            <span class="label">Status:</span>
+                            <div class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">
+                                {{ job.Status }}
+                            </div>
                         </div>
+
+                        <!-- Job Title -->
+                        <div class="job-title-wrapper">
+                            <span class="label">Title:</span>
+                            <h3 class="job-title">{{ job.Title }}</h3>
+                        </div>
+
+                        <!-- Job Description -->
+                        <div class="job-description-wrapper">
+                            <span class="label">Description:</span>
+                            <p class="job-description">{{ job.Description|truncatechars:100 }}</p>
+                        </div>
+
+                        <!-- Job Skills -->
+                        <div class="job-skills-wrapper">
+                            <span class="label">Skills:</span>
                             {% if job.skills %}
                             <div class="job-skills">
                                 {% for skill in job.skills %}
@@ -166,17 +184,20 @@
                             </div>
                             {% endif %}
                         </div>
+
                     </div>
-                </a>
-                {% endif %}
-            {% empty %}
-                <div class="empty-state">
-                    <p>No job postings available at the moment.</p>
-                    <p class="empty-state-secondary">Check back soon for new opportunities!</p>
                 </div>
-            {% endfor %}
-        </div>
-    </section>
+            </a>
+            {% endif %}
+        {% empty %}
+            <div class="empty-state">
+                <p>No job postings available at the moment.</p>
+                <p class="empty-state-secondary">Check back soon for new opportunities!</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
 
 </main>
 

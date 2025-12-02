@@ -16,7 +16,7 @@ body {
     font-weight: 400;
     color: #2D3748;
     overflow-x: hidden;
-    background: linear-gradient(135deg, #E8F4F8 0%, #F0F8FF 50%, #E3F2FD 100%);
+    background: linear-gradient(135deg, #B5D4E2 0%, #C7E0F0 50%, #A8C8DA 100%);
     line-height: 1.6;
 }
 
@@ -147,8 +147,9 @@ main {
 
 .section-subtitle {
     font-size: 1.1rem;
-    color: #7389A7;
+    color: #000000ff;
     margin-top: 6px;
+    margin-bottom: 10px;
 }
 
 /* =========================================================
@@ -226,7 +227,7 @@ main {
 }
 
 /* =========================================================
-   JOB CARDS SECTION — Floating Glass Cards
+   JOB CARDS SECTION — Modern Glass Cards with Labels
 ========================================================= */
 .jobs-section {
     margin-top: 20px;
@@ -235,6 +236,7 @@ main {
 .job-cards-container {
     display: grid;
     gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 .job-card-link {
@@ -242,86 +244,120 @@ main {
 }
 
 .job-card {
-    background: rgba(255,255,255,0.92);
-    border-radius: 22px;
-    padding: 26px 30px;
-    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.06);
+    background: #ebf4f6d5;
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 10px 28px rgba(2, 21, 38, 0.08);
     backdrop-filter: blur(14px);
-    transition: 0.25s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    border: 1px solid rgba(2, 21, 38, 0.05);
 }
 
 .job-card:hover {
-    box-shadow: 0 16px 34px rgba(0,0,0,0.12);
-    transform: translateY(-3px);
+    transform: translateY(-5px);
+    box-shadow: 0 16px 36px rgba(2, 21, 38, 0.16);
+}
+
+/* Label styles */
+.job-card .label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #021526; /* Dark Blue */
+    margin-bottom: 15px;
+    
+}
+
+/* Job title */
+.job-card .job-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #071952;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    display: inline-block;
 }
 
 /* Job status badge */
 .job-status-badge {
     display: inline-block;
-    padding: 6px 14px;
-    border-radius: 14px;
+    padding: 6px 16px;
+    border-radius: 8px;
     font-weight: 600;
     font-size: 0.85rem;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    text-transform: uppercase;
 }
 
 .job-status-badge.status-open {
-    background: rgba(34, 197, 94, 0.12);
-    color: #16A34A;
+    background: rgba(250, 229, 43, 0.75); /* Soft yellow */
+    color: #021526; /* Yellow text */
 }
 
 .job-status-badge.status-closed {
-    background: rgba(239, 68, 68, 0.12);
+    background: rgba(220, 38, 38, 0.15);
     color: #DC2626;
-}
-
-/* Job title */
-.job-card .job-title {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: #1A2B47;
-    margin-bottom: 14px;
 }
 
 /* Metadata (company & location) */
 .job-meta-info {
     display: flex;
-    gap: 20px;
-    margin-bottom: 14px;
+    gap: 16px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
 }
 
 .meta-item {
     display: flex;
     gap: 6px;
-    font-size: 0.95rem;
-    color: #5A6B80;
+    font-size: 0.9rem;
+    color: #071952; /* Navy Blue */
 }
 
-/* Description */
+/* Job description */
+.job-description-wrapper {
+    margin-top: 8px;
+}
+
+.job-description-wrapper .label {
+    margin-bottom: 6px;
+}
+
 .job-description {
-    margin-top: 10px;
-    color: #5A6B80;
-    font-size: 0.95rem;
+    color: #071952;
+    font-size: 0.92rem;
     line-height: 1.6;
 }
 
 /* Skills Tags */
-.job-skills {
+.job-skills-wrapper {
     margin-top: 12px;
+}
+
+.job-skills-wrapper .label {
+    margin-bottom: 6px;
+}
+
+.job-skills {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
 }
 
 .skill-tag {
-    background: rgba(60, 140, 255, 0.12);
-    color: #3478FF;
-    padding: 4px 10px;
-    border-radius: 12px;
+    background: rgba(8, 131, 149, 0.15); /* Mint green highlight */
+    color: #088395;
+    padding: 5px 12px;
+    border-radius: 14px;
     font-size: 0.8rem;
     font-weight: 500;
     white-space: nowrap;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.skill-tag:hover {
+    background: rgba(55, 183, 195, 0.2); /* Light Mint hover */
+    transform: translateY(-2px);
 }
 
 .skill-tag.no-skills {
@@ -334,27 +370,41 @@ main {
 .job-footer {
     margin-top: 16px;
     font-size: 0.85rem;
-    color: #8DA1B7;
+    color: #088395; /* Mint Green accent */
 }
 
 /* Apply button */
 .job-actions .btn-apply {
     margin-top: 18px;
     width: 180px;
-    padding: 12px;
+    padding: 12px 0;
     border-radius: 16px;
-    background: linear-gradient(135deg, #3C8CFF, #4DB7FF);
-    color: white;
+    background: linear-gradient(135deg, #FBBF24, #FCD34D); /* Yellow gradient */
+    color: #021526; /* Dark text for contrast */
     font-weight: 600;
     border: none;
     cursor: pointer;
-    box-shadow: 0 6px 16px rgba(60,140,255,0.35);
-    transition: 0.25s;
+    box-shadow: 0 8px 20px rgba(251, 191, 36, 0.35);
+    transition: all 0.3s ease;
 }
 
 .job-actions .btn-apply:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(60,140,255,0.45);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(251, 191, 36, 0.45);
+    background: linear-gradient(135deg, #FCD34D, #FBBF24);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .job-cards-container {
+        grid-template-columns: 1fr;
+    }
+    .job-card {
+        padding: 24px 18px;
+    }
+    .job-card .job-title {
+        font-size: 1.3rem;
+    }
 }
 
 /* =========================================================
