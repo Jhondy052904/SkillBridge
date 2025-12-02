@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, date
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -20,6 +20,43 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 
 # Single Supabase client used everywhere
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+# ================== Helper: parse date strings from Supabase ==================
+def _parse_iso_date(value):
+    """
+    Try to convert common Supabase/JSON date strings into a datetime/date.
+    Returns None on failure.
+    """
+    if not value:
+        return None
+
+    # Already a date/datetime
+    if isinstance(value, (date, datetime)):
+        return value
+
+    if isinstance(value, str):
+        s = value.strip()
+        # remove trailing 'Z' if present (UTC designator)
+        if s.endswith("Z"):
+            s = s[:-1]
+
+        # Try ISO parsing (works for YYYY-MM-DD and YYYY-MM-DDTHH:MM:SS[.ffffff])
+        try:
+            dt = datetime.fromisoformat(s)
+            return dt
+        except Exception:
+            pass
+
+        # Try explicit common formats
+        for fmt in ("%Y-%m-%d", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S"):
+            try:
+                dt = datetime.strptime(s, fmt)
+                return dt
+            except Exception:
+                continue
+
+    return None
 
 
 # ================== REGISTER FOR TRAINING ==================
@@ -154,6 +191,12 @@ def list_trainings(request):
         
         # Calculate available slots for each training
         for training in trainings_raw:
+            # Normalize date_scheduled into a datetime/date for template formatting
+            try:
+                training['date_scheduled'] = _parse_iso_date(training.get('date_scheduled'))
+            except Exception:
+                training['date_scheduled'] = None
+
             try:
                 # Get count of registered attendees
                 attendees_resp = supabase.table("training_attendees").select("id", count="exact").eq("training_id", training['id']).execute()
@@ -187,6 +230,9 @@ def edit_training(request, training_id):
     if not training:
         messages.error(request, "Training not found.")
         return redirect("list_trainings")
+
+    # normalize date for the edit form/template
+    training['date_scheduled'] = _parse_iso_date(training.get('date_scheduled'))
 
     if request.method == "POST":
         updates = {
@@ -241,6 +287,9 @@ def training_detail(request, training_id):
     if not training:
         messages.error(request, "Training not found.")
         return redirect("list_trainings")
+
+    # normalize date_scheduled to datetime/date object for templates
+    training['date_scheduled'] = _parse_iso_date(training.get('date_scheduled'))
 
     # Optional: also load attendees if you want to show them on the detail page
     try:

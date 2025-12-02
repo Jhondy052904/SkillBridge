@@ -33,7 +33,7 @@
             
             <h1 class="training-title">{{ training.training_name }}</h1>
             <p class="training-meta-header">
-                <span>{{ training.date_scheduled|date:"F d, Y"|default:"TBD" }}</span>
+                <span>{{ training.date_scheduled|date:"F d, Y" }}</span>
                 <span>{{ training.slots|default:"0" }} Slots Available</span>
             </p>
         </div>
@@ -70,7 +70,7 @@
                 <div class="details-grid">
                     <div class="detail-item">
                         <span class="detail-label">Scheduled Date</span>
-                        <span class="detail-value">{{ training.date_scheduled|date:"F d, Y"|default:"TBD" }}</span>
+                        <span class="detail-value">{{ training.date_scheduled|date:"F d, Y" }}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">Available Slots</span>
