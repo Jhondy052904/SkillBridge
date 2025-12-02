@@ -1009,7 +1009,7 @@ def edit_profile_view(request):
                 'contact_number': contact_number,
                 'employment_status': employment_status,
                 'skills': skills_csv,
-                'status': current_status,
+                'current_status': current_status,
             }).eq('email', email).execute()
 
             # Update Django Resident
