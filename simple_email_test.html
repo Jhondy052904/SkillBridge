@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SendGrid Email Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 SendGrid Email Test</h1>
+        <p>Test your SendGrid email functionality directly from this page.</p>
+        
+        <form id="emailTestForm">
+            <div class="form-group">
+                <label for="toEmail">To Email:</label>
+                <input type="email" id="toEmail" value="khangkong04@gmail.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" value="SkillBridge Test Email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="emailType">Email Type:</label>
+                <select id="emailType">
+                    <option value="basic">Basic Email</option>
+                    <option value="welcome">Welcome Email</option>
+                    <option value="approval">Approval Email</option>
+                    <option value="rejection">Rejection Email</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="firstName">First Name (for template emails):</label>
+                <input type="text" id="firstName" value="TestUser">
+            </div>
+            
+            <div class="form-group">
+                <label for="customContent">Custom Content (for basic email):</label>
+                <textarea id="customContent" rows="4" placeholder="Enter custom HTML content..."><h2>Test Email</h2>
+<p>This is a test email from SkillBridge SendGrid integration.</p>
+<p><strong>Timestamp:</strong> <span id='timestamp'></span></p></textarea>
+            </div>
+            
+            <button type="submit">🚀 Send Test Email</button>
+        </form>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('emailTestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'none';
+            resultDiv.className = 'result';
+            
+            // Update timestamp
+            document.getElementById('timestamp').textContent = new Date().toLocaleString();
+            
+            const formData = {
+                to_email: document.getElementById('toEmail').value,
+                subject: document.getElementById('subject').value,
+                email_type: document.getElementById('emailType').value,
+                first_name: document.getElementById('firstName').value,
+                content: document.getElementById('customContent').value
+            };
+            
+            try {
+                // Since we don't have a Django endpoint set up, 
+                // this is a demo form. In a real implementation,
+                // you would POST to a Django view that calls the email functions
+                
+                resultDiv.innerHTML = `
+                    <h3>📝 Test Configuration Ready</h3>
+                    <p><strong>To:</strong> ${formData.to_email}</p>
+                    <p><strong>Subject:</strong> ${formData.subject}</p>
+                    <p><strong>Type:</strong> ${formData.email_type}</p>
+                    <p><strong>Name:</strong> ${formData.first_name}</p>
+                    <hr>
+                    <p><strong>To actually send this email:</strong></p>
+                    <p>1. Run the command line test: <code>python test_email.py</code></p>
+                    <p>2. Or create a Django view that calls the email functions</p>
+                `;
+                resultDiv.className = 'result success';
+                resultDiv.style.display = 'block';
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <h3>❌ Error</h3>
+                    <p>${error.message}</p>
+                `;
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

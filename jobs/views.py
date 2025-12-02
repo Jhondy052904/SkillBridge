@@ -10,7 +10,6 @@ from .services.supabase_crud import (
     delete_job,
     get_job_by_id,
     create_job_application,
-    get_resident_by_user_id,
     get_applied_jobs_by_resident,
 )
 
@@ -48,8 +47,10 @@ def job_success(request):
 # ==========================================================
 # POST JOB (OFFICIAL)
 # ==========================================================
-@login_required
 def post_job(request):
+    if request.session.get('user_role') != 'Official':
+        messages.error(request, "Access denied. Officials only.")
+        return redirect('login')
     try:
         email = request.user.email.strip().lower()
         official = supabase.table("registration_official").select("*").ilike("email", email).execute()
@@ -116,33 +117,90 @@ def post_job(request):
 # ==========================================================
 # LIST JOBS
 # ==========================================================
-@login_required
 def list_jobs(request):
+    if request.session.get('user_role') != 'Resident':
+        return redirect('login')
     try:
+        # ==========================
+        # 1. Fetch All Jobs
+        # ==========================
         jobs = get_jobs()
-        # Fetch skills for all jobs
-        skills_resp = supabase.table("job_skill_list").select("job_id, skill_list!inner(SkillName)").execute()
-        job_skills = {}
+
+        # ==========================
+        # 2. Fetch all job-skill relations
+        # ==========================
+        skills_resp = supabase.table("job_skill_list").select(
+            "job_id, skill_list!inner(SkillID, SkillName)"
+        ).execute()
+
+        job_skills_by_id = {}       # skill IDs
+        job_skills_by_name = {}     # skill names
+
         for item in skills_resp.data:
-            job_id = item['job_id']
-            skill_name = item['skill_list']['SkillName']
-            if job_id not in job_skills:
-                job_skills[job_id] = []
-            job_skills[job_id].append(skill_name)
-        # Add skills to each job
+            job_id = item["job_id"]
+            skill_id = item["skill_list"]["SkillID"]
+            skill_name = item["skill_list"]["SkillName"]
+
+            if job_id not in job_skills_by_id:
+                job_skills_by_id[job_id] = []
+                job_skills_by_name[job_id] = []
+
+            job_skills_by_id[job_id].append(skill_id)
+            job_skills_by_name[job_id].append(skill_name)
+
+        # Attach skill names to job object for UI
         for job in jobs:
-            job['skills'] = job_skills.get(job['JobID'], [])
+            job["skills"] = job_skills_by_name.get(job["JobID"], [])
+
+        print("DEBUG JOB SKILLS:", job_skills_by_id)
+
+        # ======================================================
+        # 3. Get Resident Info from Supabase
+        # ======================================================
+        resident_email = request.user.email
+        supabase_resident = supabase.table("resident").select("id").eq("email", resident_email).execute()
+        recommended_jobs = []
+
+        if supabase_resident.data:
+            resident_id = supabase_resident.data[0]["id"]
+
+            # ======================================================
+            # 4. Fetch resident skills from Supabase
+            # ======================================================
+            resident_skill_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident_id).execute()
+            resident_skill_ids = {item["skill_id"] for item in resident_skill_resp.data}
+
+            # ======================================================
+            # 5. Filter recommended jobs
+            # ======================================================
+            recommended_jobs = [
+                job for job in jobs
+                if any(skill_id in resident_skill_ids for skill_id in job_skills_by_id.get(job["JobID"], []))
+            ]
+
     except Exception as e:
+        print("ERROR:", str(e))
         messages.error(request, f"Error loading jobs: {str(e)}")
         jobs = []
-    return render(request, 'jobs/list_jobs.html', {'jobs': jobs})
+        recommended_jobs = []
+
+    # ==========================
+    # Render Template
+    # ==========================
+    return render(request, "jobs/list_jobs.html", {
+        "jobs": jobs,
+        "recommended_jobs": recommended_jobs
+    })
+
 
 
 # ==========================================================
 # UPDATE JOB
 # ==========================================================
-@login_required
 def update_job_view(request, job_id):
+    if request.session.get('user_role') != 'Official':
+        messages.error(request, "Access denied. Officials only.")
+        return redirect('login')
 
     email = request.user.email.strip().lower()
     official = supabase.table("registration_official").select("*").ilike("email", email).execute()
@@ -200,8 +258,10 @@ def update_job_view(request, job_id):
 # ==========================================================
 # DELETE JOB
 # ==========================================================
-@login_required
 def delete_job_view(request, job_id):
+    if request.session.get('user_role') != 'Official':
+        messages.error(request, "Access denied. Officials only.")
+        return redirect('login')
     try:
         delete_job(job_id)
         log_action("delete", "job", job_id, request)
@@ -214,8 +274,10 @@ def delete_job_view(request, job_id):
 # ==========================================================
 # APPLY FOR JOB
 # ==========================================================
-@login_required
 def apply_job(request, job_id):
+    if request.session.get('user_role') != 'Resident':
+        messages.error(request, "Access denied. Residents only.")
+        return redirect('login')
     try:
         resident = get_resident_by_user_id(request.user.id)
 

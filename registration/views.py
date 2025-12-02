@@ -4,11 +4,12 @@ from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
 from django.http import JsonResponse
 from django.conf import settings
-from django.core.mail import send_mail
+# from django.core.mail import send_mail  # No longer needed - using custom SendGrid functions
 from django.contrib.auth.decorators import login_required
 from dotenv import load_dotenv
 import os
 import time
+import logging
 from supabase import create_client
 from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -73,6 +74,9 @@ def resident_details_partial(request, id):
     })
 
 
+
+# Set up logging for this module
+logger = logging.getLogger(__name__)
 
 def logout_view(request):
     logout(request)
@@ -144,7 +148,7 @@ def home(request):
 
     # Fetch Supabase resident data
     try:
-        res = supabase.table("resident").select("*").eq("email", username).single().execute()
+        res = supabase_service.table("resident").select("*").eq("email", username).single().execute()
         user_profile = res.data if res.data else None
     except Exception as e:
         print("Supabase user profile fetch error:", e)
@@ -278,7 +282,7 @@ def api_upload_certificate(request):
 
     # Use Supabase Resident UUID for resident_id
     try:
-        res = supabase.table("resident").select("id").eq("email", email).single().execute()
+        res = supabase_service.table("resident").select("id").eq("email", email).single().execute()
         resident_id = res.data['id']
     except Exception:
         return JsonResponse({"error": "Resident profile not found"}, status=404)
@@ -381,7 +385,7 @@ def supabase_reset_page(request):
 @csrf_protect
 def signup_view(request):
     if request.method == 'POST':
-        email = request.POST.get('username') 
+        email = request.POST.get('email')
         password = request.POST.get('password')
         role = request.POST.get('role', 'Resident')
 
@@ -389,38 +393,92 @@ def signup_view(request):
             messages.error(request, "All fields are required.")
             return render(request, 'registration/signup.html')
 
+        # Get form data
+        first_name = request.POST.get('first_name')
+        middle_name = request.POST.get('middle_name')
+        last_name = request.POST.get('last_name')
+        contact_number = request.POST.get('contact')
+        barangay = request.POST.get('barangay')
+        sublocation = request.POST.get('sublocation')
+        house_number = request.POST.get('house_number')
+        skills = request.POST.get('skills')
+        # For address, combine barangay, sublocation, house_number
+        address = f"{house_number}, {sublocation}, {barangay}"
+
+        # Handle proof of residency file
+        proof_data = None
+        proof_file = request.FILES.get('proof_residency')
+        if proof_file:
+            try:
+                bucket = 'proof_residency'  # Assume bucket exists for proof files
+                # Create a unique file path to avoid conflicts
+                import re
+                import time
+                clean_name = re.sub(r'[^\w\.-]', '_', proof_file.name)  # sanitize filename
+                timestamp = int(time.time())
+                file_path = f"{email}/{timestamp}_{clean_name}"
+                
+                # Upload file to Supabase storage
+                supabase_service.storage.from_(bucket).upload(file_path, proof_file.read(), {"content-type": proof_file.content_type})
+                public_url = supabase_service.storage.from_(bucket).get_public_url(file_path)
+                proof_data = public_url  # Store URL as string, not bytes
+            except Exception as storage_error:
+                # Handle storage upload errors gracefully
+                print(f"Storage upload error: {storage_error}")
+                # Continue without proof file if upload fails
+                proof_data = None
+
         try:
             auth_response = supabase.auth.sign_up({
                 "email": email,
                 "password": password
             })
 
-            if hasattr(auth_response, "error") and auth_response.error:
-                messages.error(request, "An account with this email already exists.")
+            if auth_response.user is None:
+                messages.error(request, "Signup failed. Please check your email format and password requirements.")
                 return render(request, 'registration/signup.html')
 
+            # Create Django User
+            from django.contrib.auth.models import User
+            django_user, created = User.objects.get_or_create(
+                username=email,
+                defaults={'email': email}
+            )
+            if created:
+                django_user.set_password(password)  # Set the password
+                django_user.save()
+
+            # Auth succeeded, now insert resident record
             supabase.table('resident').insert({
+                "user_id": django_user.id,
                 "email": email,
-                "verification_status": "Pending",
+                "first_name": first_name,
+                "middle_name": middle_name,
+                "last_name": last_name,
+                "contact_number": contact_number,
+                "address": address,
+                "skills": skills,
+                "proof_residency": proof_data,
+                "verification_status": "Pending Verification",
                 "employment_status": "Unemployed",
             }).execute()
 
-            send_mail(
-                subject="SkillBridge Registration - Awaiting Approval",
-                message=(
-                    f"Hello!\n\n"
-                    f"Thank you for signing up for SkillBridge.\n\n"
-                    f"Please verify your email address using the confirmation link sent to your inbox.\n\n"
-                    f"After verifying your email, your Barangay Official will review your registration.\n\n"
-                    f"You’ll receive another message once your account has been approved.\n\n"
-                    f"— The SkillBridge Team"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[email],
-                fail_silently=True,
-            )
+            # Send verification email
+            try:
+                from utils.send_email import send_welcome_email
+                
+                email_sent = send_welcome_email(email, first_name)
+                
+                if email_sent:
+                    logger.info("Verification email sent successfully to %s", email)
+                    messages.success(request, "Signup successful! Please check your email to verify your account.")
+                else:
+                    logger.warning("Failed to send verification email to %s", email)
+                    messages.warning(request, "Signup successful! However, we couldn't send the verification email. Please contact support.")
+            except Exception as e:
+                logger.exception("Email sending failed: %s", e)
+                messages.warning(request, "Signup successful! However, we couldn't send the verification email. Please contact support.")
 
-            messages.success(request, "Signup successful! Please check your email to verify your account. Wait for official approval before logging in.")
             return redirect('login')
 
         except Exception as e:
@@ -431,7 +489,7 @@ def signup_view(request):
 def confirm_email(request, email):
     """When resident clicks the email verification link."""
     try:
-        response = supabase.table("resident").select("*").eq("email", email).single().execute()
+        response = supabase_service.table("resident").select("*").eq("email", email).single().execute()
         resident = response.data
 
         if not resident:
@@ -466,78 +524,143 @@ def confirm_email(request, email):
         })
 
 # ------------------------------------------------------------
-# LOGIN 
+# LOGIN (patched)
 # ------------------------------------------------------------
+import logging 
+from supabase_auth.errors import AuthApiError
 from django.contrib.auth import login
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.conf import settings
+
 from skillbridge.supabase_client import supabase
 
+logger = logging.getLogger(__name__)
 
+@csrf_protect
 def login_view(request):
-    if request.method == 'POST':
-        email = request.POST.get('username')
-        password = request.POST.get('password')
+    if request.method != 'POST':
+        return render(request, 'registration/login.html')
 
+    # normalize input once and reuse
+    email = request.POST.get('username', '').strip().lower()
+    password = request.POST.get('password', '')
+
+    if not email or not password:
+        messages.error(request, "Please enter both email and password.")
+        return render(request, 'registration/login.html')
+
+    try:
+        # Attempt sign-in and handle client that raises on 4xx (supabase_auth does)
         try:
-            # Authenticate with Supabase Auth
             auth_response = supabase.auth.sign_in_with_password({
                 "email": email,
                 "password": password
             })
-
-            user = auth_response.user
-            if not user:
+            logger.debug("supabase.sign_in_with_password response for %s: %r", email, auth_response)
+        except AuthApiError as auth_exc:
+            # Client raised due to invalid credentials or other 4xx
+            msg = str(auth_exc).lower()
+            logger.info("Supabase AuthApiError for %s: %s", email, msg)
+            if "invalid login credentials" in msg or "invalid" in msg or "401" in msg or "bad request" in msg or "unauthorized" in msg:
                 messages.error(request, "Invalid email or password.")
                 return render(request, 'registration/login.html')
+            # Not an auth-like error: re-raise to be handled by outer except
+            raise
+        except Exception as exc:
+            # Unexpected exception during sign-in (network, parsing, etc.)
+            logger.warning("Unexpected exception during supabase sign-in for %s: %s", email, exc, exc_info=True)
+            if any(term in str(exc).lower() for term in ('invalid', 'unauthorized', '401', 'password')):
+                messages.error(request, "Invalid email or password.")
+                return render(request, 'registration/login.html')
+            raise
 
-            # ✅ Check if email belongs to an official
-            OFFICIAL_EMAILS = ["official@skillbridge.com", "admin@skillbridge.com"]
+        # Defensive extraction of user_obj from whatever shape the client returns
+        user_obj = None
+        if hasattr(auth_response, 'user'):
+            user_obj = getattr(auth_response, 'user', None)
+        elif isinstance(auth_response, dict):
+            data = auth_response.get('data') or {}
+            user_obj = auth_response.get('user') or data.get('user') or (auth_response.get('data') or {}).get('user')
 
-            if email in OFFICIAL_EMAILS:
-                messages.success(request, "Welcome, Barangay Official!")
-                request.session['user_email'] = email
-                request.session['user_role'] = 'Official'
+        if not user_obj:
+            logger.info("Supabase auth returned no user for %s: %r", email, auth_response)
+            messages.error(request, "Invalid email or password.")
+            return render(request, 'registration/login.html')
 
-                # 👇 Make Django recognize this user as authenticated
-                django_user, _ = User.objects.get_or_create(username=email, defaults={'email': email, 'is_staff': True})
+        # Prefer the normalized email for DB queries — avoids mismatch/casing issues
+        user_email = email
+
+        # OFFICIAL check (domain-driven)
+        OFFICIAL_DOMAINS = getattr(settings, 'OFFICIAL_EMAIL_DOMAINS', ['skillbridge.com'])
+        is_official = any(user_email.endswith(f"@{d}") for d in OFFICIAL_DOMAINS)
+
+        if is_official:
+            django_user, created = User.objects.get_or_create(
+                username=user_email,
+                defaults={'email': user_email, 'is_staff': True, 'is_active': True}
+            )
+            if not django_user.is_staff:
+                django_user.is_staff = True
+                django_user.save(update_fields=['is_staff'])
+
+            if created:
+                django_user.set_unusable_password()
+                django_user.save(update_fields=['password'])
+
+            login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
+
+            request.session['user_email'] = user_email
+            request.session['user_role'] = 'Official'
+
+            messages.success(request, "Welcome, Barangay Official!")
+            return redirect('official_dashboard')
+
+        # ---------- Resident path ----------
+        resident_resp = supabase.table('resident').select('*').eq('email', user_email).execute()
+        logger.debug("resident table response for %s: %r", user_email, resident_resp)
+
+        resident_list = None
+        if resident_resp is None:
+            resident_list = None
+        elif isinstance(resident_resp, dict):
+            resident_list = resident_resp.get('data')
+        else:
+            resident_list = getattr(resident_resp, 'data', None)
+
+        if resident_list:
+            resident = resident_list[0]
+            status = str(resident.get('verification_status', '')).lower()
+            if status == 'verified':
+                django_user, created = User.objects.get_or_create(
+                    username=user_email,
+                    defaults={'email': user_email, 'is_active': True}
+                )
+                if created:
+                    django_user.set_unusable_password()
+                    django_user.save(update_fields=['password'])
+
                 login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
 
-                return redirect('official_dashboard')
+                request.session['user_email'] = user_email
+                request.session['user_role'] = 'Resident'
+                messages.success(request, "Welcome back!")
+                return redirect('home')
+            else:
+                messages.warning(request, "Your account is still pending approval.")
+                return render(request, 'registration/login.html')
 
-            # ✅ Otherwise, check resident status
-            resident_data = supabase.table('resident').select('*').eq('email', user.email).execute()
+        messages.error(request, "No matching account found.")
+        return render(request, 'registration/login.html')
 
-            if resident_data.data:
-                resident = resident_data.data[0]
-                status = resident.get('verification_status', '').lower()
+    except Exception:
+        # Genuine unexpected/server-side errors reach here
+        logger.exception("Error during login for %s", email)
+        messages.error(request, "Login failed due to a server error. Please try again.")
+        return render(request, 'registration/login.html')
 
-                if status == 'verified':
-                    request.session['user_email'] = user.email
-                    request.session['user_role'] = 'Resident'
-                    messages.success(request, "Welcome back!")
-
-                    # 👇 Make Django recognize the resident as logged in
-                    django_user, _ = User.objects.get_or_create(username=user.email, defaults={'email': user.email})
-                    login(request, django_user, backend='django.contrib.auth.backends.ModelBackend')
-
-                    return redirect('home')
-
-                else:
-                    messages.warning(request, "Your account is still pending approval.")
-                    return redirect('login')
-
-            messages.error(request, "No matching account found.")
-            return redirect('login')
-
-        except Exception as e:
-            messages.error(request, f"Login failed: {str(e)}")
-
-    # Ensure session is saved to set CSRF token cookie
-    request.session['login_page_loaded'] = True
-    return render(request, 'registration/login.html')
 
 # ------------------------------------------------------------
 # OFFICIAL DASHBOARD & POSTING
@@ -592,7 +715,7 @@ def official_dashboard(request):
     total_residents = 0
     total_applicants = 0
     try:
-        total_residents = supabase.table("resident").select("id", count="exact").execute().count
+        total_residents = supabase_service.table("resident").select("id", count="exact").execute().count
         total_applicants = supabase.table("JobApplication").select("ApplicationID", count="exact").execute().count
     except:
         pass  # ignore errors
@@ -626,7 +749,7 @@ def residents_list(request):
     search_query = request.GET.get('search', '').strip()
 
     try:
-        query = supabase.table("resident").select("*").neq("verification_status", "deactivated")
+        query = supabase_service.table("resident").select("*").neq("verification_status", "deactivated")
         if search_query:
             query = query.or_(f"first_name.ilike.%{search_query}%,last_name.ilike.%{search_query}%")
         response = query.execute()
@@ -796,7 +919,7 @@ def edit_profile_view(request):
 
     # Fetch current profile from Supabase
     try:
-        res = supabase.table('resident').select('*').eq('email', email).single().execute()
+        res = supabase_service.table('resident').select('*').eq('email', email).single().execute()
         user_profile = res.data if res.data else {}
     except Exception as e:
         print("Supabase fetch error:", e)
@@ -833,7 +956,7 @@ def edit_profile_view(request):
 
         # Update Supabase
         try:
-            supabase.table('resident').update({
+            supabase_service.table('resident').update({
                 'first_name': first_name,
                 'middle_name': middle_name,
                 'last_name': last_name,
@@ -841,7 +964,7 @@ def edit_profile_view(request):
                 'contact_number': contact_number,
                 'employment_status': employment_status,
                 'skills': skills_csv,
-                'status': current_status,
+                'current_status': current_status,
             }).eq('email', email).execute()
 
             # Update Django Resident
@@ -923,7 +1046,7 @@ def pending_residents(request):
 
 
 def resident_details(request, resident_id):
-    resp = supabase.table("resident").select("*").eq("id", resident_id).single().execute()
+    resp = supabase_service.table("resident").select("*").eq("id", resident_id).single().execute()
     resident = resp.data
 
     proof_url = None
@@ -951,7 +1074,7 @@ def dashboard_resident_details(request, resident_id):
 
     # Fetch resident from Supabase
     try:
-        resp = supabase.table("resident").select("*").eq("id", resident_id).single().execute()
+        resp = supabase_service.table("resident").select("*").eq("id", resident_id).single().execute()
         resident = resp.data
     except Exception as e:
         messages.error(request, f"Resident not found: {e}")
@@ -1000,34 +1123,46 @@ def dashboard_resident_details(request, resident_id):
 
 
 
-from django.core.mail import send_mail
-from django.conf import settings
+from utils.send_email import send_approval_email, send_rejection_email
 
 def approve_resident(request, resident_id):
     try:
-        response = supabase.table("resident").update({
-            "verification_status": "verified"
+        # First, get the resident data before updating
+        resident_response = supabase_service.table("resident").select("*").eq("id", resident_id).execute()
+        
+        if not resident_response.data:
+            messages.error(request, "Resident not found.")
+            return redirect("verification_panel")
+            
+        resident_data = resident_response.data[0]
+        resident_email = resident_data.get("email")
+        resident_first_name = resident_data.get("first_name", "User")
+        
+        # Update the verification status
+        response = supabase_service.table("resident").update({
+            "verification_status": "Verified"
         }).eq("id", resident_id).execute()
 
-        # Send email
+        # Send email using SendGrid
         try:
-            resident_email = response.data[0]["email"]
-            send_mail(
-                subject="SkillBridge Account Approved",
-                message=(
-                    "Congratulations! Your SkillBridge account has been verified.\n"
-                    "You can now log in and access job and training opportunities.\n\n"
-                    "Thank you,\nSkillBridge Team"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[resident_email],
-                fail_silently=False,
-            )
-            messages.success(request, "Resident approved and email sent!")
-        except Exception:
-            messages.warning(request, "Approved but email failed. Please notify manually.")
+            if resident_email:
+                # Use SendGrid email function
+                email_sent = send_approval_email(resident_email, resident_first_name)
+                
+                if email_sent:
+                    messages.success(request, "Resident approved and approval email sent!")
+                else:
+                    messages.warning(request, "Resident approved, but email sending failed. Please notify manually.")
+            else:
+                messages.warning(request, "Resident approved, but no email address found.")
+                
+        except Exception as e:
+            print(f"Email sending error: {e}")
+            logger.error(f"Email sending failed for resident {resident_id}: {str(e)}")
+            messages.warning(request, "Resident approved, but email failed. Please notify manually.")
 
     except Exception as e:
+        logger.error(f"Error approving resident {resident_id}: {str(e)}")
         messages.error(request, f"Error: {e}")
 
     return redirect("verification_panel")
@@ -1035,29 +1170,42 @@ def approve_resident(request, resident_id):
 
 def deny_resident(request, resident_id):
     try:
-        response = supabase.table("resident").update({
-            "verification_status": "denied"
+        # First, get the resident data before updating
+        resident_response = supabase_service.table("resident").select("*").eq("id", resident_id).execute()
+        
+        if not resident_response.data:
+            messages.error(request, "Resident not found.")
+            return redirect("verification_panel")
+            
+        resident_data = resident_response.data[0]
+        resident_email = resident_data.get("email")
+        resident_first_name = resident_data.get("first_name", "User")
+        
+        # Update the verification status
+        response = supabase_service.table("resident").update({
+            "verification_status": "Rejected"
         }).eq("id", resident_id).execute()
 
-        # Send rejection email
+        # Send rejection email using SendGrid
         try:
-            resident_email = response.data[0]["email"]
-            send_mail(
-                subject="SkillBridge Account Verification Result",
-                message=(
-                    "Your SkillBridge registration was not approved.\n"
-                    "Please contact your barangay office if you believe this is an error.\n\n"
-                    "Thank you,\nSkillBridge Team"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[resident_email],
-                fail_silently=False,
-            )
-            messages.success(request, "Resident denied and email sent.")
-        except Exception:
-            messages.warning(request, "Denied but email failed. Please notify manually.")
+            if resident_email:
+                # Use SendGrid email function
+                email_sent = send_rejection_email(resident_email, resident_first_name)
+                
+                if email_sent:
+                    messages.success(request, "Resident denied and rejection email sent.")
+                else:
+                    messages.warning(request, "Resident denied, but email sending failed. Please notify manually.")
+            else:
+                messages.warning(request, "Resident denied, but no email address found.")
+                
+        except Exception as e:
+            print(f"Email sending error: {e}")
+            logger.error(f"Email sending failed for resident {resident_id}: {str(e)}")
+            messages.warning(request, "Resident denied, but email failed. Please notify manually.")
 
     except Exception as e:
+        logger.error(f"Error denying resident {resident_id}: {str(e)}")
         messages.error(request, f"Error: {e}")
 
     return redirect("verification_panel")
@@ -1070,7 +1218,7 @@ def verification_panel(request):
         return redirect('home')
 
     try:
-        response = supabase.table("resident").select("*").eq("verification_status", "pending").execute()
+        response = supabase_service.table("resident").select("*").eq("verification_status", "Pending Verification").execute()
         residents = response.data or []
 
     except Exception as e:
@@ -1106,7 +1254,7 @@ def api_delete_certificate(request):
             return JsonResponse({"error": "Certificate not found"}, status=404)
 
         # Check if resident owns this certificate
-        if cert['resident_id'] != supabase.table("resident").select("id").eq("email", email).single().execute().data['id']:
+        if cert['resident_id'] != supabase_service.table("resident").select("id").eq("email", email).single().execute().data['id']:
             return JsonResponse({"error": "Not authorized"}, status=403)
 
     except Exception as e:
@@ -1154,7 +1302,12 @@ def upload_certificate(request):
         try:
             # Upload file to Supabase Storage (use training_certificates bucket)
             bucket = os.getenv('SUPABASE_CERT_BUCKET', 'training_certificates')
-            file_path = f"{email}/{certificate_file.name}"
+            # Create unique file path to avoid conflicts
+            import re
+            clean_name = re.sub(r'[^\w\.-]', '_', certificate_file.name)  # sanitize filename
+            timestamp = int(time.time())
+            file_path = f"{email}/{timestamp}_{clean_name}"
+            
             supabase_service.storage.from_(bucket).upload(file_path, certificate_file.read(), {'content-type': certificate_file.content_type})
 
             # Get public URL
@@ -1254,15 +1407,16 @@ def calendar_events_api(request):
 
     return JsonResponse(events, safe=False)
 
-    def get_latest_notification():
-        try:
-            response = supabase.table("notifications") \
-                .select("*") \
-                .eq("visible", True) \
-                .order("created_at", desc=True) \
-                .limit(1) \
-                .execute()
-            return response.data[0] if response.data else None
-        except Exception as e:
-            print("Notification fetch error:", e)
-            return None
+
+def get_latest_notification():
+    try:
+        response = supabase.table("notifications") \
+            .select("*") \
+            .eq("visible", True) \
+            .order("created_at", desc=True) \
+            .limit(1) \
+            .execute()
+        return response.data[0] if response.data else None
+    except Exception as e:
+        print("Notification fetch error:", e)
+        return None

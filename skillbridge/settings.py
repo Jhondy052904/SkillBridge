@@ -42,15 +42,21 @@ else:
     print("⚠️ Supabase configuration missing! Please check .env file.")
 
 # -------------------------------------------------
-# Email Configuration
+# Email Configuration (SendGrid API)
 # -------------------------------------------------
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Django’s email backend disabled; we send email manually using SendGrid API
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# Use custom SendGrid functions instead of Django email backend
+# EMAIL_BACKEND = "django_sendgrid_backend.SendgridEmailBackend"  # This package is not installed
+SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_SENDER")
+
+# SendGrid-specific settings
+SENDGRID_SANDBOX_MODE_IN_DEBUG = False
+SENDGRID_TRACK_CLICKS = True
+SENDGRID_TRACK_OPENS = True
+DEFAULT_FROM_EMAIL = os.getenv("EMAIL_SENDER")
 
 # -------------------------------------------------
 # Basic Django Settings

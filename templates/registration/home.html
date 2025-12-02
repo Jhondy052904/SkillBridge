@@ -55,15 +55,16 @@
         <div class="dashboard-left">
             <!-- ================= MESSAGES ================= -->
             {% if messages %}
-            <div class="messages">
+            <div class="floating-messages">
                 {% for message in messages %}
-                <div class="message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}">
-                    <span class="message-text">{{ message }}</span>
+                <div class="editprofile-message {% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+                    {{ message }}
                 </div>
                 {% endfor %}
             </div>
             {% endif %}
 
+        {% if user_profile %}
         <div class="profile-details">
             <p><strong>Email:</strong> {{ user_profile.email }}</p>
             <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
@@ -81,17 +82,7 @@
             </div>
         </div>
 
-                <div class="profile-details">
-                    <p><strong>Email:</strong> {{ user_profile.email }}</p>
-                    <p><strong>Contact:</strong> {{ user_profile.contact_number }}</p>
-                    <p><strong>Address:</strong> {{ user_profile.address }}</p>
-                    <p><strong>Employment:</strong> {{ user_profile.employment_status }}</p>
-                    <p><strong>Verification:</strong> <span class="verification-status">{{ user_profile.verification_status }}</span></p>
-                    <p><strong>Current Status:</strong> <span class="current-status">{{ current_status }}</span></p>
-                    <p><strong>Skills:</strong> <span class="skills">{{ user_profile.skills }}</span></p>
-                </div>
-
-                <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
+            <a href="{% url 'edit_profile' %}" class="btn-update">Update Profile</a>
             </div>
             {% else %}
             <div class="profile-card error-card">
@@ -335,26 +326,7 @@ async function fetchRegisteredTrainings() {
 fetchRegisteredTrainings();
 setInterval(fetchRegisteredTrainings, 5000);
 
-// Welcome message
-document.addEventListener('DOMContentLoaded', () => {
-    const messages = document.querySelectorAll('.messages .message');
 
-    messages.forEach(msg => {
-        const closeBtn = document.createElement('span');
-        closeBtn.className = 'close-msg';
-        closeBtn.innerHTML = '&times;';
-        msg.appendChild(closeBtn);
-
-        closeBtn.addEventListener('click', () => msg.remove());
-
-        setTimeout(() => {
-            msg.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            msg.style.opacity = '0';
-            msg.style.transform = 'translateX(50px)';
-            msg.addEventListener('transitionend', () => msg.remove(), { once: true });
-        }, 5000);
-    });
-});
 
 // Certificate upload modal
 const uploadCertBtn = document.getElementById('uploadCertBtn');
