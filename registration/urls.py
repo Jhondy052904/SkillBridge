@@ -46,9 +46,4 @@ urlpatterns = [
     path('verify/resident/<int:resident_id>/', views.resident_details, name='resident_details'),
     path('verify/approve/<int:resident_id>/', views.approve_resident, name='approve_resident'),
     path('verify/deny/<int:resident_id>/', views.deny_resident, name='deny_resident'),
-<<<<<<< HEAD
-
 ]
-=======
-]
->>>>>>> c827f06 (Fix notifications, update resident dashboard and CSS styles)
