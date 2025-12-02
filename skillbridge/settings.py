@@ -47,8 +47,8 @@ else:
 
 # Django’s email backend disabled; we send email manually using SendGrid API
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-# Use SendGrid Django backend
-EMAIL_BACKEND = "django_sendgrid_backend.SendgridEmailBackend"
+# Use custom SendGrid functions instead of Django email backend
+# EMAIL_BACKEND = "django_sendgrid_backend.SendgridEmailBackend"  # This package is not installed
 SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_SENDER")
 

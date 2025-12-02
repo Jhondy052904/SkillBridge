@@ -4,7 +4,7 @@ from django.contrib.auth import logout
 from django.views.decorators.csrf import csrf_protect
 from django.http import JsonResponse
 from django.conf import settings
-from django.core.mail import send_mail
+# from django.core.mail import send_mail  # No longer needed - using custom SendGrid functions
 from django.contrib.auth.decorators import login_required
 from dotenv import load_dotenv
 import os
@@ -484,22 +484,16 @@ def signup_view(request):
 
             # Send verification email
             try:
-                send_mail(
-                    subject="SkillBridge Registration - Awaiting Approval",
-                    message=(
-                        f"Hello!\n\n"
-                        f"Thank you for signing up for SkillBridge.\n\n"
-                        f"Please verify your email address using the confirmation link sent to your inbox.\n\n"
-                        f"After verifying your email, your Barangay Official will review your registration.\n\n"
-                        f"You'll receive another message once your account has been approved.\n\n"
-                        f"— The SkillBridge Team"
-                    ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[email],
-                    fail_silently=True,  # Changed to True to prevent SMTP crashes
-                )
-                logger.info("Verification email sent successfully to %s", email)
-                messages.success(request, "Signup successful! Please check your email to verify your account.")
+                from utils.send_email import send_welcome_email
+                
+                email_sent = send_welcome_email(email, first_name)
+                
+                if email_sent:
+                    logger.info("Verification email sent successfully to %s", email)
+                    messages.success(request, "Signup successful! Please check your email to verify your account.")
+                else:
+                    logger.warning("Failed to send verification email to %s", email)
+                    messages.warning(request, "Signup successful! However, we couldn't send the verification email. Please contact support.")
             except Exception as e:
                 logger.exception("Email sending failed: %s", e)
                 messages.warning(request, "Signup successful! However, we couldn't send the verification email. Please contact support.")
@@ -1174,34 +1168,46 @@ def dashboard_resident_details(request, resident_id):
 
 
 
-from django.core.mail import send_mail
-from django.conf import settings
 from utils.send_email import send_approval_email, send_rejection_email
 
 def approve_resident(request, resident_id):
     try:
+        # First, get the resident data before updating
+        resident_response = supabase_service.table("resident").select("*").eq("id", resident_id).execute()
+        
+        if not resident_response.data:
+            messages.error(request, "Resident not found.")
+            return redirect("verification_panel")
+            
+        resident_data = resident_response.data[0]
+        resident_email = resident_data.get("email")
+        resident_first_name = resident_data.get("first_name", "User")
+        
+        # Update the verification status
         response = supabase_service.table("resident").update({
             "verification_status": "Verified"
         }).eq("id", resident_id).execute()
 
         # Send email using SendGrid
         try:
-            resident_email = response.data[0]["email"]
-            resident_first_name = response.data[0].get("first_name", "User")
-            
-            # Use SendGrid email function
-            email_sent = send_approval_email(resident_email, resident_first_name)
-            
-            if email_sent:
-                messages.success(request, "Resident approved and approval email sent!")
+            if resident_email:
+                # Use SendGrid email function
+                email_sent = send_approval_email(resident_email, resident_first_name)
+                
+                if email_sent:
+                    messages.success(request, "Resident approved and approval email sent!")
+                else:
+                    messages.warning(request, "Resident approved, but email sending failed. Please notify manually.")
             else:
-                messages.warning(request, "Resident approved, but email sending failed. Please notify manually.")
+                messages.warning(request, "Resident approved, but no email address found.")
                 
         except Exception as e:
             print(f"Email sending error: {e}")
+            logger.error(f"Email sending failed for resident {resident_id}: {str(e)}")
             messages.warning(request, "Resident approved, but email failed. Please notify manually.")
 
     except Exception as e:
+        logger.error(f"Error approving resident {resident_id}: {str(e)}")
         messages.error(request, f"Error: {e}")
 
     return redirect("verification_panel")
@@ -1209,28 +1215,42 @@ def approve_resident(request, resident_id):
 
 def deny_resident(request, resident_id):
     try:
+        # First, get the resident data before updating
+        resident_response = supabase_service.table("resident").select("*").eq("id", resident_id).execute()
+        
+        if not resident_response.data:
+            messages.error(request, "Resident not found.")
+            return redirect("verification_panel")
+            
+        resident_data = resident_response.data[0]
+        resident_email = resident_data.get("email")
+        resident_first_name = resident_data.get("first_name", "User")
+        
+        # Update the verification status
         response = supabase_service.table("resident").update({
             "verification_status": "Rejected"
         }).eq("id", resident_id).execute()
 
         # Send rejection email using SendGrid
         try:
-            resident_email = response.data[0]["email"]
-            resident_first_name = response.data[0].get("first_name", "User")
-            
-            # Use SendGrid email function
-            email_sent = send_rejection_email(resident_email, resident_first_name)
-            
-            if email_sent:
-                messages.success(request, "Resident denied and rejection email sent.")
+            if resident_email:
+                # Use SendGrid email function
+                email_sent = send_rejection_email(resident_email, resident_first_name)
+                
+                if email_sent:
+                    messages.success(request, "Resident denied and rejection email sent.")
+                else:
+                    messages.warning(request, "Resident denied, but email sending failed. Please notify manually.")
             else:
-                messages.warning(request, "Resident denied, but email sending failed. Please notify manually.")
+                messages.warning(request, "Resident denied, but no email address found.")
                 
         except Exception as e:
             print(f"Email sending error: {e}")
+            logger.error(f"Email sending failed for resident {resident_id}: {str(e)}")
             messages.warning(request, "Resident denied, but email failed. Please notify manually.")
 
     except Exception as e:
+        logger.error(f"Error denying resident {resident_id}: {str(e)}")
         messages.error(request, f"Error: {e}")
 
     return redirect("verification_panel")
@@ -1432,15 +1452,16 @@ def calendar_events_api(request):
 
     return JsonResponse(events, safe=False)
 
-    def get_latest_notification():
-        try:
-            response = supabase.table("notifications") \
-                .select("*") \
-                .eq("visible", True) \
-                .order("created_at", desc=True) \
-                .limit(1) \
-                .execute()
-            return response.data[0] if response.data else None
-        except Exception as e:
-            print("Notification fetch error:", e)
-            return None
+
+def get_latest_notification():
+    try:
+        response = supabase.table("notifications") \
+            .select("*") \
+            .eq("visible", True) \
+            .order("created_at", desc=True) \
+            .limit(1) \
+            .execute()
+        return response.data[0] if response.data else None
+    except Exception as e:
+        print("Notification fetch error:", e)
+        return None
