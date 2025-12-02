@@ -44,8 +44,8 @@ body::before {
    BACK BUTTON 
 ===================== */
 .back-btn {
-    position: absolute;
-    top: -60px; /* moved above main container */
+    position: fixed; /* FIXED instead of absolute */
+    top: 20px;
     left: 20px;
     background: transparent;
     border: none;
@@ -58,8 +58,10 @@ body::before {
     text-decoration: none;
     cursor: pointer;
     padding: 6px 10px;
+    z-index: 1100; /* above modal */
     transition: transform 0.2s ease, color 0.2s ease;
 }
+
 .back-btn:hover {
     color: #071952;
     transform: translateY(-2px);
@@ -155,6 +157,8 @@ body::before {
     box-shadow: 0 10px 28px rgba(66, 153, 225, 0.12),
                 0 6px 16px rgba(66, 153, 225, 0.08);
     transition: all 0.3s ease;
+    margin-left: 100px;
+    margin-right: 100px;
 }
 
 .resident-list {
@@ -211,6 +215,7 @@ body::before {
     font-weight: 700;
     color: #071952;
     transition: color 0.3s ease;
+    text-decoration: none;
 }
 
 .resident-name:hover { color: #021526; }
@@ -218,6 +223,7 @@ body::before {
 .resident-status {
     font-size: 1rem;
 }
+
 
 .status-hired { color: #38A169; font-weight: 700; }
 .status-training { color: #088395; font-weight: 700; }
@@ -250,4 +256,75 @@ body::before {
     font-style: italic;
     font-size: 1.1rem;
     padding: 24px;
+}
+
+
+/* ===================== 
+  Modal
+===================== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal.hidden {
+    display: none; /* fully remove from layout */
+}
+
+.open-resident-modal {
+    text-decoration: none !important;  /* remove underline */
+    color: inherit;                     /* keep the h3 color */
+    cursor: pointer;                    /* pointer for clickable */
+}
+
+.open-resident-modal h3.resident-name {
+    margin: 0;                          /* optional: remove h3 margin */
+}
+
+.modal-content {
+    background: #fff;
+    padding: 25px;
+    width: 470px;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.modal-title {
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.btn-approve, .btn-deny {
+    padding: 8px 16px;
+    border-radius: 8px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-approve {
+    background: #28a745;
+}
+
+.btn-deny {
+    background: #dc3545;
 }

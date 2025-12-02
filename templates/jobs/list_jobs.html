@@ -38,34 +38,8 @@
         <!-- Logout -->
         <a href="{% url 'login' %}" id="logoutLink">Logout</a>
 
-<!-- Notifications -->
-<div class="notifications">
-    <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
-        <img src="/static/images/notif.png" alt="Notifications" class="notif-icon">
-
-        {% if notifications %}
-            <span class="notif-indicator"></span>
-        {% endif %}
-    </button>
-
-    <!-- DROPDOWN -->
-    <div id="notifDropdown" class="notif-dropdown hidden">
-        {% if notifications %}
-            {% for notif in notifications %}
-            <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
-                <p class="notif-message">{{ notif.message }}</p>
-                <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
-            </div>
-            {% endfor %}
-            <form method="POST" action="{% url 'clear_notifications' %}">
-                {% csrf_token %}
-                <button type="submit" class="notif-clear-btn">Clear All</button>
-            </form>
-        {% else %}
-            <p class="notif-empty">No notifications.</p>
-        {% endif %}
-    </div>
-</div>
+        <!-- Notifications -->
+        {% include 'notification/notification.html' %}
 
     </div>
 </nav>
@@ -296,22 +270,6 @@ menuLinks.forEach(link => {
 
 document.querySelector('.nav-right').addEventListener('mouseleave', () => {
     if (activeLink) moveUnderline(activeLink);
-});
-
-
-// Toggle Notifications Dropdown
-function toggleNotifDropdown() {
-    const dropdown = document.getElementById('notifDropdown');
-    dropdown.classList.toggle('hidden');
-}
-
-// Close dropdown when clicking outside
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('notifDropdown');
-    const btn = document.getElementById('notifBtn');
-    if (!dropdown.contains(event.target) && !btn.contains(event.target)) {
-        dropdown.classList.add('hidden');
-    }
 });
 
 // Logout popup

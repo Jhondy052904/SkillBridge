@@ -24,6 +24,7 @@ urlpatterns = [
     path('official/post-event/', views.post_event, name='post_event'),
     path('official/verification-panel/', views.verification_panel, name='verification_panel'),
     path('verify/resident/<int:resident_id>/', views.resident_details, name='resident_details'),
+    path("official/resident/<int:id>/details/", views.resident_details_partial, name="resident_details_partial"),
 
     # -------- PROFILE --------
     path('profile/', views.edit_profile_view, name='edit_profile'),
@@ -36,6 +37,8 @@ urlpatterns = [
     path('api/registered_trainings/', views.api_registered_trainings, name='api_registered_trainings'),
     path('api/upload_certificate/', views.api_upload_certificate, name='api_upload_certificate'),
     path('api/delete_certificate/', views.api_delete_certificate, name='api_delete_certificate'),
+    path("api/resident/<int:id>/", views.resident_api, name="resident_api"),
+    path("resident/<int:id>/details/", views.resident_details_partial, name="resident_details_partial"),
     path('upload_certificate/', views.upload_certificate, name='upload_certificate'),
 
     # -------- VERIFICATION PANEL (UI) --------
@@ -43,5 +46,9 @@ urlpatterns = [
     path('verify/resident/<int:resident_id>/', views.resident_details, name='resident_details'),
     path('verify/approve/<int:resident_id>/', views.approve_resident, name='approve_resident'),
     path('verify/deny/<int:resident_id>/', views.deny_resident, name='deny_resident'),
+<<<<<<< HEAD
 
 ]
+=======
+]
+>>>>>>> c827f06 (Fix notifications, update resident dashboard and CSS styles)

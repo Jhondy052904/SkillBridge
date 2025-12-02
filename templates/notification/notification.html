@@ -1,0 +1,67 @@
+{% load static %}
+
+<!-- Notification Button -->
+<div class="notifications">
+    <button onclick="toggleNotifDropdown()" id="notifBtn" class="notif-btn">
+        <img src="{% static 'images/notif.png' %}" alt="Notifications" class="notif-icon">
+        {% if notifications %}
+            <span class="notif-indicator">{{ notifications|length }}</span>
+        {% endif %}
+    </button>
+
+    <div id="notifDropdown" class="notif-dropdown hidden">
+        {% if notifications %}
+            {% for notif in notifications %}
+            <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
+                <p class="notif-message">{{ notif.message }}</p>
+                <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
+            </div>
+            {% endfor %}
+            <form method="POST" action="{% url 'clear_notifications' %}">
+                {% csrf_token %}
+                <button type="submit" class="notif-clear-btn">Clear All</button>
+            </form>
+        {% else %}
+            <p class="notif-empty">No notifications.</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+
+.notifications { position: relative; display: inline-block; }
+.notif-btn { height:40px;width:40px;border:none;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.notif-btn img { width:80%;height:80%;object-fit:contain;pointer-events:none; }
+.notif-indicator { display:inline-block; min-width:20px;height:20px;padding:0 6px;background:#dc3545;color:#fff;font-size:12px;font-weight:bold;text-align:center;border-radius:50%;line-height:20px;vertical-align:middle;}
+.notif-dropdown { position:absolute; top:50px; right:0; width:340px; max-height:420px; overflow-y:auto; background:#EBF4F6; border-radius:20px; box-shadow:0 12px 40px rgba(66,153,225,0.2); padding:16px 0; z-index:1000;}
+.notif-item { padding:18px 24px; border-bottom:1px solid rgba(226,232,240,0.8); cursor:pointer; transition:all 0.2s ease;}
+.notif-item:last-child {border-bottom:none;}
+.notif-item:hover { background: rgba(66,153,225,0.05);}
+.notif-message { font-size:0.95rem;color:#2D3748;margin-bottom:6px;font-weight:500;line-height:1.5;}
+.notif-date { font-size:0.85rem;color:#718096;}
+.notif-clear-btn { width:100%;padding:14px 0;background:linear-gradient(135deg,#4299E1,#63B3ED);color:#fff;border:none;border-radius:0 0 20px 20px;cursor:pointer;font-weight:600;font-size:0.95rem;transition:all 0.2s ease;}
+.notif-clear-btn:hover { background:linear-gradient(135deg,#3182CE,#4299E1);}
+.notif-empty { text-align:center; padding:40px 24px; color:#A0AEC0; font-style:italic; font-size:0.95rem;}
+.hidden { display:none !important; }
+</style>
+
+<script>
+const notifBtn = document.getElementById('notifBtn');
+const notifDropdown = document.getElementById('notifDropdown');
+
+function toggleNotifDropdown() {
+    notifDropdown.classList.toggle('hidden');
+}
+
+// Click outside to close
+document.addEventListener('click', (e) => {
+    if (!notifDropdown.contains(e.target) && !notifBtn.contains(e.target)) {
+        notifDropdown.classList.add('hidden');
+    }
+});
+
+// Escape key to close
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') notifDropdown.classList.add('hidden');
+});
+</script>

@@ -17,10 +17,63 @@ from .models import Resident, Official, Job, Training, Event, JobApplication, Tr
 from jobs.services.supabase_crud import get_jobs
 from datetime import datetime
 
-from django.contrib import messages
-from django.shortcuts import redirect
-from django.contrib.auth import logout
-import time
+from .models import Resident
+from .models import Notification
+
+@login_required
+def some_view(request):
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'some_template.html', {'notifications': notifications})
+    
+# ----- JSON API (optional) -----
+def resident_api(request, id):
+    resident = get_object_or_404(Resident, id=id)
+    return JsonResponse({
+        "first_name": resident.first_name,
+        "middle_name": resident.middle_name,
+        "last_name": resident.last_name,
+        "email": resident.email,
+        "address": resident.address,
+        "contact_number": resident.contact_number,
+        "gender": resident.gender,
+        "employment_status": resident.employment_status,
+        "verification_status": resident.verification_status,
+        
+    })
+
+# ----- HTML partial for modal -----
+from django.http import JsonResponse
+import base64
+
+def resident_details_partial(request, id):
+    try:
+        resp = supabase.table("resident").select("*").eq("id", id).single().execute()
+        resident = resp.data
+    except Exception:
+        return JsonResponse({"error": "Resident not found"}, status=404)
+
+    # Always define proof_url first
+    proof_url = None
+
+    if resident.get("proof_residency"):
+        raw_proof = resident["proof_residency"]
+        try:
+            # Convert hex bytes if needed
+            if raw_proof.startswith("\\x"):
+                raw_bytes = bytes.fromhex(raw_proof[2:])
+            else:
+                raw_bytes = raw_proof.encode()  # fallback if already a string
+            proof_url = "data:image/png;base64," + base64.b64encode(raw_bytes).decode()
+        except Exception as e:
+            print("Error converting proof_residency:", e)
+            proof_url = None
+
+    return render(request, "official/resident_details_partial.html", {
+        "resident": resident,
+        "proof_url": proof_url
+    })
+
+
 
 # Set up logging for this module
 logger = logging.getLogger(__name__)
@@ -66,78 +119,6 @@ supabase_service = create_client(SUPABASE_URL, SUPABASE_KEY)
 def index(request):
     """Landing page."""
     return render(request, 'registration/index.html')
-
-# def home(request):
-#     """Resident dashboard view."""
-#     # Restrict to residents only
-#     if request.session.get('user_role') != 'Resident':
-#         messages.error(request, "Access denied. Residents only.")
-#         return redirect('login')
-
-#     username = request.session.get("user_email")
-#     verification_status = "No Profile"
-#     user_profile = None
-#     applied_jobs = []
-#     registered_trainings = []
-#     all_jobs = []
-#     all_trainings = []
-#     notifications = []  # renamed for consistency
-
-#     if username:
-#         # Fetch Django resident profile
-#         resident = Resident.objects.filter(email=username).first()
-#         if resident:
-#             verification_status = resident.verification_status
-
-#         # Fetch Supabase resident data
-#         try:
-#             res = supabase.table("resident").select("*").eq("email", username).single().execute()
-#             user_profile = res.data if res.data else None
-#         except Exception as e:
-#             print("Supabase user profile fetch error:", e)
-
-#         # Load applied jobs
-#         applied_jobs = JobApplication.objects.filter(
-#             resident__email=username
-#         ).select_related("job")
-
-#         # Load registered trainings
-#         registered_trainings = Training.objects.filter(
-#             trainingparticipation__resident__email=username
-#         ).distinct()
-
-#         # Fetch all active jobs
-#         try:
-#             all_jobs_data = get_jobs()
-#             all_jobs = [job for job in all_jobs_data if job.get('Status') == 'Open']
-#         except Exception as e:
-#             messages.error(request, "Unable to load job listings.")
-#             all_jobs = []
-
-#         # Fetch all active trainings
-#         try:
-#             response = supabase.table("training").select("*").order("created_at", desc=True).execute()
-#             all_trainings = response.data or []
-#         except Exception as e:
-#             messages.error(request, "Unable to load training events.")
-#             all_trainings = []
-
-#         # Fetch notifications
-#         try:
-#             notifications = get_all_notifications()
-#         except Exception as e:
-#             messages.error(request, "Unable to load notifications.")
-#             notifications = []
-
-#     return render(request, "registration/home.html", {
-#         "verification_status": verification_status,
-#         "user_profile": user_profile,
-#         "applied_jobs": applied_jobs,
-#         "registered_trainings": registered_trainings,
-#         "all_jobs": all_jobs,
-#         "all_trainings": all_trainings,
-#         "notifications": notifications,
-#     })
 
 def home(request):
     """Resident dashboard view."""
@@ -681,27 +662,6 @@ def login_view(request):
         return render(request, 'registration/login.html')
 
 
-
-
-
-
-# ------------------------------------------------------------
-# LOGOUT
-# ------------------------------------------------------------
-def logout_view(request):
-    logout(request)
-    request.session.flush()
-    messages.success(request, 'You have been logged out successfully.')
-    response = redirect('login')
-    # Prevent caching to ensure fresh CSRF token on login page
-    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response['Pragma'] = 'no-cache'
-    response['Expires'] = '0'
-    # Add timestamp to URL to force fresh load
-    response['Location'] += '?t=' + str(int(time.time()))
-    return response
-
-
 # ------------------------------------------------------------
 # OFFICIAL DASHBOARD & POSTING
 # ------------------------------------------------------------
@@ -868,9 +828,6 @@ def post_job(request):
         messages.error(request, f"Error posting job: {str(e)}")
         return redirect('official_dashboard')
 
-
-
-
 def post_training(request):
     """Official posts a training."""
     if request.session.get('user_role') != 'Official':
@@ -914,8 +871,6 @@ def post_training(request):
             return redirect('official_dashboard')
 
     return render(request, 'official/post_training.html')
-
-
 
 def post_event(request):
     """Official posts an event."""

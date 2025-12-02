@@ -37,6 +37,13 @@
 </nav>
 
     <!-- ====================== MAIN ====================== -->
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
     <main class="main-container">
 
         <h1 class="page-title">Resident Verification Panel</h1>
