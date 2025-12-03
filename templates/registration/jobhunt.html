@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Hunt</title>
+    <link rel="stylesheet" href="{% static 'css/global-font.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/registration/jobhunt.css' %}?v=10">
 </head>
 <body>
@@ -99,31 +100,17 @@
             {% if jobs %}
                 {% for job in jobs %}
                     {% if job.Status == "Open" %}
-                    <div class="job-card modern-card">
-                        <div class="card-header">
-                            <h3 class="job-title">{{ job.Title }}</h3>
-                            <span class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">
-                                {{ job.Status }}
-                            </span>
+                    <a href="{% url 'login' %}?next={% url 'jobhunt' %}" class="job-card-link">
+                        <div class="job-card modern-card">
+                            <div class="card-header">
+                                <h3 class="job-title">{{ job.Title }}</h3>
+                                <span class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">
+                                    {{ job.Status }}
+                                </span>
+                            </div>
+                            <p class="job-description">{{ job.Description|truncatechars:150 }}</p>
                         </div>
-                        <p class="job-description">{{ job.Description|truncatechars:150 }}</p>
-                        <div class="job-skills">
-                            {% if job.skills %}
-                                {% for skill in job.skills %}
-                                    <span class="skill-tag">{{ skill }}</span>
-                                {% endfor %}
-                            {% else %}
-                                <span class="skill-tag no-skills">No specific skills required</span>
-                            {% endif %}
-                        </div>
-                        <div class="job-actions">
-                            {% if user.is_authenticated and request.session.user_role == 'Resident' %}
-                                <a href="{% url 'apply_job' job.JobID %}" class="btn-apply">Apply</a>
-                            {% else %}
-                                <a href="{% url 'login' %}?next={% url 'jobhunt' %}" class="btn-apply">Login to Apply</a>
-                            {% endif %}
-                        </div>
-                    </div>
+                    </a>
                     {% endif %}
                 {% endfor %}
             {% else %}

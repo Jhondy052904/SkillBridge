@@ -207,10 +207,33 @@ def home(request):
     # Applied jobs: removed backend fetch to speed up dashboard (UI removed)
     applied_jobs = []
 
-    # Registered trainings
-    registered_trainings = Training.objects.filter(
-        trainingparticipation__resident__email=username
-    ).distinct()
+    # Registered trainings (only attended ones)
+    registered_trainings = []
+    try:
+        # Get attended trainings from Supabase
+        attendees_resp = supabase.table("training_attendees").select("*").eq("email", username).in_("attendance_status", ["Attended", "Completed"]).execute()
+        attendees = attendees_resp.data or []
+        
+        # Get training details for each attended training
+        for att in attendees:
+            try:
+                training_resp = supabase.table("training").select("*").eq("id", att['training_id']).single().execute()
+                training_data = training_resp.data
+                if training_data:
+                    # Convert to Django Training object-like structure for template compatibility
+                    class TrainingObj:
+                        def __init__(self, data):
+                            self.id = data.get('id')
+                            self.training_name = data.get('training_name')
+                            self.date_scheduled = data.get('date_scheduled')
+                            self.status = data.get('status', 'Upcoming')
+                    
+                    registered_trainings.append(TrainingObj(training_data))
+            except Exception as e:
+                print(f"Training fetch error for {att['training_id']}: {e}")
+    except Exception as e:
+        print(f"Attended trainings fetch error: {e}")
+        registered_trainings = []
 
     # All jobs
     try:
@@ -266,13 +289,14 @@ def home(request):
 
 
 def api_registered_trainings(request):
-    """Returns JSON list of trainings the logged-in resident registered for, including attendance_status."""
+    """Returns JSON list of trainings the logged-in resident attended (Attended or Completed)."""
     if not request.user.is_authenticated:
         return JsonResponse({"error": "Authentication required"}, status=401)
 
     email = request.session.get('user_email') or request.user.email
     try:
-        resp = supabase.table("training_attendees").select("*").eq("email", email).execute()
+        # Only fetch trainings where attendance_status is 'Attended' or 'Completed'
+        resp = supabase.table("training_attendees").select("*").eq("email", email).in_("attendance_status", ["Attended", "Completed"]).execute()
         attendees = resp.data or []
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -425,7 +449,17 @@ def aboutus(request):
 
 
 def jobhunt(request):
-    return render(request, 'registration/jobhunt.html')
+    """Public job hunt page - displays all available jobs."""
+    jobs = []
+    try:
+        jobs_data = get_jobs()
+        # Filter to only show open jobs
+        jobs = [job for job in jobs_data if job.get('Status') == 'Open']
+    except Exception as e:
+        print(f"Error fetching jobs for jobhunt: {e}")
+        jobs = []
+    
+    return render(request, 'registration/jobhunt.html', {'jobs': jobs})
 
 def supabase_reset_page(request):
     return render(request, "registration/reset_password.html")

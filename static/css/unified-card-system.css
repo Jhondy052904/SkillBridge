@@ -1,0 +1,421 @@
+/* =========================================================
+   UNIFIED CARD DESIGN SYSTEM
+   Central design tokens for consistent job and training cards
+   ========================================================= */
+
+/* =====================
+   DESIGN TOKENS
+   ===================== */
+
+/* Color System */
+:root {
+  /* Primary Colors */
+  --primary-blue: #3C8CFF;
+  --primary-blue-light: #4DB7FF;
+  --primary-blue-dark: #3182CE;
+  
+  /* Accent Colors */
+  --accent-mint: #088395;
+  --accent-mint-light: #37B7C3;
+  --accent-mint-dark: #037D8C;
+  
+  /* Status Colors */
+  --status-open-bg: rgba(250, 229, 43, 0.75);
+  --status-open-text: #021526;
+  --status-closed-bg: rgba(220, 38, 38, 0.15);
+  --status-closed-text: #DC2626;
+  --status-urgent-bg: rgba(255, 193, 7, 0.18);
+  --status-urgent-text: #9A6A00;
+  
+  /* Background Colors */
+  --card-bg: rgba(235, 244, 246, 0.95);
+  --card-bg-hover: rgba(235, 244, 246, 0.98);
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-bg-hover: rgba(255, 255, 255, 0.96);
+  
+  /* Text Colors */
+  --text-primary: #071952;
+  --text-secondary: #5A6B80;
+  --text-muted: #8DA1B7;
+  --text-label: #021526;
+  
+  /* Border & Shadow */
+  --border-light: rgba(2, 21, 38, 0.05);
+  --shadow-card: 0 4px 16px rgba(7, 25, 82, 0.12);
+  --shadow-card-hover: 0 6px 20px rgba(7, 25, 82, 0.16);
+  --shadow-button: 0 6px 16px rgba(60, 140, 255, 0.35);
+  --shadow-button-hover: 0 8px 20px rgba(60, 140, 255, 0.45);
+}
+
+/* =====================
+   UNIFIED CARD LAYOUT
+   ===================== */
+
+/* Base card structure */
+.unified-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-light);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.unified-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+  background: var(--card-bg-hover);
+}
+
+/* Card Grid Layout */
+.unified-cards-container {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.unified-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* =====================
+   UNIFIED TYPOGRAPHY
+   ===================== */
+
+/* Card Titles */
+.unified-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+/* Card Descriptions */
+.unified-card-description {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Labels */
+.unified-card-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-label);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* =====================
+   UNIFIED STATUS & BADGES
+   ===================== */
+
+/* Status Badges */
+.unified-status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.unified-status-badge.status-open {
+  background: var(--status-open-bg);
+  color: var(--status-open-text);
+}
+
+.unified-status-badge.status-closed {
+  background: var(--status-closed-bg);
+  color: var(--status-closed-text);
+}
+
+.unified-status-badge.status-urgent {
+  background: var(--status-urgent-bg);
+  color: var(--status-urgent-text);
+}
+
+/* Level Badges */
+.unified-badge {
+  background: var(--glass-bg);
+  padding: 6px 12px;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+}
+
+/* =====================
+   UNIFIED SKILL TAGS
+   ===================== */
+
+.unified-skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.unified-skill-tag {
+  background: rgba(8, 131, 149, 0.15);
+  color: var(--accent-mint);
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.unified-skill-tag:hover {
+  background: rgba(8, 131, 149, 0.25);
+  transform: translateY(-1px);
+}
+
+.unified-skill-tag.no-skills {
+  background: rgba(156, 163, 175, 0.12);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* =====================
+   UNIFIED META INFORMATION
+   ===================== */
+
+.unified-meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid rgba(237, 242, 247, 0.8);
+  border-bottom: 1px solid rgba(237, 242, 247, 0.8);
+  margin: 16px 0;
+}
+
+.unified-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.unified-meta-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.unified-meta-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* =====================
+   UNIFIED BUTTONS
+   ===================== */
+
+.unified-btn {
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.unified-btn-primary {
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-light));
+  color: white;
+  box-shadow: var(--shadow-button);
+}
+
+.unified-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-button-hover);
+}
+
+.unified-btn-secondary {
+  background: linear-gradient(135deg, var(--accent-mint), var(--accent-mint-light));
+  color: white;
+  box-shadow: 0 6px 16px rgba(8, 131, 149, 0.35);
+}
+
+.unified-btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(8, 131, 149, 0.45);
+}
+
+.unified-btn-danger {
+  background: linear-gradient(135deg, #FF6B6B, #FF4757);
+  color: white;
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.35);
+}
+
+.unified-btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.45);
+}
+
+/* =====================
+   UNIFIED ACTIONS CONTAINER
+   ===================== */
+
+.unified-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+  flex-wrap: wrap;
+}
+
+.unified-actions .unified-btn {
+  flex: 1;
+  min-width: 100px;
+}
+
+/* =====================
+   UNIFIED EMPTY STATE
+   ===================== */
+
+.unified-empty-state {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  padding: 60px 20px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(7, 25, 82, 0.12);
+  margin: 20px 0;
+}
+
+.unified-empty-state p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.unified-empty-state-secondary {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* =====================
+   RESPONSIVE DESIGN
+   ===================== */
+
+@media (max-width: 768px) {
+  .unified-cards-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .unified-card {
+    padding: 20px;
+    min-height: 260px;
+  }
+  
+  .unified-meta-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .unified-actions {
+    flex-direction: column;
+  }
+  
+  .unified-actions .unified-btn {
+    flex: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .unified-card {
+    padding: 16px;
+    min-height: 240px;
+  }
+  
+  .unified-card-title {
+    font-size: 1.1rem;
+  }
+  
+  .unified-card-description {
+    font-size: 0.9rem;
+  }
+}
+
+/* =====================
+   ACCESSIBILITY IMPROVEMENTS
+   ===================== */
+
+.unified-card:focus {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+.unified-btn:focus {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+.unified-skill-tag:focus {
+  outline: 2px solid var(--accent-mint);
+  outline-offset: 1px;
+}
+
+/* =====================
+   ANIMATIONS
+   ===================== */
+
+@keyframes unifiedFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.unified-card {
+  animation: unifiedFadeIn 0.3s ease;
+}
+
+@keyframes unifiedPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+.unified-card:hover {
+  animation: unifiedPulse 0.6s ease infinite alternate;
+}

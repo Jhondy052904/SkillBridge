@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Training Management | SkillBridge</title>
 
+    <link rel="stylesheet" href="{% static 'css/global-font.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/trainings/list_trainings.css' %}?v=5">
     <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
@@ -73,7 +74,7 @@
         <a href="{% url 'training_detail' t.id %}" class="training-card-link">
             <div class="training-card">
                 <div class="card-header">
-                    <span class="badge">{{ t.level|default:"Beginner" }}</span>
+                    <!-- Badge removed for clean UI -->
                 </div>
                 
                 <div class="training-card-content">
@@ -94,8 +95,8 @@
                         </div>
                     </div>
 
+                    <!-- Status removed for clean UI -->
                     <div class="training-status">
-                        <span class="status-badge">Not Urgent</span>
                     </div>
 
                     <div class="training-actions" onclick="event.stopPropagation();">
