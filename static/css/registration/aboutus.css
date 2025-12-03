@@ -1,13 +1,15 @@
 /* =====================
    General Page Styling
 ===================== */
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
     position: relative;
     min-height: 100vh;
     margin: 0;
     padding: 0;
-
-    font-family: 'Poppins', Arial, sans-serif;
     font-size: 0.9rem;
     color: #1B3C53;
     overflow-x: hidden;

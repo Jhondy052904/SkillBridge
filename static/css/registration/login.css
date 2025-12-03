@@ -4,6 +4,9 @@ body {
   overflow: hidden; /* ensures no scrollbar appears */
 }
 
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
 /* Page Centering */
 .login-page {
   display: flex;

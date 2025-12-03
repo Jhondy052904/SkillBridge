@@ -1,11 +1,14 @@
 /* ===================== 
    BODY & BACKGROUND 
 ===================== */
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
     position: relative;
     min-height: 100vh;
     width: 100%;
-    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #2D3748;

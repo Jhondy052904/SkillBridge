@@ -1,9 +1,12 @@
 /* Reset & Body */
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: "Poppins", sans-serif;
 }
 
 /* Page Centering */

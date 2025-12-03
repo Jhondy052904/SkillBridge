@@ -5,6 +5,10 @@
     box-sizing: border-box;
 }
 
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
     font-family: Arial, sans-serif;
     min-height: 100vh;

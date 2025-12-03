@@ -1,6 +1,10 @@
 /* ===================== 
    BODY & BACKGROUND 
 ===================== */
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
     position: relative;
     min-height: 100vh;

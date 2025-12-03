@@ -1,6 +1,10 @@
 /* =====================
    Modern Logout Pop-up
 ===================== */
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 .logout-popup {
     position: fixed;
     top: 50%;
