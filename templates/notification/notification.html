@@ -12,7 +12,7 @@
     <div id="notifDropdown" class="notif-dropdown hidden">
         {% if notifications %}
             {% for notif in notifications %}
-            <div onclick="window.location.href='{{ notif.link_url }}'" class="notif-item">
+            <div onclick="handleNotificationClick('{{ notif.link_url|escapejs }}')" class="notif-item" data-link-url="{{ notif.link_url|escapejs }}">
                 <p class="notif-message">{{ notif.message }}</p>
                 <small class="notif-date">{{ notif.created_at|date:"M d, Y h:i A" }}</small>
             </div>
@@ -51,6 +51,30 @@ const notifDropdown = document.getElementById('notifDropdown');
 
 function toggleNotifDropdown() {
     notifDropdown.classList.toggle('hidden');
+}
+
+function handleNotificationClick(linkUrl) {
+    // Check if user is authenticated by making a quick API call
+    fetch('/notifications/latest/')
+        .then(response => {
+            if (response.status === 401) {
+                // User is not authenticated, redirect to login
+                window.location.href = '{% url "login" %}?next=' + encodeURIComponent(linkUrl);
+                return false;
+            }
+            // User is authenticated, proceed with navigation
+            window.location.href = linkUrl;
+        })
+        .catch(error => {
+            console.error('Authentication check failed:', error);
+            // In case of network error, still try to navigate
+            // But first check if we're likely authenticated by checking Django's auth state
+            if (typeof window.djangoAuth !== 'undefined' && !window.djangoAuth.isAuthenticated) {
+                window.location.href = '{% url "login" %}?next=' + encodeURIComponent(linkUrl);
+            } else {
+                window.location.href = linkUrl;
+            }
+        });
 }
 
 // Click outside to close

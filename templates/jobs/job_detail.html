@@ -39,15 +39,6 @@
     </div>
     {% endif %}
 
-    <div class="section">
-        {% if user.is_authenticated and request.session.user_role == 'Resident' and job.Status == 'Open' %}
-            <a href="{% url 'apply_job' job.JobID %}" class="btn-apply">Apply for this Job</a>
-        {% elif job.Status == 'Open' %}
-            <a href="{% url 'login' %}?next={% url 'jobhunt' %}" class="btn-apply">Login to Apply</a>
-        {% else %}
-            <span class="text-muted">Applications closed</span>
-        {% endif %}
-    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

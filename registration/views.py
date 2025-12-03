@@ -156,12 +156,12 @@ def log_action(action, entity, entity_id, request):
 # ------------------------------------------------------------
 # Supabase Setup
 # ------------------------------------------------------------
+from skillbridge.supabase_client import supabase
+# Create service client for privileged operations
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 SUPABASE_ANON_KEY = os.getenv("SUPABASE_ANON_KEY")
-# Create both an anon client (for public reads) and a service-role client (for privileged writes)
-supabase = create_client(SUPABASE_URL, SUPABASE_ANON_KEY or SUPABASE_KEY)
 supabase_service = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ------------------------------------------------------------
@@ -270,7 +270,7 @@ def home(request):
 
     # Notifications
     try:
-        notifications = get_all_notifications()
+        notifications = get_all_notifications(request)
     except Exception as e:
         messages.error(request, "Unable to load notifications.")
         notifications = []
@@ -319,10 +319,24 @@ def api_registered_trainings(request):
 
     return JsonResponse(results, safe=False)
 
-def get_all_notifications():
-    """Returns ALL visible notifications ordered from newest to oldest."""
+def get_all_notifications(request=None):
+    """Returns ALL visible notifications ordered from newest to oldest.
+    
+    Only returns notifications for authenticated users with valid sessions.
+    """
+    # If request is provided, check authentication
+    if request:
+        if not request.user.is_authenticated:
+            return []
+        
+        user_email = request.session.get('user_email')
+        user_role = request.session.get('user_role')
+        
+        if not user_email or not user_role:
+            return []
+    
     try:
-        response = supabase.table("notifications") \
+        response = supabase_service.table("notifications") \
             .select("*") \
             .eq("visible", True) \
             .order("created_at", desc=True) \

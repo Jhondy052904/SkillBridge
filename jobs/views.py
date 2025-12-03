@@ -94,6 +94,19 @@ def post_job(request):
                     "created_at": datetime.utcnow().isoformat()
                 }).execute()
 
+            # Create notification for all residents about new job
+            try:
+                supabase.table("notifications").insert({
+                    "type": "job_posted",
+                    "message": f"New job opportunity: {title}",
+                    "link_url": f"/jobs/{job_id}/",
+                    "visible": True,
+                    "created_at": datetime.utcnow().isoformat()
+                }).execute()
+                print("DEBUG: Notification created successfully for job:", title)
+            except Exception as e:
+                print("Error creating notification:", e)
+
             log_action("create", "job", job_id, request)
             messages.success(request, "Job posted successfully!")
             return redirect("official_dashboard")

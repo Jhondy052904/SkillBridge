@@ -249,22 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Apply for Job Function
-function applyForJob(jobId) {
-    if (confirm('Are you sure you want to apply for this job?')) {
-        // Submit the application
-        fetch(`/jobs/${jobId}/apply/`, { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Application submitted successfully!');
-                } else {
-                    alert('Failed to submit application');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-}
+
 
 // Navbar underline animation
 const menuLinks = document.querySelectorAll('.nav-right a');
