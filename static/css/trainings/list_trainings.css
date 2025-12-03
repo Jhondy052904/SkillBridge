@@ -7,11 +7,13 @@
     box-sizing: border-box;
 }
 
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
 body {
     position: relative;
     min-height: 100vh;
     width: 100%;
-    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #2D3748;
@@ -192,21 +194,7 @@ main {
 /* =========================================================
    TRAINING CARD — Floating Glass
 ========================================================= */
-.training-card {
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    border-radius: 22px;
-    box-shadow: 0 12px 26px rgba(0,0,0,0.06);
-    transition: 0.25s ease;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-}
 
-.training-card:hover {
-    box-shadow: 0 16px 34px rgba(0,0,0,0.12);
-    transform: translateY(-4px);
-}
 
 /* Header banner */
 .card-header {
@@ -239,14 +227,73 @@ main {
     text-decoration: none;
 }
 
-/* =========================================================
-   CARD CONTENT
-========================================================= */
-.training-card-content {
-    padding: 26px;
+/* ================================
+   TRAINING CARDS — Equal Height per row with padding
+================================= */
+.training-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 28px;
+    align-items: stretch; /* stretch all grid items to same height */
+}
+
+.training-card-link {
+    display: flex; /* allow card to stretch */
+}
+
+.training-card {
     display: flex;
     flex-direction: column;
+    flex: 1; /* fills parent grid item */
+    background: #EBF4F6; /* Ivory background */
+    border-radius: 22px;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.06);
+    overflow: hidden;
+    transition: 0.25s ease;
+    padding: 20px; /* added padding inside card */
 }
+
+.training-card:hover {
+    box-shadow: 0 16px 34px rgba(0,0,0,0.12);
+    transform: translateY(-4px);
+}
+
+.training-card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.training-actions {
+    margin-top: auto; /* push buttons to bottom */
+}
+
+/* Optional: limit description height */
+.training-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* adjust number of lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Card header styling remains for visual differentiation */
+.card-header {
+    height: 140px;
+    padding: 16px;
+    display: flex;
+    align-items: flex-start;
+    border-radius: 22px 22px 0 0;
+}
+
+/* Badge contrast */
+.badge {
+    background: #DDEAF2; /* slightly darker than card bg for contrast */
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
 
 /* Title */
 .training-title {
@@ -256,19 +303,25 @@ main {
     color: #1A2B47;
 }
 
-/* Description */
-.training-description {
-    font-size: 0.95rem;
-    color: #5A6B80;
-    line-height: 1.6;
-    margin-bottom: 16px;
-
-    /* clamp */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+/* ================================
+   TRAINING CARD LABELS
+================================= */
+.training-title::before {
+    content: "Title: ";
+    font-weight: 600;
+    color: #8DA1B7; /* lighter gray for label */
+    font-size: 1rem;
+    margin-right: 4px;
 }
+
+.training-description::before {
+    content: "Description: ";
+    font-weight: 600;
+    color: #8DA1B7;
+    margin-right: 4px;
+    display: inline-block;
+}
+
 
 /* =========================================================
    META INFO

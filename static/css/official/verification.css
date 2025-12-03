@@ -1,13 +1,16 @@
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
     position: relative;
     min-height: 100vh;
     width: 100%;
-    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #2D3748;
     overflow-x: hidden;
-    background: linear-gradient(135deg, #E8F4F8 0%, #F0F8FF 50%, #E3F2FD 100%);
+    background: linear-gradient(135deg, #CDEFF9 0%, #A0DDF3 50%, #7BC9ED 100%);
     line-height: 1.6;
 }
 

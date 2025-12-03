@@ -1,9 +1,12 @@
 /* Reset & Body */
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  font-family: "Poppins", sans-serif;
 }
 
 /* Page Centering */
@@ -91,12 +94,14 @@ body {
 }
 
 .input-icon {
-  position: absolute;
-  left: 10px;
-  top: 70%;
-  transform: translateY(-50%);
-  color: #021526;
-  font-size: 0.9rem;
+    font-family: "Font Awesome 6 Free" !important; /* force it to use FA font */
+    font-weight: 900 !important; /* for solid icons */
+    position: absolute;
+    left: 10px;
+    top: 70%;
+    transform: translateY(-50%);
+    color: #0c5596ff;
+    font-size: 0.9rem;
 }
 
 .form-group input,

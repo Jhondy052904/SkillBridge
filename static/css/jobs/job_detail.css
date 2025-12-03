@@ -9,6 +9,10 @@ html, body {
     background: linear-gradient(135deg, #EBF4F6 0%, #37B7C3 50%, #088395 100%);
 }
 
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
     display: flex;
     justify-content: center;

@@ -1,13 +1,19 @@
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
     position: relative;
     min-height: 100vh;
+    overflow-x: hidden; 
+    overflow-y: auto;   
     width: 100%;
-    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
     font-size: 16px;
     font-weight: 400;
     color: #2D3748;
     overflow-x: hidden;
-    background: linear-gradient(135deg, #E8F4F8 0%, #F0F8FF 50%, #E3F2FD 100%);
+    background: linear-gradient(135deg, #CDEFF9 0%, #A0DDF3 50%, #7BC9ED 100%);
+
     line-height: 1.6;
 }
 
@@ -285,11 +291,13 @@ main {
 .cards-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+    gap: 30px;
+    padding-bottom: 50px; 
+    grid-auto-rows: auto; 
 }
 
 .job-card, .training-card {
-    background: rgba(235, 244, 246, 0.95); /* Ivory glass */
+    background: rgba(235, 244, 246, 0.95);
     backdrop-filter: blur(12px);
     padding: 20px;
     border-radius: 12px;
@@ -299,6 +307,11 @@ main {
     transition: transform 0.2s ease, box-shadow 0.3s ease;
     text-decoration: none;
     color: inherit;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: auto;
 }
 
 .job-card:hover, .training-card:hover {
@@ -356,6 +369,26 @@ main {
 
 .job-delete { background-color: #E53E3E; color: white; }
 .job-delete:hover { background-color: #C53030; }
+
+/* Align labels and values in two columns */
+.job-field {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+    align-items: start;
+}
+
+.job-label {
+    font-weight: 700;
+    color: #071952;
+}
+
+.job-value {
+    font-weight: 500;
+    color: #021526;
+    word-break: break-word;
+}
 
 /* =====================
           EMPTY TEXT

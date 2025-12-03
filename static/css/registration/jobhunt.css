@@ -1,6 +1,9 @@
 /* =====================
    Body / General Layout
 ===================== */
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
 body {
     display: flex;
     flex-direction: column;
@@ -8,7 +11,6 @@ body {
     align-items: center;     /* horizontally center content */
     min-height: 100vh;       /* full viewport height */
     margin: 0;
-    font-family: 'Poppins', Arial, sans-serif;
     background: 
         linear-gradient(to bottom, transparent 95%, #021526 20%),
         url("/static/images/b1.jpg") no-repeat center 20% / cover;

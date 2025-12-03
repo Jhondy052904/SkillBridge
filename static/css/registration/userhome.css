@@ -1,6 +1,10 @@
 /* =====================
    DASHBOARD CONTAINER
 ===================== */
+html, body, * {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
