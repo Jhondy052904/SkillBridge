@@ -67,8 +67,14 @@ class Resident(models.Model):
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
     address = models.CharField(max_length=255, blank=True)
     contact_number = models.CharField(max_length=20, blank=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True)  # Already has unique=True
     employment_status = models.CharField(max_length=20, choices=EMPLOYMENT_CHOICES, default="Unemployed")
+    
+    class Meta:
+        # Ensure email uniqueness across the entire system
+        constraints = [
+            models.UniqueConstraint(fields=['email'], name='unique_resident_email'),
+        ]
     # Many-to-many relationship is stored in the Supabase `resident_skills`
     # table which references the Supabase `resident` table. Rather than a
     # direct Django-managed ManyToManyField (which would expect the join

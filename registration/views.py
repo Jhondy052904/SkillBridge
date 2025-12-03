@@ -465,7 +465,7 @@ def supabase_reset_page(request):
     return render(request, "registration/reset_password.html")
 
 # ------------------------------------------------------------
-# SIGNUP — create new account in Supabase
+# SIGNUP — create new account in Supabase with duplicate prevention
 # ------------------------------------------------------------
 @csrf_protect
 def signup_view(request):
@@ -476,6 +476,19 @@ def signup_view(request):
 
         if not email or not password:
             messages.error(request, "All fields are required.")
+            return render(request, 'registration/signup.html')
+
+        # Normalize email to prevent case-sensitivity issues
+        email = email.strip().lower()
+
+        # Import duplicate prevention utilities
+        from .utils import prevent_duplicate_signup, clean_existing_duplicates
+        from django.db import transaction
+
+        # Check for duplicates before proceeding
+        should_prevent, error_msg = prevent_duplicate_signup(email, supabase_service)
+        if should_prevent:
+            messages.error(request, error_msg)
             return render(request, 'registration/signup.html')
 
         # Get form data
@@ -514,41 +527,51 @@ def signup_view(request):
                 proof_data = None
 
         try:
-            auth_response = supabase.auth.sign_up({
-                "email": email,
-                "password": password
-            })
+            # Use database transaction to prevent race conditions
+            with transaction.atomic():
+                # Check again for duplicates within the transaction
+                should_prevent, error_msg = prevent_duplicate_signup(email, supabase_service)
+                if should_prevent:
+                    messages.error(request, error_msg)
+                    return render(request, 'registration/signup.html')
+                
+                # Clean any existing duplicates
+                clean_existing_duplicates(email, supabase_service)
 
-            if auth_response.user is None:
-                messages.error(request, "Signup failed. Please check your email format and password requirements.")
-                return render(request, 'registration/signup.html')
+                # Create Supabase auth user first
+                auth_response = supabase.auth.sign_up({
+                    "email": email,
+                    "password": password
+                })
 
-            # Create Django User
-            from django.contrib.auth.models import User
-            django_user, created = User.objects.get_or_create(
-                username=email,
-                defaults={'email': email}
-            )
-            if created:
-                django_user.set_password(password)  # Set the password
-                django_user.save()
+                if auth_response.user is None:
+                    messages.error(request, "Signup failed. Please check your email format and password requirements.")
+                    return render(request, 'registration/signup.html')
 
-            # Auth succeeded, now insert resident record
-            supabase.table('resident').insert({
-                "user_id": django_user.id,
-                "email": email,
-                "first_name": first_name,
-                "middle_name": middle_name,
-                "last_name": last_name,
-                "contact_number": contact_number,
-                "address": address,
-                "skills": skills,
-                "proof_residency": proof_data,
-                "verification_status": "Pending Verification",
-                "employment_status": "Unemployed",
-            }).execute()
+                # Create Django User atomically
+                from django.contrib.auth.models import User
+                django_user = User.objects.create_user(
+                    username=email,
+                    email=email,
+                    password=password
+                )
 
-            # Send verification email
+                # Create Supabase resident record
+                supabase.table('resident').insert({
+                    "user_id": django_user.id,
+                    "email": email,
+                    "first_name": first_name,
+                    "middle_name": middle_name,
+                    "last_name": last_name,
+                    "contact_number": contact_number,
+                    "address": address,
+                    "skills": skills,
+                    "proof_residency": proof_data,
+                    "verification_status": "Pending Verification",
+                    "employment_status": "Unemployed",
+                }).execute()
+
+            # Send verification email (outside transaction)
             try:
                 from utils.send_email import send_welcome_email
                 
@@ -567,7 +590,12 @@ def signup_view(request):
             return redirect('login')
 
         except Exception as e:
-            messages.error(request, f"Signup failed: {e}")
+            logger.error(f"Signup failed for {email}: {str(e)}")
+            # Check if it's a unique constraint violation
+            if "duplicate key" in str(e).lower() or "unique constraint" in str(e).lower():
+                messages.error(request, "An account with this email already exists. Please try logging in instead.")
+            else:
+                messages.error(request, f"Signup failed: {e}")
 
     return render(request, 'registration/signup.html')
 

@@ -1,0 +1,30 @@
+Duplicate cleanup started at: 2025-12-03 13:41:45.089171
+
+2025-12-03 13:41:45.089650: 1. Cleaning Django User duplicates:
+2025-12-03 13:41:47.029419:    No duplicate emails found in User model
+2025-12-03 13:41:47.030863: 
+2. Cleaning Django Resident duplicates:
+2025-12-03 13:41:47.975139:    No duplicate emails found in Resident model
+2025-12-03 13:41:47.975383: 
+3. Cleaning Supabase resident duplicates:
+2025-12-03 13:41:48.351670:    Found 3 emails with duplicates:
+2025-12-03 13:41:48.352128:    - macasindelsittie@gmail.com: 2 records
+2025-12-03 13:41:48.352681:      * Deleting resident: Sittie Macasindel (ID: 85)
+2025-12-03 13:41:48.454888:    - maldo.nicco@gmail.com: 2 records
+2025-12-03 13:41:48.456012:      * Deleting resident: jud malds (ID: 83)
+2025-12-03 13:41:48.565715:    - kikikyleed@gmail.com: 7 records
+2025-12-03 13:41:48.566802:      * Deleting resident: Kyle Ed Maningo (ID: 45)
+2025-12-03 13:41:48.666018:      * Deleting resident: Kyle Ed Maningo (ID: 44)
+2025-12-03 13:41:48.767899:      * Deleting resident: Kyle Ed Maningo (ID: 43)
+2025-12-03 13:41:48.867850:      * Deleting resident: Kyle Ed Maningo (ID: 39)
+2025-12-03 13:41:48.971858:      * Deleting resident: asd asd (ID: 14)
+2025-12-03 13:41:49.072768:      * Deleting resident: Kyle Ed Maningo (ID: 13)
+2025-12-03 13:41:49.172827: 
+4. Cross-validation check:
+2025-12-03 13:41:49.399662:    Django User emails: 24
+2025-12-03 13:41:49.400837:    Django Resident emails: 15
+2025-12-03 13:41:49.401966:    Supabase resident emails: 25
+2025-12-03 13:41:50.907310:    ? All duplicates successfully cleaned!
+2025-12-03 13:41:50.908188: 
+=== Cleanup completed at 2025-12-03 13:41:50.907652 ===
+2025-12-03 13:41:50.908904: Check duplicate_cleanup_log.txt for detailed logs
