@@ -1,0 +1,43 @@
+/* =========================================================
+   GLOBAL FONT DEFINITIONS
+   Apply consistent typography across all pages
+========================================================= */
+
+/* Global font family definition - will be inherited by all elements */
+* {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Ensure body has proper font settings */
+body {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+/* Standard text elements */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+p, span, div {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Form elements */
+input, textarea, select, button {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Links */
+a {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Lists */
+ul, ol, li {
+    font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+}

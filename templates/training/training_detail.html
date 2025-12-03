@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ training.training_name }} | SkillBridge</title>
 
+    <link rel="stylesheet" href="{% static 'css/global-font.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/trainings/training_detail.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
@@ -21,7 +22,7 @@
     <div class="training-header">
         <div class="header-content">
             <div class="header-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                <span class="badge">{{ training.level|default:"Beginner" }}</span>
+                <!-- Badge removed for clean UI -->
             </div>
             
             <h1 class="training-title">{{ training.training_name }}</h1>
@@ -69,9 +70,8 @@
                         <span class="detail-label">Available Slots</span>
                         <span class="detail-value">{{ training.slots|default:"0" }}</span>
                     </div>
+                    <!-- Level removed for clean UI -->
                     <div class="detail-item">
-                        <span class="detail-label">Level</span>
-                        <span class="detail-value">{{ training.level|default:"Beginner" }}</span>
                     </div>
                     <div class="detail-item">
                         <span class="detail-label">⏱Duration</span>
@@ -140,8 +140,8 @@
             <!-- Status Card -->
             <div class="sidebar-card">
                 <h3 class="card-title">Status</h3>
+                <!-- Status removed for clean UI -->
                 <div class="status-display">
-                    <span class="status-badge-large">Not Urgent</span>
                 </div>
             </div>
 
