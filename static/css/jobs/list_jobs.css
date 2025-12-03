@@ -255,7 +255,13 @@ main {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
     border: 1px solid rgba(2, 21, 38, 0.05);
+
+    display: flex;           /* make the card a flex container */
+    flex-direction: column;  /* stack all children vertically */
+    justify-content: space-between; /* push the footer down */
+    min-height: 100%;        /* ensure it fills its grid cell */
 }
+
 
 .job-card:hover {
     transform: translateY(-5px);
