@@ -77,18 +77,10 @@
 
         <div class="filter-container">
             <select id="filterSelect">
-                <option value="other" selected>Other</option>
-                <option value="Haircut">Haircut</option>
-                <option value="Plumbing">Plumbing</option>
-                <option value="Electrical">Electrical</option>
-                <option value="Carpentry">Carpentry</option>
-                <option value="Cleaning">Cleaning</option>
-                <option value="Cooking">Cooking</option>
-                <option value="Driving">Driving</option>
-                <option value="Babysitting">Babysitting</option>
-                <option value="Elderly Care">Elderly Care</option>
-                <option value="Tutoring">Tutoring</option>
-                <option value="Pedicure">Pedicure</option>
+                <option value="all" selected>All Skills</option>
+                {% for skill in all_skills %}
+                    <option value="{{ skill.skill_name|lower }}">{{ skill.skill_name }}</option>
+                {% endfor %}
             </select>
         </div>
 
@@ -204,13 +196,8 @@
 
 <!-- =============== DATA FOR JS =============== -->
 <script>
-const jobData = [
-    {% for job in jobs %}
-        {% if job.Status == "Open" %}
-        { title: "{{ job.Title|escapejs }}", start: "{{ job.dateposted|date:'Y-m-d' }}" }{% if not forloop.last %},{% endif %}
-        {% endif %}
-    {% endfor %}
-];
+const jobData = {{ job_data_json|safe }};
+</script>
 
 const counts = {
     users: {{ user_count|default:0 }},
@@ -226,16 +213,17 @@ function filterJobs() {
 
     jobCards.forEach(card => {
         const title = card.querySelector('.job-title').textContent.toLowerCase();
-        const skills = Array.from(card.querySelectorAll('.skill-tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+        const skills = Array.from(card.querySelectorAll('.skill-tag')).map(tag =>
+            tag.textContent.toLowerCase()
+        );
 
         const matchesSearch = title.includes(searchTerm);
-        const matchesSkill = !selectedSkill || selectedSkill === 'other' || skills.includes(selectedSkill);
 
-        if (matchesSearch && matchesSkill) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
+        // if selectedSkill is "all", show all skills
+        const matchesSkill =
+            selectedSkill === 'all' || skills.includes(selectedSkill);
+
+        card.style.display = (matchesSearch && matchesSkill) ? '' : 'none';
     });
 }
 
