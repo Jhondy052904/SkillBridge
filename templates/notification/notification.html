@@ -43,6 +43,46 @@
 .notif-clear-btn:hover { background:linear-gradient(135deg,#3182CE,#4299E1);}
 .notif-empty { text-align:center; padding:40px 24px; color:#A0AEC0; font-style:italic; font-size:0.95rem;}
 .hidden { display:none !important; }
+
+/* Toast notifications */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10000;
+    max-width: 400px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast-success { background: #4CAF50; }
+.toast-info { background: #2196F3; }
+.toast-warning { background: #FF9800; }
+.toast-error { background: #F44336; }
+
+.toast-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toast-content button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
 </style>
 
 <script>
@@ -88,4 +128,72 @@ document.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') notifDropdown.classList.add('hidden');
 });
+
+// In-app toast alerts for new notifications
+{% if notifications %}
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()">×</button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+}
+
+// Show toast for new notifications on page load
+document.addEventListener('DOMContentLoaded', () => {
+    {% for notif in notifications %}
+        showToast('{{ notif.message|escapejs }}', 'success');
+    {% endfor %}
+
+    // Start polling for new notifications
+    setInterval(checkForNewNotifications, 30000); // Check every 30 seconds
+});
+
+let lastNotificationId = {% if notifications %}{{ notifications.0.id }}{% else %}null{% endif %};
+
+function checkForNewNotifications() {
+    fetch('/notifications/latest/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.has && data.notification.id !== lastNotificationId) {
+                // New notification
+                lastNotificationId = data.notification.id;
+                showToast(data.notification.message, 'info');
+                // Update the notification count and dropdown
+                updateNotificationUI(data.notification);
+            }
+        })
+        .catch(error => console.error('Error checking notifications:', error));
+}
+
+function updateNotificationUI(notification) {
+    const notifBtn = document.getElementById('notifBtn');
+    const notifDropdown = document.getElementById('notifDropdown');
+
+    // Update count
+    let indicator = notifBtn.querySelector('.notif-indicator');
+    if (!indicator) {
+        indicator = document.createElement('span');
+        indicator.className = 'notif-indicator';
+        notifBtn.appendChild(indicator);
+    }
+    const currentCount = parseInt(indicator.textContent) || 0;
+    indicator.textContent = currentCount + 1;
+
+    // Add to dropdown
+    const notifItem = document.createElement('div');
+    notifItem.className = 'notif-item';
+    notifItem.onclick = () => handleNotificationClick(notification.link_url);
+    notifItem.innerHTML = `
+        <p class="notif-message">${notification.message}</p>
+        <small class="notif-date">${new Date(notification.created_at).toLocaleDateString()}</small>
+    `;
+    notifDropdown.insertBefore(notifItem, notifDropdown.querySelector('.notif-clear-btn').parentElement);
+}
+{% endif %}
 </script>

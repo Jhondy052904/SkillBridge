@@ -170,15 +170,15 @@ def send_approval_email(to_email, first_name=""):
 def send_rejection_email(to_email, first_name=""):
     """
     Send rejection email to users whose accounts have been rejected
-    
+
     Args:
         to_email (str): Recipient email address
         first_name (str): User's first name
-    
+
     Returns:
         bool: True if email sent successfully, False otherwise
     """
-    
+
     template_data = {
         'message': f"""
         <h2>SkillBridge Account Update</h2>
@@ -194,8 +194,64 @@ def send_rejection_email(to_email, first_name=""):
         """,
         'details': f"Email: {to_email}"
     }
-    
+
     return send_email_template(to_email, "SkillBridge Account Status Update", template_data)
+
+def send_job_notification_email(to_email, job_title, job_description, job_link):
+    """
+    Send job notification email to residents
+
+    Args:
+        to_email (str): Recipient email address
+        job_title (str): Job title
+        job_description (str): Job description
+        job_link (str): Link to job detail
+
+    Returns:
+        bool: True if email sent successfully, False otherwise
+    """
+
+    template_data = {
+        'message': f"""
+        <h2>New Job Opportunity Available!</h2>
+        <p>A new job opportunity has been posted on SkillBridge:</p>
+        <h3>{job_title}</h3>
+        <p>{job_description[:200]}{'...' if len(job_description) > 200 else ''}</p>
+        <p><a href="{job_link}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View Job Details</a></p>
+        """,
+        'details': f"Job Link: {job_link}"
+    }
+
+    return send_email_template(to_email, f"New Job: {job_title}", template_data)
+
+def send_training_notification_email(to_email, training_name, training_description, training_date, training_link):
+    """
+    Send training notification email to residents
+
+    Args:
+        to_email (str): Recipient email address
+        training_name (str): Training name
+        training_description (str): Training description
+        training_date (str): Training date
+        training_link (str): Link to training detail
+
+    Returns:
+        bool: True if email sent successfully, False otherwise
+    """
+
+    template_data = {
+        'message': f"""
+        <h2>New Training Opportunity Available!</h2>
+        <p>A new training program has been posted on SkillBridge:</p>
+        <h3>{training_name}</h3>
+        <p><strong>Date:</strong> {training_date}</p>
+        <p>{training_description[:200]}{'...' if len(training_description) > 200 else ''}</p>
+        <p><a href="{training_link}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View Training Details</a></p>
+        """,
+        'details': f"Training Link: {training_link}"
+    }
+
+    return send_email_template(to_email, f"New Training: {training_name}", template_data)
 
 # Test function
 def test_send_email():

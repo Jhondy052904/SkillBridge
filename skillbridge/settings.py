@@ -87,7 +87,6 @@ INSTALLED_APPS = [
     'job_applications',
     'registration.apps.RegistrationConfig',
     'notifications',
-    'django_extensions',
     'training',
 ]
 
@@ -121,6 +120,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "registration.context_processors.notifications_processor",
             ],
         },
     },
