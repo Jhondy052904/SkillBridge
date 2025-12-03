@@ -3,7 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import Http404
 from datetime import datetime
+import json
+from django.shortcuts import get_object_or_404, render, redirect
 from skillbridge.supabase_client import supabase
+from utils.send_email import send_job_notification_email
 from .services.supabase_crud import (
     get_jobs,
     update_job,
@@ -94,6 +97,36 @@ def post_job(request):
                     "created_at": datetime.utcnow().isoformat()
                 }).execute()
 
+            # Create notification for all residents about new job
+            try:
+                supabase.table("notifications").insert({
+                    "type": "job_posted",
+                    "message": f"New job opportunity: {title} (Posted: {datetime.utcnow().strftime('%B %d, %Y')})",
+                    "link_url": f"/jobs/job/{job_id}/",
+                    "visible": True,
+                    "created_at": datetime.utcnow().isoformat()
+                }).execute()
+                print("DEBUG: Notification created successfully for job:", title)
+            except Exception as e:
+                print("Error creating notification:", e)
+
+            # Send email notifications to all verified residents
+            try:
+                # Get all verified residents
+                residents_resp = supabase.table("resident").select("email, first_name").eq("verification_status", "Verified").execute()
+                residents = residents_resp.data or []
+
+                job_link = f"https://yourdomain.com/jobs/job/{job_id}/"  # Replace with actual domain
+
+                for resident in residents:
+                    email = resident.get("email")
+                    first_name = resident.get("first_name", "")
+                    if email:
+                        send_job_notification_email(email, title, description, job_link)
+                        print(f"Email sent to {email} for job {title}")
+            except Exception as e:
+                print("Error sending job notification emails:", e)
+
             log_action("create", "job", job_id, request)
             messages.success(request, "Job posted successfully!")
             return redirect("official_dashboard")
@@ -120,76 +153,85 @@ def post_job(request):
 def list_jobs(request):
     if request.session.get('user_role') != 'Resident':
         return redirect('login')
-    try:
-        # ==========================
-        # 1. Fetch All Jobs
-        # ==========================
-        jobs = get_jobs()
 
-        # ==========================
-        # 2. Fetch all job-skill relations
-        # ==========================
+    jobs = []
+    recommended_jobs = []
+    all_skills = []
+
+    try:
+        # 1) Fetch all jobs (your existing helper)
+        jobs = get_jobs() or []
+
+        # 2) Fetch all job-skill relations
         skills_resp = supabase.table("job_skill_list").select(
             "job_id, skill_list!inner(SkillID, SkillName)"
         ).execute()
-
-        job_skills_by_id = {}       # skill IDs
-        job_skills_by_name = {}     # skill names
-
-        for item in skills_resp.data:
+        job_skills_by_id = {}
+        job_skills_by_name = {}
+        for item in (skills_resp.data or []):
             job_id = item["job_id"]
             skill_id = item["skill_list"]["SkillID"]
             skill_name = item["skill_list"]["SkillName"]
 
-            if job_id not in job_skills_by_id:
-                job_skills_by_id[job_id] = []
-                job_skills_by_name[job_id] = []
-
-            job_skills_by_id[job_id].append(skill_id)
-            job_skills_by_name[job_id].append(skill_name)
+            job_skills_by_id.setdefault(job_id, []).append(skill_id)
+            job_skills_by_name.setdefault(job_id, []).append(skill_name)
 
         # Attach skill names to job object for UI
         for job in jobs:
-            job["skills"] = job_skills_by_name.get(job["JobID"], [])
+            job["skills"] = job_skills_by_name.get(job.get("JobID"), [])
 
-        print("DEBUG JOB SKILLS:", job_skills_by_id)
-
-        # ======================================================
-        # 3. Get Resident Info from Supabase
-        # ======================================================
-        resident_email = request.user.email
-        supabase_resident = supabase.table("resident").select("id").eq("email", resident_email).execute()
-        recommended_jobs = []
-
-        if supabase_resident.data:
-            resident_id = supabase_resident.data[0]["id"]
-
-            # ======================================================
-            # 4. Fetch resident skills from Supabase
-            # ======================================================
-            resident_skill_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident_id).execute()
-            resident_skill_ids = {item["skill_id"] for item in resident_skill_resp.data}
-
-            # ======================================================
-            # 5. Filter recommended jobs
-            # ======================================================
-            recommended_jobs = [
-                job for job in jobs
-                if any(skill_id in resident_skill_ids for skill_id in job_skills_by_id.get(job["JobID"], []))
-            ]
+        # 3) Get Resident info and resident skills to build recommended_jobs
+        resident_email = getattr(request.user, "email", None)
+        if resident_email:
+            supabase_resident = supabase.table("resident").select("id").eq("email", resident_email).execute()
+            if supabase_resident.data:
+                resident_id = supabase_resident.data[0]["id"]
+                resident_skill_resp = supabase.table("resident_skills").select("skill_id").eq("resident_id", resident_id).execute()
+                resident_skill_ids = {item["skill_id"] for item in (resident_skill_resp.data or [])}
+                recommended_jobs = [
+                    job for job in jobs
+                    if any(skill_id in resident_skill_ids for skill_id in job_skills_by_id.get(job.get("JobID"), []))
+                ]
 
     except Exception as e:
-        print("ERROR:", str(e))
+        print("ERROR loading jobs:", str(e))
         messages.error(request, f"Error loading jobs: {str(e)}")
         jobs = []
         recommended_jobs = []
 
-    # ==========================
-    # Render Template
-    # ==========================
+    # 4) Fetch all skills for the filter dropdown and normalize keys
+    try:
+        skills_list_resp = supabase.table("skill_list").select("SkillID,SkillName").order("SkillName", desc=False).execute()
+        raw_skills = skills_list_resp.data or []
+        all_skills = [{"id": s.get("SkillID"), "skill_name": s.get("SkillName")} for s in raw_skills]
+    except Exception as e:
+        print("Error fetching all skills:", e)
+        all_skills = []
+
+    # 5) Build JS-safe JSON for only-open jobs (title + date). Using iso-date (YYYY-MM-DD)
+    try:
+        job_data = []
+        for job in jobs:
+            if job.get("Status") == "Open":
+                # get dateposted fallback safely
+                dp = job.get("dateposted") or job.get("date_posted") or ""
+                # if it's a full ISO timestamp, cut to date portion
+                if isinstance(dp, str) and len(dp) >= 10:
+                    dp_date = dp[:10]
+                else:
+                    dp_date = ""
+                job_data.append({"title": job.get("Title", ""), "start": dp_date})
+        job_data_json = json.dumps(job_data)  # safe JSON string
+    except Exception as e:
+        print("Error building job_data_json:", e)
+        job_data_json = "[]"
+
+    # Render
     return render(request, "jobs/list_jobs.html", {
         "jobs": jobs,
-        "recommended_jobs": recommended_jobs
+        "recommended_jobs": recommended_jobs,
+        "all_skills": all_skills,
+        "job_data_json": job_data_json,   # <- new: JSON string for JS
     })
 
 # ==========================================================
@@ -202,7 +244,7 @@ from .services.supabase_crud import get_jobs
 def jobhunt(request):
     try:
         # Fetch all jobs
-        jobs = get_jobs()  # Returns list of dicts, e.g., [{"JobID": 1, "Title": ..., "Status": "Open"}, ...]
+        jobs = get_jobs()
 
         # Fetch job-skill relations
         skills_resp = supabase.table("job_skill_list").select(
@@ -211,7 +253,7 @@ def jobhunt(request):
 
         job_skills_by_name = {}
         job_skills_by_id = {}
-        for item in skills_resp.data:
+        for item in skills_resp.data or []:
             job_id = item["job_id"]
             skill_name = item["skill_list"]["SkillName"]
             skill_id = item["skill_list"]["SkillID"]
@@ -242,9 +284,18 @@ def jobhunt(request):
         jobs = []
         recommended_jobs = []
 
+    # Fetch all skills for the filter dropdown (same as above)
+    try:
+        skills_list_resp = supabase.table("skill_list").select("SkillID,SkillName").order("SkillName", desc=False).execute()
+        all_skills = skills_list_resp.data if skills_list_resp.data else []
+    except Exception as e:
+        print("Error fetching all skills:", e)
+        all_skills = []
+
     return render(request, 'registration/jobhunt.html', {
         'jobs': jobs,
-        'recommended_jobs': recommended_jobs
+        'recommended_jobs': recommended_jobs,
+        'all_skills': all_skills,  # <-- new
     })
 
 

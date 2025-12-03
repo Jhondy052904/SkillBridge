@@ -1,17 +1,16 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings | SkillBridge</title>
-    <link rel="icon" type="image/png" href="{% static 'images/suitcase.png' %}">
+    <link rel="stylesheet" href="{% static 'css/global-font.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/jobs/list_jobs.css' %}?v=5">
     <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
-
 <body>
+
 <!-- ====================== NAVBAR ====================== -->
 <nav class="navbar">
     <div class="nav-left">
@@ -21,27 +20,16 @@
     </div>
 
     <div class="nav-right">
-
-        <!-- Main Navigation -->
         <a href="{% url 'home' %}">Dashboard</a>
         <a href="{% url 'list_jobs' %}" class="active">Jobs</a>
         <a href="{% url 'list_trainings' %}">Trainings</a>
 
-        <!-- Underline Element for Animation -->
         <div class="underline"></div>
-
-        <!-- Separator -->
         <span class="separator">|</span>
-
-        <!-- Profile Link -->
         <a href="{% url 'edit_profile' %}">Profile</a>
-
-        <!-- Logout -->
         <a href="{% url 'login' %}" id="logoutLink">Logout</a>
 
-        <!-- Notifications -->
         {% include 'notification/notification.html' %}
-
     </div>
 </nav>
 
@@ -77,22 +65,15 @@
 
         <div class="filter-container">
             <select id="filterSelect">
-                <option value="other" selected>Other</option>
-                <option value="Haircut">Haircut</option>
-                <option value="Plumbing">Plumbing</option>
-                <option value="Electrical">Electrical</option>
-                <option value="Carpentry">Carpentry</option>
-                <option value="Cleaning">Cleaning</option>
-                <option value="Cooking">Cooking</option>
-                <option value="Driving">Driving</option>
-                <option value="Babysitting">Babysitting</option>
-                <option value="Elderly Care">Elderly Care</option>
-                <option value="Tutoring">Tutoring</option>
-                <option value="Pedicure">Pedicure</option>
+                <option value="all" selected>All Skills</option>
+                {% for skill in all_skills %}
+                    <option value="{{ skill.skill_name|lower }}">{{ skill.skill_name }}</option>
+                {% endfor %}
             </select>
         </div>
 
-        <button class="btn-search" onclick="filterJobs()">Search</button>
+        <!-- NOTE: type="button" prevents accidental form submit -->
+        <button type="button" id="btnSearch" class="btn-search">Search</button>
     </div>
 
     <!-- Recommended Jobs Section -->
@@ -161,79 +142,76 @@
 </section>
 
 
-<!-- Job Listings Section -->
-<section class="jobs-section">
-    <h2 class="section-title">{% if recommended_jobs %}All {% endif %}Available Jobs</h2>
+    <!-- Job Listings Section -->
+    <section class="jobs-section">
+        <h2 class="section-title">{% if recommended_jobs %}All {% endif %}Available Jobs</h2>
 
-    <div id="jobList" class="job-cards-container">
-        {% for job in jobs %}
-            {% if job.Status == "Open" %}
-            <a href="{% url 'job_detail' job.JobID %}" class="job-card-link">
-                <div class="job-card">
+        <div id="jobList" class="job-cards-container">
+            {% for job in jobs %}
+                {% if job.Status == "Open" %}
+                <a href="{% url 'job_detail' job.JobID %}" class="job-card-link">
+                    <div class="job-card">
+                        <div class="job-card-content">
 
-                    <div class="job-card-content">
-
-                        <!-- Job Status -->
-                        <div class="card-header">
-                            <span class="label">Status:</span>
-                            <div class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">
-                                {{ job.Status }}
+                            <!-- Job Status -->
+                            <div class="card-header">
+                                <span class="label">Status:</span>
+                                <div class="job-status-badge {% if job.Status == 'Open' %}status-open{% else %}status-closed{% endif %}">
+                                    {{ job.Status }}
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Job Title -->
-                        <div class="job-title-wrapper">
-                            <span class="label">Title:</span>
-                            <h3 class="job-title">{{ job.Title }}</h3>
-                        </div>
-
-                        <!-- Job Description -->
-                        <div class="job-description-wrapper">
-                            <span class="label">Description:</span>
-                            <p class="job-description">{{ job.Description|truncatechars:100 }}</p>
-                        </div>
-
-                        <!-- Job Skills -->
-                        <div class="job-skills-wrapper">
-                            <span class="label">Skills:</span>
-                            {% if job.skills %}
-                            <div class="job-skills">
-                                {% for skill in job.skills %}
-                                    <span class="skill-tag">{{ skill }}</span>
-                                {% endfor %}
+                            <!-- Job Title -->
+                            <div class="job-title-wrapper">
+                                <span class="label">Title:</span>
+                                <h3 class="job-title">{{ job.Title }}</h3>
                             </div>
-                            {% else %}
-                            <div class="job-skills">
-                                <span class="skill-tag no-skills">No specific skills required</span>
-                            </div>
-                            {% endif %}
-                        </div>
 
+                            <!-- Job Description -->
+                            <div class="job-description-wrapper">
+                                <span class="label">Description:</span>
+                                <p class="job-description">{{ job.Description|truncatechars:100 }}</p>
+                            </div>
+
+                            <!-- Job Skills -->
+                            <div class="job-skills-wrapper">
+                                <span class="label">Skills:</span>
+                                {% if job.skills %}
+                                <div class="job-skills">
+                                    {% for skill in job.skills %}
+                                        <span class="skill-tag">{{ skill }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% else %}
+                                <div class="job-skills">
+                                    <span class="skill-tag no-skills">No specific skills required</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                        </div>
                     </div>
+                </a>
+                {% endif %}
+            {% empty %}
+                <div class="empty-state">
+                    <p>No job postings available at the moment.</p>
+                    <p class="empty-state-secondary">Check back soon for new opportunities!</p>
                 </div>
-            </a>
-            {% endif %}
-        {% empty %}
-            <div class="empty-state">
-                <p>No job postings available at the moment.</p>
-                <p class="empty-state-secondary">Check back soon for new opportunities!</p>
-            </div>
-        {% endfor %}
-    </div>
-</section>
-
+            {% endfor %}
+        </div>
+    </section>
 
 </main>
 
-<!-- =============== DATA FOR JS =============== -->
+<!-- =============== DATA & SCRIPTS =============== -->
 <script>
-const jobData = [
-    {% for job in jobs %}
-        {% if job.Status == "Open" %}
-        { title: "{{ job.Title|escapejs }}", start: "{{ job.dateposted|date:'Y-m-d' }}" }{% if not forloop.last %},{% endif %}
-        {% endif %}
-    {% endfor %}
-];
+/*
+  Data passed from view:
+    - job_data_json : a JSON array string (safe) for only-open jobs
+    - counts (optional): user_count, job_count, application_count (templated below)
+*/
+const jobData = {{ job_data_json|safe }};
 
 const counts = {
     users: {{ user_count|default:0 }},
@@ -241,109 +219,56 @@ const counts = {
     applications: {{ application_count|default:0 }}
 };
 
-// Filter Jobs Function
+// Robust filter function (shows jobs that match both search term AND selected skill)
 function filterJobs() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const selectedSkill = document.getElementById('filterSelect').value.toLowerCase();
-    const jobCards = document.querySelectorAll('.job-card-link');
+    try {
+        const searchInput = document.getElementById('searchInput');
+        const searchTerm = (searchInput && searchInput.value || '').trim().toLowerCase();
 
-    jobCards.forEach(card => {
-        const title = card.querySelector('.job-title').textContent.toLowerCase();
-        const skills = Array.from(card.querySelectorAll('.skill-tag')).map(tag => tag.textContent.toLowerCase()).join(' ');
+        const select = document.getElementById('filterSelect');
+        const selectedSkill = (select && select.value || 'all').toLowerCase();
 
-        const matchesSearch = title.includes(searchTerm);
-        const matchesSkill = !selectedSkill || selectedSkill === 'other' || skills.includes(selectedSkill);
+        const jobCards = document.querySelectorAll('.job-card-link');
 
-        if (matchesSearch && matchesSkill) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
-    });
+        jobCards.forEach(card => {
+            const titleNode = card.querySelector('.job-title');
+            const title = titleNode ? titleNode.textContent.trim().toLowerCase() : '';
+
+            const skills = Array.from(card.querySelectorAll('.skill-tag'))
+                .map(t => t.textContent.trim().toLowerCase());
+
+            const matchesSearch = !searchTerm || title.includes(searchTerm);
+            const matchesSkill = (selectedSkill === 'all') || skills.includes(selectedSkill);
+
+            card.style.display = (matchesSearch && matchesSkill) ? '' : 'none';
+        });
+    } catch (err) {
+        console.error('filterJobs error:', err);
+    }
 }
 
-// Allow filtering on Enter key
 document.addEventListener('DOMContentLoaded', function() {
+    // ONLY the Search button triggers filtering
+    const btn = document.getElementById('btnSearch');
+    if (btn) btn.addEventListener('click', filterJobs);
+
+    // Prevent Enter from submitting or triggering filter: intercept Enter and do nothing
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') filterJobs();
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                return false;
+            }
         });
     }
+
+    // DO NOT attach 'change' handler to select — select changes will NOT auto-filter
+
+    // Debug logs (optional)
+    console.log('DEBUG counts:', counts);
+    console.log('DEBUG jobData length:', Array.isArray(jobData) ? jobData.length : 0);
 });
-
-// Apply for Job Function
-function applyForJob(jobId) {
-    if (confirm('Are you sure you want to apply for this job?')) {
-        // Submit the application
-        fetch(`/jobs/${jobId}/apply/`, { method: 'POST' })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Application submitted successfully!');
-                } else {
-                    alert('Failed to submit application');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-    }
-}
-
-// Navbar underline animation
-const menuLinks = document.querySelectorAll('.nav-right a');
-const underline = document.querySelector('.nav-right .underline');
-
-function moveUnderline(el) {
-    if (!underline) return;
-    const rect = el.getBoundingClientRect();
-    const parentRect = el.closest('.nav-right').getBoundingClientRect();
-    underline.style.width = rect.width + 'px';
-    underline.style.left = (rect.left - parentRect.left) + 'px';
-}
-
-const activeLink = document.querySelector('.nav-right a.active');
-if (activeLink) {
-    setTimeout(() => moveUnderline(activeLink), 0);
-}
-
-menuLinks.forEach(link => {
-    link.addEventListener('mouseenter', e => {
-        if (e.target.tagName === 'A') moveUnderline(e.target);
-    });
-});
-
-document.querySelector('.nav-right').addEventListener('mouseleave', () => {
-    if (activeLink) moveUnderline(activeLink);
-});
-
-// Logout popup
-const logoutLink = document.getElementById('logoutLink');
-if (logoutLink) {
-    logoutLink.addEventListener('click', function(e) {
-        e.preventDefault();
-
-        const popup = document.createElement('div');
-        popup.className = 'logout-popup';
-        popup.innerHTML = `
-            <p>Are you sure you want to end your session?</p>
-            <div class="separator"></div>
-            <div class="popup-buttons">
-                <button id="cancelLogout">Cancel</button>
-                <button id="confirmLogout">Yes</button>
-            </div>
-        `;
-        document.body.appendChild(popup);
-
-        document.getElementById('confirmLogout').addEventListener('click', () => {
-            window.location.href = logoutLink.href;
-        });
-
-        document.getElementById('cancelLogout').addEventListener('click', () => {
-            popup.classList.add('fade-out');
-            setTimeout(() => popup.remove(), 300);
-        });
-    });
-}
 </script>
 
 </body>
