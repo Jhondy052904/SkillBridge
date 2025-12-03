@@ -596,10 +596,10 @@ def signup_view(request):
                     messages.success(request, "Signup successful! Please check your email to verify your account.")
                 else:
                     logger.warning("Failed to send verification email to %s", email)
-                    messages.warning(request, "Signup successful! However, we couldn't send the verification email. Please contact support.")
+                    messages.warning(request, "Signup successful!")
             except Exception as e:
                 logger.exception("Email sending failed: %s", e)
-                messages.warning(request, "Signup successful! However, we couldn't send the verification email. Please contact support.")
+                messages.warning(request, "Signup successful!")
 
             return redirect('login')
 

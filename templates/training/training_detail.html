@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="{% static 'css/trainings/training_detail.css' %}?v=1">
     <link rel="stylesheet" href="{% static 'css/registration/logout.css' %}?v=3">
 </head>
-
+<form id="csrf-form" style="display:none;">
+    {% csrf_token %}
+</form>
 <body>
 
     <!-- Back Button -->
@@ -160,9 +162,10 @@
                         </form>
                     </div>
                 {% else %}
-                    <button class="btn btn-register-large" onclick="registerTraining('{{ training.id }}')">
-                        Register Now
-                    </button>
+                    <form action="{% url 'register_training' training.id %}" method="POST" onsubmit="return confirm('Are you sure you want to register for this training?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-register-large">Register Now</button>
+                    </form>
                     <p class="info-text">Secure your spot in this training session</p>
                 {% endif %}
             </div>
@@ -185,38 +188,56 @@
 
 <!-- ====================== SCRIPTS ====================== -->
 <script>
-// Register Training Function (sends POST to register endpoint)
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
 }
 
 async function registerTraining(trainingId) {
     if (!confirm('Are you sure you want to register for this training?')) return;
 
     const csrftoken = getCookie('csrftoken');
+    if (!csrftoken) {
+        alert('CSRF token not found. Please refresh the page.');
+        return;
+    }
+
     try {
         const resp = await fetch(`/training/register/${trainingId}/`, {
             method: 'POST',
+            credentials: 'same-origin', // ensures cookies (including csrftoken) are sent
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest', // helps server detect AJAX
                 'X-CSRFToken': csrftoken
             },
-            credentials: 'same-origin',
             body: JSON.stringify({})
         });
 
-        if (resp.ok) {
-            window.location.reload();
-        } else {
-            const text = await resp.text();
-            alert('Registration failed: ' + text);
+        // try parse JSON (view returns JSON when AJAX)
+        const data = await resp.json().catch(() => null);
+
+        if (!resp.ok) {
+            const msg = data && data.message ? data.message : `Registration failed (status ${resp.status})`;
+            alert(msg);
+            return;
         }
+
+        const message = data && data.message ? data.message : 'Registered successfully.';
+        alert(message);
+
+        // optionally reload to update UI
+        window.location.reload();
+
     } catch (err) {
         alert('Registration error: ' + err);
     }
 }
+</script>
+
 
 // Navbar underline animation
 const menuLinks = document.querySelectorAll('.nav-right a');
