@@ -5,6 +5,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from dotenv import load_dotenv
 from supabase import create_client
+from utils.send_email import send_training_notification_email
+
 from django.http import JsonResponse
 from registration.utils import require_official
 from registration.models import Resident
@@ -205,11 +207,29 @@ def post_training(request):
             new_id = result.data[0]["id"]
 
             supabase.table("notifications").insert({
-                "type": "Training Event",
-                "message": f"New training posted: {data['training_name'][:100]}",
-                "link_url": "/official/dashboard/",
+                "type": "training_posted",
+                "message": f"New training opportunity: {data['training_name'][:100]} (Scheduled: {data['date_scheduled']})",
+                "link_url": f"/training/{new_id}/",
                 "visible": True,
+                "created_at": datetime.now().isoformat()
             }).execute()
+
+            # Send email notifications to all verified residents
+            try:
+                # Get all verified residents
+                residents_resp = supabase.table("resident").select("email, first_name").eq("verification_status", "Verified").execute()
+                residents = residents_resp.data or []
+
+                training_link = f"https://yourdomain.com/training/{new_id}/"  # Replace with actual domain
+
+                for resident in residents:
+                    email = resident.get("email")
+                    first_name = resident.get("first_name", "")
+                    if email:
+                        send_training_notification_email(email, data['training_name'], data['description'], data['date_scheduled'], training_link)
+                        print(f"Email sent to {email} for training {data['training_name']}")
+            except Exception as e:
+                print("Error sending training notification emails:", e)
 
             log_action("create", "training", new_id, request)
 

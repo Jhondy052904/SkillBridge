@@ -7,7 +7,19 @@ from django.shortcuts import redirect
 def latest_notification(request):
     """
     Returns the latest visible notification or {"has": False}
+    Only returns notifications to authenticated users
     """
+    # Check if user is authenticated
+    if not request.user.is_authenticated:
+        return JsonResponse({"has": False, "error": "Not authenticated"}, status=401)
+    
+    # Check if user session is valid
+    user_email = request.session.get('user_email')
+    user_role = request.session.get('user_role')
+    
+    if not user_email or not user_role:
+        return JsonResponse({"has": False, "error": "Invalid session"}, status=401)
+    
     try:
         # Fetch last visible notification (newest by created_at)
         res = supabase.table('notifications').select('*').eq('visible', True).order('created_at', desc=True).limit(1).execute()

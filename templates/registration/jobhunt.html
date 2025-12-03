@@ -79,13 +79,6 @@
                             <span class="skill-tag no-skills">No specific skills required</span>
                         {% endif %}
                     </div>
-                    <div class="job-actions">
-                        {% if user.is_authenticated and request.session.user_role == 'Resident' %}
-                            <a href="{% url 'apply_job' job.JobID %}" class="btn-apply">Apply</a>
-                        {% else %}
-                            <a href="{% url 'login' %}?next={% url 'jobhunt' %}" class="btn-apply">Login to Apply</a>
-                        {% endif %}
-                    </div>
                 </div>
                 {% endif %}
             {% endfor %}

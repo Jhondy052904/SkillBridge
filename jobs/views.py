@@ -6,6 +6,7 @@ from datetime import datetime
 import json
 from django.shortcuts import get_object_or_404, render, redirect
 from skillbridge.supabase_client import supabase
+from utils.send_email import send_job_notification_email
 from .services.supabase_crud import (
     get_jobs,
     update_job,
@@ -95,6 +96,36 @@ def post_job(request):
                     "skill_id": skill_id,
                     "created_at": datetime.utcnow().isoformat()
                 }).execute()
+
+            # Create notification for all residents about new job
+            try:
+                supabase.table("notifications").insert({
+                    "type": "job_posted",
+                    "message": f"New job opportunity: {title} (Posted: {datetime.utcnow().strftime('%B %d, %Y')})",
+                    "link_url": f"/jobs/job/{job_id}/",
+                    "visible": True,
+                    "created_at": datetime.utcnow().isoformat()
+                }).execute()
+                print("DEBUG: Notification created successfully for job:", title)
+            except Exception as e:
+                print("Error creating notification:", e)
+
+            # Send email notifications to all verified residents
+            try:
+                # Get all verified residents
+                residents_resp = supabase.table("resident").select("email, first_name").eq("verification_status", "Verified").execute()
+                residents = residents_resp.data or []
+
+                job_link = f"https://yourdomain.com/jobs/job/{job_id}/"  # Replace with actual domain
+
+                for resident in residents:
+                    email = resident.get("email")
+                    first_name = resident.get("first_name", "")
+                    if email:
+                        send_job_notification_email(email, title, description, job_link)
+                        print(f"Email sent to {email} for job {title}")
+            except Exception as e:
+                print("Error sending job notification emails:", e)
 
             log_action("create", "job", job_id, request)
             messages.success(request, "Job posted successfully!")
